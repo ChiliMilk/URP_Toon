@@ -143,7 +143,7 @@ Material:
     - _InverseClipMask: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
-    - _OutlineWidth: 0.53
+    - _OutlineWidth: 0.33
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _ReflectionSteps: 16
