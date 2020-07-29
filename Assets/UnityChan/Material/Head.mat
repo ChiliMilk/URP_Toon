@@ -30,7 +30,8 @@ Material:
   m_CustomRenderQueue: 2450
   stringTagMap:
     RenderType: TransparentCutout
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - SRPDEFAULTUNLIT
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -126,7 +127,7 @@ Material:
     - _EnableClearCoat: 0
     - _EnableHairSpecular: 0
     - _EnableInShadowMap: 0
-    - _EnableOutline: 1
+    - _EnableOutline: 0
     - _EnableRampMap: 0
     - _EnableRim: 1
     - _EnableShadowMap: 1
