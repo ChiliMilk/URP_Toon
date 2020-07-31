@@ -29,11 +29,11 @@ float4 TransformOutlineToHClipScreenSpace(float4 position, float3 normal, float 
     float aspect = abs(nearUpperRight.y / nearUpperRight.x);
     float4 vertex = TransformObjectToHClip(position);
 #ifdef _USESMOOTHNORMAL
-    float3 viewNormal = TransformWorldToViewDir(normal);
+    float3 clipNormal = TransformWorldToHClipDir(normal);
 #else
-    float3 viewNormal = mul((float3x3) UNITY_MATRIX_IT_MV, normal.xyz);
+    float3 normalWS = TransformObjectToWorldNormal(normal);
+    float3 clipNormal = TransformWorldToHClipDir(normalWS);
 #endif
-    float3 clipNormal = mul((float3x3) UNITY_MATRIX_P,viewNormal.xyz);
     float2 projectedNormal = normalize(clipNormal.xy);
     projectedNormal *= min(vertex.w, _OutlineScaledMaxDistance);
     projectedNormal.x *= aspect;
@@ -50,7 +50,7 @@ Varyings Vertex(Attributes input)
     UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
 #ifdef _USESMOOTHNORMAL
     float3 normalDir = TransformObjectToWorldNormal(input.normalOS);
-    float3 tangentDir = TransformObjectToWorldDir(input.tangentOS.xyz);
+    float3 tangentDir = TransformObjectToWorldNormal(input.tangentOS.xyz);
     float3 bitangentDir = normalize(cross(normalDir, tangentDir) * input.tangentOS.w);
     float3x3 t_tbn = float3x3(tangentDir,bitangentDir,normalDir);
     float3 bakeNormal = GetSmoothedWorldNormal(input.texcoord7,t_tbn);
