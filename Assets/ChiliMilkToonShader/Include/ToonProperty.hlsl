@@ -87,6 +87,7 @@ struct SurfaceDataToon
     //Ramp
     #ifdef _DIFFUSERAMPMAP
     half diffuseRampV;
+    half shadowMinus;
     #else
     half shadowMinus;
     half shadowStep;
@@ -266,6 +267,7 @@ inline void InitializeSurfaceDataToon(float2 uv,float2 uv2,out SurfaceDataToon o
 #endif
 #ifdef _DIFFUSERAMPMAP
     outSurfaceData.diffuseRampV = _DiffuseRampV;
+    outSurfaceData.shadowMinus = _ShadowMinus;
 #else
     outSurfaceData.shadowMinus = _ShadowMinus;
     outSurfaceData.shadowStep = _ShadowStep;

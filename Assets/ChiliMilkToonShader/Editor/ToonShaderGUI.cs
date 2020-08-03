@@ -610,6 +610,13 @@ namespace ChiliMilk.Toon.Editor
             {
                 //Use Ramp
                 materialEditor.TexturePropertySingleLine(GUIContents.DiffuseRampMap, m_DiffuseRampMapProp, m_DiffuseRampVProp);
+                EditorGUI.BeginChangeCheck();
+                EditorGUI.indentLevel += 2;
+                var shadowMinus = EditorGUILayout.Slider(GUIContents.ShadowMinus, m_ShadowMinusProp.floatValue, 0.0f, 1.0f);
+                if (EditorGUI.EndChangeCheck())
+                {
+                    m_ShadowMinusProp.floatValue = shadowMinus;
+                }
             }
             else
             {
@@ -748,24 +755,6 @@ namespace ChiliMilk.Toon.Editor
         {
             // Get Material
             var material = materialEditor.target as Material;
-
-            //// Receive Shadows
-            //if (material.HasProperty(PropertyNames.ReceiveShadows))
-            //{
-            //    EditorGUI.BeginChangeCheck();
-            //    var receiveShadows = EditorGUILayout.Toggle(GUIContents.ReceiveShadows, m_ReceiveShadowsProp.floatValue == 1.0f);
-            //    if (EditorGUI.EndChangeCheck())
-            //    {
-            //        materialEditor.RegisterPropertyChangeUndo(GUIContents.ReceiveShadows.text);
-            //        m_ReceiveShadowsProp.floatValue = receiveShadows ? 1.0f : 0.0f;
-            //    }
-            //}
-
-            //// Highlights
-            //if (material.HasProperty(PropertyNames.SpecularHighlights))
-            //{
-            //    materialEditor.ShaderProperty(m_SpecularHighlightsProp, GUIContents.SpecularHighlights);
-            //}
 
             // Reflections
             if (material.HasProperty(PropertyNames.EnvironmentReflections))
