@@ -295,7 +295,7 @@
             #pragma shader_feature _ALPHATEST_ON
             #pragma shader_feature _ALPHAPREMULTIPLY_ON
 
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+            #include "../Include/ToonProperty.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/Utils/Universal2D.hlsl"
             ENDHLSL
         }
