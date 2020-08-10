@@ -6,20 +6,20 @@
 CBUFFER_START(UnityPerMaterial)
 float4 _BaseMap_ST;
 half4 _BaseColor;
-half _DiffuseRampV;
 half4 _SpecColor;
 half4 _EmissionColor;
 half _Cutoff;
 half _Smoothness;
 half _Metallic;
 half _BumpScale;
-half _OcclusionStrength;
 float4 _SpecularShiftMap_ST;
 half _SpecularShiftIntensity;
 half _SpecularShift1Add;
 half _Smoothness2Mul;
 half _SpecularShift2Add;
 half _Specular2Mul;
+half _DiffuseRampV;
+half _OcclusionStrength;
 half _ShadowMinus;
 half _ShadowStep;
 half _ShadowFeather;
@@ -30,8 +30,8 @@ half3 _RimColor;
 half _RimPow;
 half _RimStep;
 half _RimFeather;
-half4 _OutlineColor;
 half _OutlineWidth;
+half4 _OutlineColor;
 CBUFFER_END
 
 TEXTURE2D(_ClipMask);   SAMPLER(sampler_ClipMask);
