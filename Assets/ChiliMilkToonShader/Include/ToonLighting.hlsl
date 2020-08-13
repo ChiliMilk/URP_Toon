@@ -182,13 +182,14 @@ half4 RadianceToon(SurfaceDataToon surfaceData, half3 normalWS, half3 lightDirec
 #ifdef _INSHADOWMAP
     lightAttenuation = saturate(lightAttenuation*surfaceData.inShadow);
 #endif
+    radiance.w = radiance.x;
 #ifdef _DIFFUSERAMPMAP
     radiance.xyz = saturate(lightAttenuation+surfaceData.shadowMinus)*radiance.xyz;
 #else
     lightAttenuation = lerp(lightAttenuation,StepAntiAliasing(lightAttenuation,0.5),saturate(1-surfaceData.shadowFeather));
     radiance.xyz = saturate((lightAttenuation*radiance.xyz)+surfaceData.shadowMinus);
 #endif
-    radiance.w = (lightAttenuation*radiance.x);
+    radiance.w*=lightAttenuation;
     return radiance;
 }
 
