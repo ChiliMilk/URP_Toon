@@ -152,7 +152,7 @@
             #pragma shader_feature _RECEIVE_SHADOWS_OFF
             #pragma shader_feature _HAIRSPECULAR
             #pragma shader_feature _SPECULARSHIFTMAP
-
+            
             // Universal Pipeline keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
@@ -160,9 +160,9 @@
             #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
             #pragma multi_compile _ _SHADOWS_SOFT
             #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
-            #pragma multi_compile _ _REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR
-            #pragma multi_compile _ _MAIN_LIGHT_CALCULATE_SHADOWS
-            #pragma multi_compile _ _REQUIRES_WORLD_SPACE_POS_INTERPOLATOR
+            //#pragma multi_compile _ _REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR
+            //#pragma multi_compile _ _MAIN_LIGHT_CALCULATE_SHADOWS
+            //#pragma multi_compile _ _REQUIRES_WORLD_SPACE_POS_INTERPOLATOR
 
             // Unity defined keywords
             #pragma multi_compile _DIRLIGHTMAP_COMBINED
