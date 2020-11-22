@@ -4,11 +4,20 @@
     {
         // Surface Options
         [HideInInspector] _WorkflowMode("WorkflowMode", Float) = 0.0
+
+        //BlendState
+        [HideInInspector] _SurfaceType("__surface", Float) = 0.0
+        [HideInInspector] _Blend("__blend", Float) = 0.0
+        [HideInInspector] _SrcBlend("__src", Float) = 1.0
+        [HideInInspector] _DstBlend("__dst", Float) = 0.0
+        [HideInInspector] _ZWrite("__zw", Float) = 1.0
         [HideInInspector] _Cull("__cull", Float) = 2.0
 		[HideInInspector][ToggleOff]_AlphaClip("__clip", Float) = 0.0
         [ToggleOff] _InverseClipMask("_InverseClipMask",Float) = 0.0
         _ClipMask("_ClipMask",2D) = "white"{}
 		_Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
+
+        //Stencil
         [HideInInspector]_StencilType("StencilType",Float) = 0
         [ToggleOff]_EnableStencil("EnableStencil",Float) = 0 
         _StencilChannel ("Stencil Channel", int) =1
@@ -89,6 +98,7 @@
             Name "Outline"
             ZTest Less
             Tags{"LightMode"="SRPDefaultUnlit"}
+            ZWrite On
             Cull Front
             Stencil
             {
@@ -118,7 +128,7 @@
         {
             Name "ForwardLit"
             Tags{"LightMode" = "UniversalForward"}
-            Blend One Zero
+            Blend[_SrcBlend][_DstBlend]
             ZWrite On
             Cull[_Cull]
             Stencil

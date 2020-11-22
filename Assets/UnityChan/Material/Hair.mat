@@ -30,7 +30,8 @@ Material:
   m_CustomRenderQueue: 2450
   stringTagMap:
     RenderType: TransparentCutout
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - SRPDEFAULTUNLIT
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -119,14 +120,14 @@ Material:
     - _ClearCoat: 1
     - _ClearCoatSmoothness: 0.5
     - _Cull: 2
-    - _Cutoff: 1
+    - _Cutoff: 0.2
     - _DiffuseRampV: 0
     - _DstBlend: 0
     - _EnableAnisotropy: 0
     - _EnableClearCoat: 0
     - _EnableHairSpecular: 1
     - _EnableInShadowMap: 1
-    - _EnableOutline: 1
+    - _EnableOutline: 0
     - _EnableRampMap: 0
     - _EnableRim: 1
     - _EnableShadowMap: 1
@@ -172,7 +173,9 @@ Material:
     - _StencilNo: 0
     - _StencilOp: 0
     - _StencilType: 1
+    - _SufaceType: 0
     - _Surface: 0
+    - _SurfaceType: 0
     - _Thickness: 0.5
     - _UseSmoothNormal: 1
     - _WorkflowMode: 0

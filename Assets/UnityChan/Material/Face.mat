@@ -172,13 +172,14 @@ Material:
     - _StencilOp: 0
     - _StencilType: 1
     - _Surface: 0
+    - _SurfaceType: 0
     - _Thickness: 0.5
     - _UseSmoothNormal: 1
     - _WorkflowMode: 0
     - _ZWrite: 1
     - __EnableStencil: 0
     m_Colors:
-    - _BaseColor: {r: 0.7264151, g: 0.7264151, b: 0.7264151, a: 1}
+    - _BaseColor: {r: 0.8207547, g: 0.72783905, b: 0.72783905, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}

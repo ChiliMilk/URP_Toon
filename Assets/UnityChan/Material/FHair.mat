@@ -172,7 +172,9 @@ Material:
     - _StencilNo: 1
     - _StencilOp: 0
     - _StencilType: 1
+    - _SufaceType: 0
     - _Surface: 0
+    - _SurfaceType: 0
     - _Thickness: 0.5
     - _UseSmoothNormal: 1
     - _WorkflowMode: 0

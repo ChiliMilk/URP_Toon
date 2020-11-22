@@ -9,14 +9,14 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Cloth
   m_Shader: {fileID: 4800000, guid: 1d6e561d2a2bdae46a0884077d1708ba, type: 3}
-  m_ShaderKeywords: _BLENDRIM _ENVIRONMENTREFLECTIONS_OFF _NORMALMAP _RIMLIGHT _SHADEMAP
-    _SPECULAR_SETUP _USESMOOTHNORMAL
+  m_ShaderKeywords: _ALPHACLIP_OFF _BLENDRIM _ENABLEHAIRSPECULAR_OFF _ENABLEINSHADOWMAP_OFF
+    _ENABLERAMPMAP_OFF _ENABLESTENCIL_OFF _INVERSECLIPMASK_OFF _NORMALMAP _RIMLIGHT
+    _SHADEMAP _SPECULAR_SETUP _USESMOOTHNORMAL
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2000
-  stringTagMap:
-    RenderType: Opaque
+  stringTagMap: {}
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -122,7 +122,7 @@ Material:
     - _EnableToonReflections: 0
     - _EnableTransmission: 0
     - _Enable_HAIRSPECULAR: 0
-    - _EnvironmentReflections: 0
+    - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -143,7 +143,7 @@ Material:
     - _ShadowMapStrength: 1
     - _ShadowMinus: 0.587
     - _ShadowStep: 0.45
-    - _Smoothness: 0.252
+    - _Smoothness: 0.5
     - _Smoothness2Mul: 1
     - _SmoothnessTextureChannel: 0
     - _Specular2Mul: 1
@@ -160,13 +160,14 @@ Material:
     - _StencilOp: 0
     - _StencilType: 1
     - _Surface: 0
+    - _SurfaceType: 0
     - _Thickness: 1
     - _UseSmoothNormal: 1
     - _WorkflowMode: 0
     - _ZWrite: 1
     - __EnableStencil: 0
     m_Colors:
-    - _BaseColor: {r: 0.8207547, g: 0.8207547, b: 0.8207547, a: 1}
+    - _BaseColor: {r: 0.8584906, g: 0.6803133, b: 0.6803133, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}

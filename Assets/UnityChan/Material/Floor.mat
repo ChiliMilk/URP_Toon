@@ -9,13 +9,14 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Floor
   m_Shader: {fileID: 4800000, guid: 1d6e561d2a2bdae46a0884077d1708ba, type: 3}
-  m_ShaderKeywords: _ENVIRONMENTREFLECTIONS_OFF _SPECULARHIGHLIGHTS_OFF _SPECULAR_SETUP
+  m_ShaderKeywords: _ALPHACLIP_OFF _BLENDRIM_OFF _ENABLEHAIRSPECULAR_OFF _ENABLEINSHADOWMAP_OFF
+    _ENABLEOUTLINE_OFF _ENABLERAMPMAP_OFF _ENABLERIM_OFF _ENABLESTENCIL_OFF _ENVIRONMENTREFLECTIONS_OFF
+    _INVERSECLIPMASK_OFF _SPECULARHIGHLIGHTS_OFF _SPECULAR_SETUP _USESMOOTHNORMAL_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2000
-  stringTagMap:
-    RenderType: Opaque
+  stringTagMap: {}
   disabledShaderPasses:
   - SRPDEFAULTUNLIT
   m_SavedProperties:
@@ -126,6 +127,7 @@ Material:
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _InShadowMapStrength: 1
+    - _InverseClipMask: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _OutlineWidth: 1
@@ -157,7 +159,9 @@ Material:
     - _StencilNo: 0
     - _StencilOp: 0
     - _StencilType: 0
+    - _SufaceType: 0
     - _Surface: 0
+    - _SurfaceType: 0
     - _Thickness: 0.5
     - _UseSmoothNormal: 0
     - _WorkflowMode: 0

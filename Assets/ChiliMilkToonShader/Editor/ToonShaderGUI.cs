@@ -23,6 +23,8 @@ namespace ChiliMilk.Toon.Editor
 
             // Properies
             public static readonly GUIContent WorkflowMode = new GUIContent("Workflow Mode");
+            public static readonly GUIContent SurfaceType = new GUIContent("SurfaceType");
+            public static readonly GUIContent BlendMode = new GUIContent("BlendMode");
             public static readonly GUIContent RenderFace = new GUIContent("Render Face");
             public static readonly GUIContent AlphaClipping = new GUIContent("Alpha Clipping");
             public static readonly GUIContent InverseClipMask = new GUIContent("Inverse ClipMask");
@@ -82,6 +84,8 @@ namespace ChiliMilk.Toon.Editor
         struct PropertyNames
         {
             public static readonly string WorkflowMode = "_WorkflowMode";
+            public static readonly string SurfaceType = "_SurfaceType";
+            public static readonly string BlendMode = "_Blend";
             public static readonly string Cull = "_Cull";
             public static readonly string AlphaClip = "_AlphaClip";
             public static readonly string InverseClipMask = "_InverseClipMask";
@@ -148,6 +152,20 @@ namespace ChiliMilk.Toon.Editor
             Metallic,
         }
 
+        public enum SurfaceType
+        {
+            Opaque,
+            Transparent
+        }
+
+        public enum BlendMode
+        {
+            Alpha,   // Old school alpha-blending mode, fresnel does not affect amount of transparency
+            Premultiply, // Physically plausible transparency mode, implemented as alpha pre-multiply
+            Additive,
+            Multiply
+        }
+
         public enum RenderFace
         {
             Front = 2,
@@ -176,6 +194,8 @@ namespace ChiliMilk.Toon.Editor
 
         // Properties
         MaterialProperty m_WorkflowModeProp;
+        MaterialProperty m_SurfaceTypeProp;
+        MaterialProperty m_BlendModeProp;
         MaterialProperty m_CullProp;
         MaterialProperty m_AlphaClipProp;
         MaterialProperty m_InverseClipMaskProp;
@@ -245,6 +265,8 @@ namespace ChiliMilk.Toon.Editor
             m_OutlineFoldout = GetFoldoutState("Outline");
 
             m_WorkflowModeProp = FindProperty(PropertyNames.WorkflowMode, properties, false);
+            m_SurfaceTypeProp = FindProperty(PropertyNames.SurfaceType, properties, false);
+            m_BlendModeProp = FindProperty(PropertyNames.BlendMode, properties, false);
             m_CullProp = FindProperty(PropertyNames.Cull, properties, false);
             m_AlphaClipProp = FindProperty(PropertyNames.AlphaClip, properties, false);
             m_InverseClipMaskProp = FindProperty(PropertyNames.InverseClipMask, properties, false);
@@ -312,6 +334,70 @@ namespace ChiliMilk.Toon.Editor
 
         #region Keywords
 
+        public void SetupMaterialBlendMode(Material material)
+        {
+            if (material == null)
+                throw new ArgumentNullException("material");
+
+            bool alphaClip = material.GetFloat("_AlphaClip") == 1;
+            material.SetKeyword("_INVERSECLIPMASK", alphaClip && material.GetFloat(PropertyNames.InverseClipMask) == 1);
+            if (alphaClip)
+            {
+                material.EnableKeyword("_ALPHATEST_ON");
+            }
+            else
+            {
+                material.DisableKeyword("_ALPHATEST_ON");
+            }
+
+            SurfaceType surfaceType = (SurfaceType)material.GetFloat(PropertyNames.SurfaceType);
+            if (surfaceType == SurfaceType.Opaque)
+            {
+                if (alphaClip)
+                {
+                    material.SetOverrideTag("RenderType", "TransparentCutout");
+                }
+                else
+                {
+                    material.SetOverrideTag("RenderType", "Opaque");
+                }
+                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            }
+            else
+            {
+                BlendMode blendMode = (BlendMode)material.GetFloat("_Blend");
+                // Specific Transparent Mode Settings
+                switch (blendMode)
+                {
+                    case BlendMode.Alpha:
+                        material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                        material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                        material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                        break;
+                    case BlendMode.Premultiply:
+                        material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                        material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                        material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                        break;
+                    case BlendMode.Additive:
+                        material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                        material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                        material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                        break;
+                    case BlendMode.Multiply:
+                        material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.DstColor);
+                        material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                        material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                        material.EnableKeyword("_ALPHAMODULATE_ON");
+                        break;
+                }
+                // General Transparent Material Settings
+                material.SetOverrideTag("RenderType", "Transparent");
+            }
+        }
+
         void SetMaterialKeywords(Material material)
         {
             // Reset
@@ -323,32 +409,13 @@ namespace ChiliMilk.Toon.Editor
                 material.SetKeyword("_SPECULAR_SETUP", material.GetFloat("_WorkflowMode") == 0);
             }
 
-            // AlphaClip
-            bool alphaClip = false;
-            if (material.HasProperty(PropertyNames.AlphaClip))
-            {
-                alphaClip = material.GetFloat(PropertyNames.AlphaClip) == 1;
-                material.SetKeyword("_INVERSECLIPMASK", alphaClip && material.GetFloat(PropertyNames.InverseClipMask) == 1);
-                material.SetKeyword("_ALPHATEST_ON", alphaClip);
-            }
+            SetupMaterialBlendMode(material);
 
             // Receive Shadows
             if (material.HasProperty(PropertyNames.ReceiveShadows))
             {
                 material.SetKeyword("_RECEIVE_SHADOWS_OFF", material.GetFloat(PropertyNames.ReceiveShadows) == 0.0f);
             }
-
-            // Opaque
-            if (alphaClip)
-            {
-                material.SetOverrideTag("RenderType", "TransparentCutout");
-            }
-            else
-            {
-                material.SetOverrideTag("RenderType", "Opaque");
-            }
-            material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-            material.SetShaderPassEnabled("ShadowCaster", true);
 
             // Highlights
             if (material.HasProperty(PropertyNames.SpecularHighlights))
@@ -492,15 +559,33 @@ namespace ChiliMilk.Toon.Editor
             var material = materialEditor.target as Material;
 
             // Workflow Mode
-            if (material.HasProperty(PropertyNames.WorkflowMode))
+            DoPopup(GUIContents.WorkflowMode, m_WorkflowModeProp, Enum.GetNames(typeof(WorkflowMode)),materialEditor);
+
+            //SufaceType
+            if (material.HasProperty(PropertyNames.SurfaceType))
             {
                 EditorGUI.BeginChangeCheck();
-                var workflowMode = EditorGUILayout.Popup(GUIContents.WorkflowMode, (int)m_WorkflowModeProp.floatValue, Enum.GetNames(typeof(WorkflowMode)));
+                var surface = EditorGUILayout.Popup(GUIContents.SurfaceType, (int)m_SurfaceTypeProp.floatValue, Enum.GetNames(typeof(SurfaceType)));
                 if (EditorGUI.EndChangeCheck())
                 {
-                    materialEditor.RegisterPropertyChangeUndo(GUIContents.WorkflowMode.text);
-                    m_WorkflowModeProp.floatValue = workflowMode;
+                    materialEditor.RegisterPropertyChangeUndo(GUIContents.SurfaceType.text);
+                    if ((SurfaceType)surface == SurfaceType.Opaque)
+                    {
+                        material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Geometry;
+                    }
+                    else
+                    {
+                        material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                    }
+                    m_RenderQueueProp.floatValue = material.renderQueue;
+                    m_SurfaceTypeProp.floatValue = surface;
                 }
+            }
+
+            //BlendMode
+            if ((SurfaceType)material.GetFloat(PropertyNames.SurfaceType) == SurfaceType.Transparent)
+            {
+                DoPopup(GUIContents.BlendMode, m_BlendModeProp, Enum.GetNames(typeof(BlendMode)),materialEditor);
             }
 
             // Render Face
@@ -512,6 +597,7 @@ namespace ChiliMilk.Toon.Editor
                 {
                     materialEditor.RegisterPropertyChangeUndo(GUIContents.RenderFace.text);
                     m_CullProp.floatValue = renderFace;
+                    material.doubleSidedGI = (RenderFace)m_CullProp.floatValue != RenderFace.Front;
                 }
             }
 
@@ -792,7 +878,25 @@ namespace ChiliMilk.Toon.Editor
 
             // Set value to EditorPrefs and field
             EditorPrefs.SetBool($"{EditorPrefKey}.{name}", value);
-            field = value;
+        }
+
+        public static void DoPopup(GUIContent label, MaterialProperty property, string[] options, MaterialEditor materialEditor)
+        {
+            if (property == null)
+                throw new ArgumentNullException("property");
+
+            EditorGUI.showMixedValue = property.hasMixedValue;
+
+            var mode = property.floatValue;
+            EditorGUI.BeginChangeCheck();
+            mode = EditorGUILayout.Popup(label, (int)mode, options);
+            if (EditorGUI.EndChangeCheck())
+            {
+                materialEditor.RegisterPropertyChangeUndo(label.text);
+                property.floatValue = mode;
+            }
+
+            EditorGUI.showMixedValue = false;
         }
         #endregion
     }
@@ -813,4 +917,6 @@ namespace ChiliMilk.Toon.Editor
         }
         #endregion
     }
+
+
 }
