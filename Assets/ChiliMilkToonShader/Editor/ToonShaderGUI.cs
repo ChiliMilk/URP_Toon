@@ -586,20 +586,26 @@ namespace ChiliMilk.Toon.Editor
             if ((SurfaceType)material.GetFloat(PropertyNames.SurfaceType) == SurfaceType.Transparent)
             {
                 DoPopup(GUIContents.BlendMode, m_BlendModeProp, Enum.GetNames(typeof(BlendMode)),materialEditor);
+                m_CullProp.floatValue = 2;
+                material.doubleSidedGI = false;
             }
-
-            // Render Face
-            if (material.HasProperty(PropertyNames.Cull))
+            else
             {
-                EditorGUI.BeginChangeCheck();
-                var renderFace = EditorGUILayout.Popup(GUIContents.RenderFace, (int)m_CullProp.floatValue, Enum.GetNames(typeof(RenderFace)));
-                if (EditorGUI.EndChangeCheck())
+                // Render Face
+                if (material.HasProperty(PropertyNames.Cull))
                 {
-                    materialEditor.RegisterPropertyChangeUndo(GUIContents.RenderFace.text);
-                    m_CullProp.floatValue = renderFace;
-                    material.doubleSidedGI = (RenderFace)m_CullProp.floatValue != RenderFace.Front;
+                    EditorGUI.BeginChangeCheck();
+                    var renderFace = EditorGUILayout.Popup(GUIContents.RenderFace, (int)m_CullProp.floatValue, Enum.GetNames(typeof(RenderFace)));
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        materialEditor.RegisterPropertyChangeUndo(GUIContents.RenderFace.text);
+                        m_CullProp.floatValue = renderFace;
+                        material.doubleSidedGI = (RenderFace)m_CullProp.floatValue != RenderFace.Front;
+                    }
                 }
             }
+
+       
 
             // AlphaClip
             if (material.HasProperty(PropertyNames.AlphaClip) && material.HasProperty(PropertyNames.Cutoff))
