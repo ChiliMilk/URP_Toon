@@ -10,7 +10,7 @@
         [HideInInspector] _Blend("__blend", Float) = 0.0
         [HideInInspector] _SrcBlend("__src", Float) = 1.0
         [HideInInspector] _DstBlend("__dst", Float) = 0.0
-        [HideInInspector] _ZWrite("__zw", Float) = 1.0
+        //[HideInInspector] _ZWrite("__zw", Float) = 1.0
         [HideInInspector] _Cull("__cull", Float) = 2.0
 		[HideInInspector][ToggleOff]_AlphaClip("__clip", Float) = 0.0
         [ToggleOff] _InverseClipMask("_InverseClipMask",Float) = 0.0
