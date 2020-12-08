@@ -14,9 +14,9 @@ half _Metallic;
 half _BumpScale;
 float4 _SpecularShiftMap_ST;
 half _SpecularShiftIntensity;
-half _SpecularShift1Add;
+half _SpecularShift1;
 half _Smoothness2Mul;
-half _SpecularShift2Add;
+half _SpecularShift2;
 half _Specular2Mul;
 half _DiffuseRampV;
 half _OcclusionStrength;
@@ -44,7 +44,6 @@ TEXTURE2D(_ShadeMap);   SAMPLER(sampler_ShadeMap);
 TEXTURE2D(_OcclusionMap);   SAMPLER(sampler_OcclusionMap);
 TEXTURE2D(_MetallicGlossMap);   SAMPLER(sampler_MetallicGlossMap);
 TEXTURE2D(_SpecGlossMap);   SAMPLER(sampler_SpecGlossMap);
-TEXTURE2D(_SmoothnessMap);  SAMPLER(sampler_SmoothnessMap);
 #ifdef _SPECULARSHIFTMAP
 TEXTURE2D(_SpecularShiftMap);   SAMPLER(sampler_SpecularShiftMap);
 #endif
@@ -119,16 +118,15 @@ struct InputDataToon
 
 half SampleClipMask(float2 uv)
 {
+#ifdef _ALPHATEST_ON
 #ifdef _INVERSECLIPMASK
     return 1.0h-SAMPLE_TEXTURE2D(_ClipMask,sampler_ClipMask,uv).r;
 #else
      return SAMPLE_TEXTURE2D(_ClipMask,sampler_ClipMask,uv).r;
 #endif
-}
-
-half SampleSmoothness(float2 uv,half smoothness)
-{
-    return SAMPLE_TEXTURE2D(_SmoothnessMap, sampler_SmoothnessMap, uv).r*smoothness;
+#else
+    return 1.0;
+#endif
 }
 
 half SampleShadow(float2 uv)
@@ -165,23 +163,14 @@ half4 SampleMetallicSpecGloss(float2 uv, half albedoAlpha,half smoothness)
     half4 specGloss;
 #ifdef _METALLICSPECGLOSSMAP
     specGloss = SAMPLE_METALLICSPECULAR(uv);
-    #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-        specGloss.a = albedoAlpha * smoothness;
-    #else
-        specGloss.a *= smoothness;
-    #endif
+    specGloss.a *= smoothness;
 #else
     #if _SPECULAR_SETUP
         specGloss.rgb = _SpecColor.rgb;
     #else
         specGloss.rgb = _Metallic.rrr;
     #endif
-
-    #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-        specGloss.a = albedoAlpha * smoothness;
-    #else
         specGloss.a = smoothness;
-    #endif
 #endif
     return specGloss;
 }
@@ -207,8 +196,7 @@ inline void InitializeStandardLitSurfaceData(float2 uv, out SurfaceData outSurfa
     half4 albedoAlpha = SampleAlbedoAlpha(uv, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));
     outSurfaceData.alpha = Alpha(albedoAlpha.a*SampleClipMask(uv), _BaseColor, _Cutoff);
 
-    half smoothness = SampleSmoothness(uv,_Smoothness);
-    half4 specGloss = SampleMetallicSpecGloss(uv, albedoAlpha.a,smoothness);
+    half4 specGloss = SampleMetallicSpecGloss(uv, albedoAlpha.a,_Smoothness);
     outSurfaceData.albedo = albedoAlpha.rgb * _BaseColor.rgb;
 
 #if _SPECULAR_SETUP
@@ -229,8 +217,7 @@ inline void InitializeSurfaceDataToon(float2 uv,float2 uv2,out SurfaceDataToon o
 {
     half4 albedoAlpha = SampleAlbedoAlpha(uv, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));
     outSurfaceData.alpha = Alpha(albedoAlpha.a*SampleClipMask(uv), _BaseColor, _Cutoff);
-    half smoothness = SampleSmoothness(uv,_Smoothness);
-    half4 specGloss = SampleMetallicSpecGloss(uv, albedoAlpha.a,smoothness);
+    half4 specGloss = SampleMetallicSpecGloss(uv, albedoAlpha.a,_Smoothness);
     outSurfaceData.albedo = albedoAlpha.rgb * _BaseColor.rgb;
 
 #if _SPECULAR_SETUP
@@ -246,8 +233,8 @@ inline void InitializeSurfaceDataToon(float2 uv,float2 uv2,out SurfaceDataToon o
     outSurfaceData.occlusion = SampleOcclusion(uv);
     outSurfaceData.emission = SampleEmission(uv, _EmissionColor.rgb, TEXTURE2D_ARGS(_EmissionMap, sampler_EmissionMap));
 #ifdef _HAIRSPECULAR
-    outSurfaceData.specularShift1 = SampleSpecularShift(uv2,_SpecularShift1Add);
-    outSurfaceData.specularShift2 = SampleSpecularShift(uv2,_SpecularShift2Add);
+    outSurfaceData.specularShift1 = SampleSpecularShift(uv2,_SpecularShift1);
+    outSurfaceData.specularShift2 = SampleSpecularShift(uv2,_SpecularShift2);
     outSurfaceData.specular2Mul = _Specular2Mul;
     outSurfaceData.smoothness2 = outSurfaceData.smoothness * _Smoothness2Mul;
 #endif

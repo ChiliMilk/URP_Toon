@@ -50,7 +50,6 @@
         _SpecGlossMap("Specular", 2D) = "white" {}
         _SpecularStep("SpecularStep",Range(0.0,1)) = 0.5
         _SpecularFeather("SpecularFeather",Range(0.0,1))= 0
-        _SmoothnessMap("SmoothnessMap",2D) = "white"{}
 		_Smoothness("Smoothness", Range(0.0, 1.0)) = 0.5
 
         //Ramp
@@ -70,8 +69,8 @@
         [ToggleOff] _EnableHairSpecular("HairSpecular", Float) = 0.0
         _SpecularShiftMap("SpecularShiftMap",2D) = "white"{}
         _SpecularShiftIntensity("SpecularShiftIntensity",Range(0.0,3.0)) = 1.0
-        _SpecularShift1Add("SpecularShift",Float) = 0.0
-        _SpecularShift2Add("SpecularShiftSec",Float)= 0.0
+        _SpecularShift1("SpecularShift",Float) = 0.0
+        _SpecularShift2("SpecularShiftSec",Float)= 0.0
         _Smoothness2Mul("SmoothnessSecMul",Range(0.0,1.0)) = 1.0
         _Specular2Mul ("SpecularSecMul", Range (0.0,1.0) ) = 0.5
 
@@ -111,7 +110,7 @@
             #pragma prefer_hlslcc gles
             #pragma exclude_renderers d3d11_9x
             #pragma target 2.0
-            
+
             #pragma shader_feature _USESMOOTHNORMAL
             #pragma multi_compile_instancing
             #pragma multi_compile_fog
@@ -170,9 +169,6 @@
             #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
             #pragma multi_compile _ _SHADOWS_SOFT
             #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
-            //#pragma multi_compile _ _REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR
-            //#pragma multi_compile _ _MAIN_LIGHT_CALCULATE_SHADOWS
-            //#pragma multi_compile _ _REQUIRES_WORLD_SPACE_POS_INTERPOLATOR
 
             // Unity defined keywords
             #pragma multi_compile _DIRLIGHTMAP_COMBINED
@@ -213,7 +209,6 @@
             //--------------------------------------
             // GPU Instancing
             #pragma multi_compile_instancing
-            #pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
 
             #pragma vertex ShadowPassVertex
             #pragma fragment ShadowPassFragment
@@ -241,7 +236,6 @@
              // -------------------------------------
             // Material Keywords
             #pragma shader_feature _ALPHATEST_ON
-            #pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
 
             //--------------------------------------
             // GPU Instancing
@@ -276,7 +270,6 @@
             #pragma shader_feature _EMISSION
             #pragma shader_feature _METALLICSPECGLOSSMAP
             #pragma shader_feature _ALPHATEST_ON
-            #pragma shader_feature _ _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
 
             #pragma shader_feature _SPECGLOSSMAP
 
