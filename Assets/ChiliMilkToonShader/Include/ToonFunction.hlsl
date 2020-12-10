@@ -30,7 +30,7 @@ half StepAntiAliasing(half x, half y)
 //Use for Toon Diffuse
 half DiffuseToon(half value,half step,half feather)
 {
-    return 1-saturate(1-(value-step+feather)/feather);
+    return saturate((value-step+feather)/feather);
 }
 
 //Use to Toon Specular , Rim Light
