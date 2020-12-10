@@ -151,7 +151,7 @@ half3 SampleShade(float2 uv)
 half SampleSpecularShift(float2 uv,half shiftAdd)
 {
 #ifdef _SPECULARSHIFTMAP
-    half specularShift = SAMPLE_TEXTURE2D(_SpecularShiftMap,sampler_SpecularShiftMap,uv).r*_SpecularShiftIntensity+shiftAdd;
+    half specularShift = SAMPLE_TEXTURE2D(_SpecularShiftMap,sampler_SpecularShiftMap,uv*_SpecularShiftMap_ST.xy+_SpecularShiftMap_ST.zw).r*_SpecularShiftIntensity+shiftAdd;
     return specularShift;
 #else
     return _SpecularShiftIntensity+shiftAdd;
@@ -213,7 +213,7 @@ inline void InitializeStandardLitSurfaceData(float2 uv, out SurfaceData outSurfa
     outSurfaceData.emission = SampleEmission(uv, _EmissionColor.rgb, TEXTURE2D_ARGS(_EmissionMap, sampler_EmissionMap));
 }
 
-inline void InitializeSurfaceDataToon(float2 uv,float2 uv2,out SurfaceDataToon outSurfaceData)
+inline void InitializeSurfaceDataToon(float2 uv,out SurfaceDataToon outSurfaceData)
 {
     half4 albedoAlpha = SampleAlbedoAlpha(uv, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));
     outSurfaceData.alpha = Alpha(albedoAlpha.a*SampleClipMask(uv), _BaseColor, _Cutoff);
@@ -233,8 +233,8 @@ inline void InitializeSurfaceDataToon(float2 uv,float2 uv2,out SurfaceDataToon o
     outSurfaceData.occlusion = SampleOcclusion(uv);
     outSurfaceData.emission = SampleEmission(uv, _EmissionColor.rgb, TEXTURE2D_ARGS(_EmissionMap, sampler_EmissionMap));
 #ifdef _HAIRSPECULAR
-    outSurfaceData.specularShift1 = SampleSpecularShift(uv2,_SpecularShift1);
-    outSurfaceData.specularShift2 = SampleSpecularShift(uv2,_SpecularShift2);
+    outSurfaceData.specularShift1 = SampleSpecularShift(uv,_SpecularShift1);
+    outSurfaceData.specularShift2 = SampleSpecularShift(uv,_SpecularShift2);
     outSurfaceData.specular2Mul = _Specular2Mul;
     outSurfaceData.smoothness2 = outSurfaceData.smoothness * _Smoothness2Mul;
 #endif

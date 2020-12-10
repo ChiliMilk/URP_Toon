@@ -110,7 +110,7 @@ half2 DirectSpecularHairToon(BRDFDataToon brdfData, SurfaceDataToon surfaceData,
     half spec1 = D_KajiyaKay(t1,H,brdfData.specularExponent);
     half spec2 = D_KajiyaKay(t2,H,brdfData.specularExponentSec);
     half maxSpec1 = (brdfData.specularExponent + 2) * rcp(2 * PI);
-    half maxSpec2 = (brdfData.specularExponentSec+2) * rcp(2*PI);
+    half maxSpec2 = (brdfData.specularExponentSec + 2) * rcp(2 * PI);
     half S1 = SmoothstepToon(spec1,maxSpec1,surfaceData.specularStep,surfaceData.specularFeather);
     half S2 = SmoothstepToon(spec2,maxSpec2,surfaceData.specularStep,surfaceData.specularFeather)*surfaceData.specular2Mul;
     return S1+S2;
@@ -171,13 +171,12 @@ half3 GlobalIlluminationToon(BRDFDataToon brdfData, half3 bakedGI, half occlusio
 half4 RadianceToon(SurfaceDataToon surfaceData, half3 normalWS, half3 lightDirectionWS,half lightAttenuation)
 {
     half4 radiance;
+    half H_NdotL = 0.5*dot(normalWS, lightDirectionWS)+0.5;
 #ifdef _DIFFUSERAMPMAP
-    half NdotL = saturate(dot(normalWS, lightDirectionWS));
-    radiance.xyz = SAMPLE_TEXTURE2D_LOD(_DiffuseRampMap,sampler_LinearClamp,half2(NdotL,surfaceData.diffuseRampV),0).xyz;
+    radiance.xyz = SAMPLE_TEXTURE2D_LOD(_DiffuseRampMap,sampler_LinearClamp,half2(H_NdotL,surfaceData.diffuseRampV),0).xyz;
 #else
-    half NdotL = dot(normalWS, lightDirectionWS);
-    NdotL = SmoothstepDiffuseToon(NdotL,surfaceData.shadowStep,surfaceData.shadowFeather);
-    radiance.xyz = NdotL;
+    H_NdotL = DiffuseToon(H_NdotL,surfaceData.shadowStep,surfaceData.shadowFeather);
+    radiance.xyz = H_NdotL;
 #endif
 #ifdef _INSHADOWMAP
     lightAttenuation = saturate(lightAttenuation*surfaceData.inShadow);
@@ -197,7 +196,7 @@ half3 LightingToon(BRDFDataToon brdfData, SurfaceDataToon surfaceData,Light ligh
 {
     half lightAttenuation = light.distanceAttenuation * light.shadowAttenuation;
     half4 radiance = RadianceToon(surfaceData,normalWS, light.direction,lightAttenuation);
-    half3 color = DirectBDRFToon(brdfData, surfaceData,normalWS, light.direction, viewDirectionWS, bitangentWS, light.color, radiance);
+    half3 color = DirectBDRFToon(brdfData, surfaceData, normalWS, light.direction, viewDirectionWS, bitangentWS, light.color, radiance);
 #ifdef _RIMLIGHT
     half3 rimColor = RimLight(brdfData,surfaceData,normalWS,viewDirectionWS,light.direction);
     color += rimColor;

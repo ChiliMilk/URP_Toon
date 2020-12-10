@@ -36,9 +36,9 @@
 
         //Shadow
         _ShadeMap("ShadeMap",2D) = "white" {} 
-        _ShadowStep("Shadow Step",Float) = 0.5
+        _ShadowStep("Shadow Step",Range(0.0,1.0)) = 0.5
         _ShadowFeather("Shadow Feather",Range(0.0,1.0)) = 0.0
-        _ShadowMinus("ShadowMinus",Float) = 0.0
+        _ShadowMinus("ShadowMinus",Range(0.0,1.0)) = 0.0
          [ToggleOff]_EnableInShadowMap("Enable ShadowMap",Float) = 0.0
         _InShadowMap("Shadow Map",2D) = "white"{}
         _InShadowMapStrength("ShadowMap Strength",Range(0.0,1.0)) = 1.0

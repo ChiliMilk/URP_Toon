@@ -38,9 +38,6 @@ struct Varyings
     float4 positionCS               : SV_POSITION;
     UNITY_VERTEX_INPUT_INSTANCE_ID
     UNITY_VERTEX_OUTPUT_STEREO
-#ifdef _SPECULARSHIFTMAP
-    float2 uv2 : TEXCOORD8;
-#endif
 };
 
 void InitializeInputDataToon(Varyings input, half3 normalTS, out InputDataToon inputData)
@@ -95,9 +92,7 @@ Varyings ToonForwardPassVertex(Attributes input)
     half3 vertexLight = VertexLighting(vertexInput.positionWS, normalInput.normalWS);
     half fogFactor = ComputeFogFactor(vertexInput.positionCS.z);
     output.uv = TRANSFORM_TEX(input.texcoord, _BaseMap);
-#ifdef _SPECULARSHIFTMAP
-    output.uv2 = TRANSFORM_TEX(input.texcoord,_SpecularShiftMap);
-#endif
+    
 #if defined(_NORMALMAP) || defined(_HAIRSPECULAR)
     output.normalWS = half4(normalInput.normalWS, viewDirWS.x);
     output.tangentWS = half4(normalInput.tangentWS, viewDirWS.y);
@@ -128,12 +123,8 @@ half4 ToonForwardPassFragment(Varyings input) : SV_Target
 {
     UNITY_SETUP_INSTANCE_ID(input);
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
-    float2 uv2;
-#ifdef _SPECULARSHIFTMAP
-    uv2 = input.uv2;
-#endif
     SurfaceDataToon surfaceData;
-    InitializeSurfaceDataToon(input.uv,uv2, surfaceData);
+    InitializeSurfaceDataToon(input.uv, surfaceData);
 
     InputDataToon inputData;
     InitializeInputDataToon(input, surfaceData.normalTS, inputData);
