@@ -14,7 +14,7 @@
         [HideInInspector] _Cull("__cull", Float) = 2.0
 		[HideInInspector][ToggleOff]_AlphaClip("__clip", Float) = 0.0
         [ToggleOff] _InverseClipMask("_InverseClipMask",Float) = 0.0
-        _ClipMask("_ClipMask",2D) = "white"{}
+        _ClipMask("ClipMask",2D) = "white"{}
 		_Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
 
         //Stencil
@@ -25,8 +25,6 @@
         [HideInInspector]_StencilOp ("Stencil Op",int) = 0
 
         // Default 
-		_BaseMap("Albedo", 2D) = "white" {}
-		_BaseColor("Color", Color) = (1.0, 1.0, 1.0, 1.0)
         _BumpMap("Normal Map", 2D) = "bump" {}
 		_BumpScale("Scale", Float) = 1.0
 		_OcclusionStrength("Strength", Range(0.0, 1.0)) = 1.0
@@ -35,10 +33,16 @@
         _EmissionMap("Emission", 2D) = "white" {}
 
         //Shadow
-        _ShadeMap("ShadeMap",2D) = "white" {} 
-        _ShadowStep("Shadow Step",Range(0.0,1.0)) = 0.5
-        _ShadowFeather("Shadow Feather",Range(0.0,1.0)) = 0.0
-        _ShadowMinus("ShadowMinus",Range(0.0,1.0)) = 0.0
+        _BaseMap("Albedo", 2D) = "white" {}
+		_BaseColor("Color", Color) = (1.0, 1.0, 1.0, 1.0)
+        _Shadow1Color("Shadow1Color", Color) = (0.5, 0.5, 0.5, 0.5)
+        //_Shadow1Map("Shadow1 Map",2D) = "white" {} 
+        _Shadow1Step("Shadow1 Step",Range(0.0,1.0)) = 0.5
+        _Shadow1Feather("Shadow1 Feather",Range(0.0,1.0)) = 0.0
+        _Shadow2Color("Shadow2Color", Color) = (0.0, 0.0, 0.0, 0.0)
+        //_Shadow2Map("Shadow2 Map",2D) = "white" {} 
+        _Shadow2Step("Shadow1 Step",Range(0.0,1.0)) = 0.3
+        _Shadow2Feather("Shadow1 Feather",Range(0.0,1.0)) = 0.0
          [ToggleOff]_EnableInShadowMap("Enable ShadowMap",Float) = 0.0
         _InShadowMap("Shadow Map",2D) = "white"{}
         _InShadowMapStrength("ShadowMap Strength",Range(0.0,1.0)) = 1.0
@@ -71,7 +75,6 @@
         _SpecularShiftIntensity("SpecularShiftIntensity",Range(0.0,3.0)) = 1.0
         _SpecularShift1("SpecularShift",Float) = 0.0
         _SpecularShift2("SpecularShiftSec",Float)= 0.0
-        _Smoothness2Mul("SmoothnessSecMul",Range(0.0,1.0)) = 1.0
         _Specular2Mul ("SpecularSecMul", Range (0.0,1.0) ) = 0.5
 
         //Outline
@@ -83,7 +86,7 @@
         // Advanced Options
         [ToggleOff] _ReceiveShadows("Receive Shadows", Float) = 1.0
 		[ToggleOff] _SpecularHighlights("Specular Highlights", Float) = 1.0
-        [ToggleOff] _EnvironmentReflections("Environment Reflections", Float) = 1.0
+        [ToggleOff] _EnvironmentReflections("Environment Reflections", Float) = 0.0
         _RenderQueue("Render Queue", Float) = 2000
 
     }
@@ -148,7 +151,6 @@
             #pragma shader_feature _RIMLIGHT
             #pragma shader_feature _BLENDRIM
             #pragma shader_feature _INSHADOWMAP
-            #pragma shader_feature _SHADEMAP
             #pragma shader_feature _NORMALMAP
             #pragma shader_feature _ALPHATEST_ON
             #pragma shader_feature _ALPHAPREMULTIPLY_ON

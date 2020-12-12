@@ -24,7 +24,7 @@ struct Varyings
 float4 TransformOutlineToHClipScreenSpace(float4 position, float3 normal, float outlineWidth)
 {
     half _OutlineScaledMaxDistance = 10;
-    float4 vertex = TransformObjectToHClip(position);
+    float4 vertex = TransformObjectToHClip(position.xyz);
 #ifdef _USESMOOTHNORMAL
     float3 clipNormal = TransformWorldToHClipDir(normal);
 #else

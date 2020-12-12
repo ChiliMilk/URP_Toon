@@ -6,40 +6,45 @@
 CBUFFER_START(UnityPerMaterial)
 float4 _BaseMap_ST;
 half4 _BaseColor;
-half4 _SpecColor;
-half4 _EmissionColor;
-half _Cutoff;
-half _Smoothness;
-half _Metallic;
-half _BumpScale;
-float4 _SpecularShiftMap_ST;
-half _SpecularShiftIntensity;
-half _SpecularShift1;
-half _Smoothness2Mul;
-half _SpecularShift2;
-half _Specular2Mul;
+half3 _Shadow1Color;
+half _Shadow1Step;
+half _Shadow1Feather;
+half _Shadow2Step;
+half _Shadow2Feather;
 half _DiffuseRampV;
+half3 _Shadow2Color;
+half _InShadowMapStrength;
+
+half4 _EmissionColor;
 half _OcclusionStrength;
-half _ShadowMinus;
-half _ShadowStep;
-half _ShadowFeather;
+half _Cutoff;
+half _BumpScale;
+
+half _Smoothness;
+half4 _SpecColor;
 half _SpecularStep;
 half _SpecularFeather;
-half _InShadowMapStrength;
+half _SpecularShift1;
+half _SpecularShift2;
+half _Specular2Mul;
+half _SpecularShiftIntensity;
+float4 _SpecularShiftMap_ST;
+half _Metallic;
+
 half3 _RimColor;
 half _RimPow;
 half _RimStep;
 half _RimFeather;
+
 half _OutlineWidth;
 half4 _OutlineColor;
 CBUFFER_END
 
 TEXTURE2D(_ClipMask);   SAMPLER(sampler_ClipMask);
+//TEXTURE2D(_Shadow1Map);   SAMPLER(sampler_Shadow1Map);
+//TEXTURE2D(_Shadow2Map);   SAMPLER(sampler_Shadow2Map);
 #ifdef _INSHADOWMAP
 TEXTURE2D(_InShadowMap);  SAMPLER(sampler_InShadowMap);
-#endif
-#ifdef _SHADEMAP
-TEXTURE2D(_ShadeMap);   SAMPLER(sampler_ShadeMap);
 #endif
 TEXTURE2D(_OcclusionMap);   SAMPLER(sampler_OcclusionMap);
 TEXTURE2D(_MetallicGlossMap);   SAMPLER(sampler_MetallicGlossMap);
@@ -68,36 +73,15 @@ struct SurfaceDataToon
     half  occlusion;
     half  alpha;
     //Specular
-    half specularStep;
-    half specularFeather;
     #ifdef _HAIRSPECULAR
         half specularShift1;
         half specularShift2;
-        half specular2Mul;
-        half smoothness2;
     #endif
     //Shadow
+    half3 shadow1;
+    half3 shadow2;
     #ifdef _INSHADOWMAP
         half inShadow;
-    #endif
-    #ifdef _SHADEMAP
-        half3 shade;
-    #endif
-    //Ramp
-    #ifdef _DIFFUSERAMPMAP
-    half diffuseRampV;
-    half shadowMinus;
-    #else
-    half shadowMinus;
-    half shadowStep;
-    half shadowFeather;
-    #endif
-    //rim
-    #ifdef _RIMLIGHT
-    half3 rimColor;
-    half rimPow;
-    half rimStep;
-    half rimFeather;
     #endif
 };
 
@@ -129,7 +113,7 @@ half SampleClipMask(float2 uv)
 #endif
 }
 
-half SampleShadow(float2 uv)
+half SampleInShadow(float2 uv)
 {
 #ifdef _INSHADOWMAP
     half inShadow = SAMPLE_TEXTURE2D(_InShadowMap,sampler_InShadowMap,uv).r*_InShadowMapStrength;
@@ -139,15 +123,6 @@ half SampleShadow(float2 uv)
 #endif
 }
 
-half3 SampleShade(float2 uv)
-{
-#ifdef _SHADEMAP
-    half3 Shade = SAMPLE_TEXTURE2D(_ShadeMap,sampler_ShadeMap,uv);
-    return Shade;
-#else
-    return 0.0;
-#endif
-}
 half SampleSpecularShift(float2 uv,half shiftAdd)
 {
 #ifdef _SPECULARSHIFTMAP
@@ -219,7 +194,13 @@ inline void InitializeSurfaceDataToon(float2 uv,out SurfaceDataToon outSurfaceDa
     outSurfaceData.alpha = Alpha(albedoAlpha.a*SampleClipMask(uv), _BaseColor, _Cutoff);
     half4 specGloss = SampleMetallicSpecGloss(uv, albedoAlpha.a,_Smoothness);
     outSurfaceData.albedo = albedoAlpha.rgb * _BaseColor.rgb;
-
+    //outSurfaceData.shadow1 = SAMPLE_TEXTURE2D(_Shadow1Map,sampler_Shadow1Map,uv)*_Shadow1Color;
+    //outSurfaceData.shadow2 = SAMPLE_TEXTURE2D(_Shadow2Map,sampler_Shadow2Map,uv)*_Shadow2Color;
+    outSurfaceData.shadow1 = albedoAlpha.rgb *_Shadow1Color;
+    outSurfaceData.shadow2 = albedoAlpha.rgb *_Shadow2Color;
+#ifdef _INSHADOWMAP
+    outSurfaceData.inShadow = SampleInShadow(uv);
+#endif
 #if _SPECULAR_SETUP
     outSurfaceData.metallic = 1.0h;
     outSurfaceData.specular = specGloss.rgb;
@@ -227,7 +208,6 @@ inline void InitializeSurfaceDataToon(float2 uv,out SurfaceDataToon outSurfaceDa
     outSurfaceData.metallic = specGloss.r;
     outSurfaceData.specular = half3(0.0h, 0.0h, 0.0h);
 #endif
-
     outSurfaceData.smoothness = specGloss.a;
     outSurfaceData.normalTS = SampleNormal(uv, TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap), _BumpScale);
     outSurfaceData.occlusion = SampleOcclusion(uv);
@@ -235,30 +215,8 @@ inline void InitializeSurfaceDataToon(float2 uv,out SurfaceDataToon outSurfaceDa
 #ifdef _HAIRSPECULAR
     outSurfaceData.specularShift1 = SampleSpecularShift(uv,_SpecularShift1);
     outSurfaceData.specularShift2 = SampleSpecularShift(uv,_SpecularShift2);
-    outSurfaceData.specular2Mul = _Specular2Mul;
-    outSurfaceData.smoothness2 = outSurfaceData.smoothness * _Smoothness2Mul;
 #endif
-#ifdef _INSHADOWMAP
-    outSurfaceData.inShadow = SampleShadow(uv);
-#endif
-#ifdef _SHADEMAP
-    outSurfaceData.shade = SampleShade(uv)*_BaseColor.rgb;
-#endif
-    outSurfaceData.specularStep = _SpecularStep;
-    outSurfaceData.specularFeather = _SpecularFeather;
-#ifdef _RIMLIGHT
-    outSurfaceData.rimColor = _RimColor;
-    outSurfaceData.rimPow = _RimPow;
-    outSurfaceData.rimStep = _RimStep;
-    outSurfaceData.rimFeather = _RimFeather;
-#endif
-#ifdef _DIFFUSERAMPMAP
-    outSurfaceData.diffuseRampV = _DiffuseRampV;
-    outSurfaceData.shadowMinus = _ShadowMinus;
-#else
-    outSurfaceData.shadowMinus = _ShadowMinus;
-    outSurfaceData.shadowStep = _ShadowStep;
-    outSurfaceData.shadowFeather = _ShadowFeather;
-#endif
+    
+
 }
 #endif

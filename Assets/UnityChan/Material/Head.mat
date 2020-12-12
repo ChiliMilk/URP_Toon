@@ -22,8 +22,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Head
   m_Shader: {fileID: 4800000, guid: 1d6e561d2a2bdae46a0884077d1708ba, type: 3}
-  m_ShaderKeywords: _ALPHATEST_ON _BLENDRIM _NORMALMAP _RIMLIGHT _SHADEMAP _SPECULARSHIFTMAP
-    _SPECULAR_SETUP _USESMOOTHNORMAL
+  m_ShaderKeywords: _ALPHATEST_ON _BLENDRIM _ENVIRONMENTREFLECTIONS_OFF _NORMALMAP
+    _RIMLIGHT _SPECULARSHIFTMAP _SPECULAR_SETUP _USESMOOTHNORMAL
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -86,6 +86,14 @@ Material:
         m_Texture: {fileID: 2800000, guid: e22da664ebab32d4ca5bea4d43b0ff43, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Shadow1Map:
+        m_Texture: {fileID: 2800000, guid: e22da664ebab32d4ca5bea4d43b0ff43, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Shadow2Map:
+        m_Texture: {fileID: 2800000, guid: e22da664ebab32d4ca5bea4d43b0ff43, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ShadowMap:
         m_Texture: {fileID: 2800000, guid: 867befb73db438442a9ba0e5e6ef7474, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -135,7 +143,7 @@ Material:
     - _EnableToonReflections: 0
     - _EnableTransmission: 0
     - _Enable_HAIRSPECULAR: 0
-    - _EnvironmentReflections: 1
+    - _EnvironmentReflections: 0
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -146,12 +154,17 @@ Material:
     - _OutlineWidth: 0.4
     - _QueueOffset: 0
     - _RampV: 0
+    - _ReceiveShadowStrength: 0
     - _ReceiveShadows: 1
     - _ReflectionSteps: 16
     - _RenderQueue: 2450
-    - _RimFeather: 0.173
+    - _RimFeather: 0
     - _RimPow: 4
-    - _RimStep: 0.223
+    - _RimStep: 0.155
+    - _Shadow1Feather: 0.073
+    - _Shadow1Step: 0.5
+    - _Shadow2Feather: 0.179
+    - _Shadow2Step: 0.33
     - _ShadowFeather: 0
     - _ShadowMapStrength: 1
     - _ShadowMinus: 0.5
@@ -162,7 +175,9 @@ Material:
     - _Specular2Mul: 0.489
     - _SpecularFeather: 0.302
     - _SpecularHighlights: 1
+    - _SpecularShift1: 0
     - _SpecularShift1Add: -0.607
+    - _SpecularShift2: 0
     - _SpecularShift2Add: -0.5
     - _SpecularShiftIntensity: 1
     - _SpecularStep: 0.516
@@ -185,5 +200,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _RimColor: {r: 1, g: 0.7993822, b: 0.53301877, a: 1}
+    - _Shadow1Color: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 0.5}
+    - _Shadow2Color: {r: 0.5283019, g: 0.5283019, b: 0.5283019, a: 0}
     - _SpecColor: {r: 0.2264151, g: 0.15599413, b: 0.0010679982, a: 1}
     - _SubsurfaceColor: {r: 1, g: 1, b: 1, a: 1}

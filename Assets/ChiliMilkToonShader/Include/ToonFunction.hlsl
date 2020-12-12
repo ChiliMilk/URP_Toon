@@ -24,19 +24,19 @@ float RoughnessToBlinnPhongSpecularExponent(float roughness)
 half StepAntiAliasing(half x, half y)
 {
     half v = x - y;
-    return saturate(v / fwidth(v));//fwidth(x) = abs(ddx(x) + ddy(x))
+    return saturate(v / (fwidth(v)+HALF_MIN));//fwidth(x) = abs(ddx(x) + ddy(x))
 }
 
 //Use for Toon Diffuse
-half DiffuseToon(half value,half step,half feather)
+half DiffuseRadianceToon(half value,half step,half feather)
 {
     return saturate((value-step+feather)/feather);
 }
 
 //Use to Toon Specular , Rim Light
-inline half SmoothstepToon(half Term,half maxTerm,half step,half feather)
+inline half StepFeatherToon(half Term,half maxTerm,half step,half feather)
 {
-    return smoothstep(step,step+feather+HALF_MIN,Term/maxTerm)*maxTerm;
+    return saturate((Term/maxTerm-step)/feather)*maxTerm;
 }
 
 #ifdef _DIFFUSERAMPMAP
