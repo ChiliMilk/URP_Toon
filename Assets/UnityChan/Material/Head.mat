@@ -158,7 +158,7 @@ Material:
     - _ReceiveShadows: 1
     - _ReflectionSteps: 16
     - _RenderQueue: 2450
-    - _RimFeather: 0
+    - _RimFeather: 0.354
     - _RimPow: 4
     - _RimStep: 0.155
     - _Shadow1Feather: 0.073

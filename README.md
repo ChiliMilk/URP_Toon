@@ -22,6 +22,7 @@ Universal Toon shader based on URP , use PBR lighting（Minimalist CookTorrance 
 ### SurfaceOptions
 ![image-SurfaceOptions](image/SurfaceOptions.png)
 - Workflow Mode : Specular or Metallic 
+- SurfaceType : Opaque or Transparent 
 - Render Face : Front Back Both (For Forward Pass)
 - Alpha Clipping : ClipMask(裁剪遮罩)，Threshold(阈值)
 - Stencil : 模板测试，用于实现眼睛的遮挡效果，参考UTS(Stencil Test,used to achieve transparent effects for toon eyes,reference from UTS)  
@@ -46,12 +47,14 @@ Stencil Channel : 1-255
 ![image-Base](image/Base.png)
 ### Shadow
 ![image-Shadow](image/Shadow.png)
-- ShadeMap : 用于全局照明颜色
 - UseRampMapShadow : 使用RampMap控制阴影衰减。
 - VOffset : RampMap采样的V坐标
-- ShadowMinus : 用于淡化阴影颜色 
-- ShadowStep : 阴影阈值
-- ShadowFeather : 阴影羽化值
+- Shadow1Color ：第一层阴影颜色
+- Shadow2Color ：第二层阴影颜色
+- Shadow1Step : 第一层阴影阈值
+- Shadow1Feather : 第一层阴影羽化值
+- Shadow2Step : 第二层阴影阈值
+- Shadow2Feather : 第二层阴影羽化值
 - EnableInShadowMap : 固定阴影贴图
 - Receive Shadow : 接收阴影（ShadowCoord）
 
@@ -66,7 +69,6 @@ Stencil Channel : 1-255
 - SpecularShift : 第一层高光偏移量
 - SpecularShiftSec : 第二层高光偏移量
 - SpecularSecMul : 第二层高光强度（*Specular)
-- SmoothnessSecMul : 第二层光滑度（*First Smoothness)
 - EnablesSpecularHighlights : 是否使用高光
 
 ### Rim
