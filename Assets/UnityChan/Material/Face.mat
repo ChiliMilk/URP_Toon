@@ -22,8 +22,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Face
   m_Shader: {fileID: 4800000, guid: 1d6e561d2a2bdae46a0884077d1708ba, type: 3}
-  m_ShaderKeywords: _BLENDRIM _ENVIRONMENTREFLECTIONS_OFF _NORMALMAP _RIMLIGHT _SPECULARHIGHLIGHTS_OFF
-    _SPECULAR_SETUP
+  m_ShaderKeywords: _BLENDRIM _ENVIRONMENTREFLECTIONS_OFF _NORMALMAP _RECEIVE_SHADOWS_OFF
+    _RIMLIGHT _SPECULARHIGHLIGHTS_OFF _SPECULAR_SETUP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -154,7 +154,7 @@ Material:
     - _OutlineWidth: 0.29
     - _QueueOffset: 0
     - _ReceiveShadowStrength: 0
-    - _ReceiveShadows: 1
+    - _ReceiveShadows: 0
     - _ReflectionSteps: 16
     - _RenderQueue: 2000
     - _RimFeather: 0
