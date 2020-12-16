@@ -187,8 +187,6 @@ namespace ChiliMilk.Toon.Editor
 
         // Properties
         private MaterialProperty m_WorkflowModeProp;
-        private MaterialProperty m_SurfaceTypeProp;
-        private MaterialProperty m_BlendModeProp;
         private MaterialProperty m_CullProp;
         private MaterialProperty m_AlphaClipProp;
         private MaterialProperty m_InverseClipMaskProp;
