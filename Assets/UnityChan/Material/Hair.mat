@@ -163,10 +163,10 @@ Material:
     - _RimFeather: 0
     - _RimPow: 4
     - _RimStep: 0.155
-    - _Shadow1Feather: 0
+    - _Shadow1Feather: 0.167
     - _Shadow1Step: 0.5
-    - _Shadow2Feather: 0
-    - _Shadow2Step: 0
+    - _Shadow2Feather: 0.2
+    - _Shadow2Step: 0.7
     - _ShadowFeather: 0
     - _ShadowMapStrength: 1
     - _ShadowMinus: 0.5
@@ -202,7 +202,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _RimColor: {r: 1, g: 0.7993822, b: 0.53301877, a: 1}
-    - _Shadow1Color: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 0.5}
-    - _Shadow2Color: {r: 0.5283019, g: 0.5283019, b: 0.5283019, a: 0}
+    - _Shadow1Color: {r: 0.5377358, g: 0.5377358, b: 0.5377358, a: 0.5}
+    - _Shadow2Color: {r: 0.4, g: 0.4, b: 0.4, a: 0}
     - _SpecColor: {r: 0.25471696, g: 0.17399678, b: 0, a: 1}
     - _SubsurfaceColor: {r: 1, g: 1, b: 1, a: 1}

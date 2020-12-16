@@ -87,9 +87,9 @@ Material:
     - _RimPow: 4
     - _RimStep: 0.3
     - _Shadow1Feather: 0
-    - _Shadow1Step: 0.5
+    - _Shadow1Step: 0.671
     - _Shadow2Feather: 0
-    - _Shadow2Step: 0.3
+    - _Shadow2Step: 0.5
     - _Smoothness: 0.23
     - _Specular2Mul: 0.5
     - _SpecularFeather: 0

@@ -138,7 +138,7 @@ Material:
     - _InverseClipMask: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
-    - _OutlineWidth: 0.47
+    - _OutlineWidth: 0.3
     - _QueueOffset: 0
     - _RampV: 0
     - _ReceiveShadowStrength: 0
@@ -150,8 +150,8 @@ Material:
     - _RimStep: 0.336
     - _Shadow1Feather: 0
     - _Shadow1Step: 0.5
-    - _Shadow2Feather: 0.065
-    - _Shadow2Step: 0.532
+    - _Shadow2Feather: 0.1
+    - _Shadow2Step: 0.427
     - _ShadowFeather: 0.3
     - _ShadowMapStrength: 1
     - _ShadowMinus: 0.587

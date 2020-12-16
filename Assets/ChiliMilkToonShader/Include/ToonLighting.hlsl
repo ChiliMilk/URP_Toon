@@ -157,7 +157,7 @@ half2 RadianceToon(SurfaceDataToon surfaceData, half3 normalWS, half3 lightDirec
     #endif
     half H_Lambert = 0.5*dot(normalWS, lightDirectionWS)+0.5;
     radiance.x = DiffuseRadianceToon(H_Lambert,_Shadow1Step,_Shadow1Feather)*lightAttenuation;
-    radiance.y = DiffuseRadianceToon(H_Lambert,min(_Shadow1Step-_Shadow1Feather,_Shadow2Step),_Shadow2Feather);
+    radiance.y = DiffuseRadianceToon(H_Lambert,_Shadow2Step,_Shadow2Feather);
     return radiance;
 }
 #else
