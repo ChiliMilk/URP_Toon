@@ -24,6 +24,7 @@ namespace ChiliMilk.Toon.Editor
 
             // Properies
             public static readonly GUIContent WorkflowMode = new GUIContent("Workflow Mode");
+            public static readonly GUIContent SurfaceType = new GUIContent("SurfaceType");
             public static readonly GUIContent RenderFace = new GUIContent("Render Face");
             public static readonly GUIContent AlphaClipping = new GUIContent("Alpha Clipping");
             public static readonly GUIContent InverseClipMask = new GUIContent("Inverse ClipMask");
@@ -79,6 +80,7 @@ namespace ChiliMilk.Toon.Editor
         private struct MPropertyNames
         {
             public static readonly string WorkflowMode = "_WorkflowMode";
+            public static readonly string SurfaceType = "_SurfaceType";
             public static readonly string Cull = "_Cull";
             public static readonly string AlphaClip = "_AlphaClip";
             public static readonly string InverseClipMask = "_InverseClipMask";
@@ -157,6 +159,12 @@ namespace ChiliMilk.Toon.Editor
             Metallic,
         }
 
+        public enum SurfaceType
+        {
+            Opaque,
+            Transparent
+        }
+
         public enum RenderFace
         {
             Front = 2,
@@ -187,6 +195,7 @@ namespace ChiliMilk.Toon.Editor
 
         // Properties
         private MaterialProperty m_WorkflowModeProp;
+        private MaterialProperty m_SurfaceTypeProp;
         private MaterialProperty m_CullProp;
         private MaterialProperty m_AlphaClipProp;
         private MaterialProperty m_InverseClipMaskProp;
@@ -268,6 +277,7 @@ namespace ChiliMilk.Toon.Editor
             m_OutlineFoldout = GetFoldoutState("Outline");
 
             m_WorkflowModeProp = FindProperty(MPropertyNames.WorkflowMode, properties, false);
+            m_SurfaceTypeProp = FindProperty(MPropertyNames.SurfaceType, properties, false);
             m_CullProp = FindProperty(MPropertyNames.Cull, properties, false);
             m_AlphaClipProp = FindProperty(MPropertyNames.AlphaClip, properties, false);
             m_InverseClipMaskProp = FindProperty(MPropertyNames.InverseClipMask, properties, false);
@@ -376,12 +386,36 @@ namespace ChiliMilk.Toon.Editor
             {
                 SetKeyword(material,"_INVERSECLIPMASK",material.GetFloat(MPropertyNames.InverseClipMask) == 1);
                 material.EnableKeyword("_ALPHATEST_ON");
-                material.SetOverrideTag("RenderType", "TransparentCutout");
+                //material.SetOverrideTag("RenderType", "TransparentCutout");
             }
             else
             {
                 material.DisableKeyword("_ALPHATEST_ON");
-                material.SetOverrideTag("RenderType", "Opaque");
+                //material.SetOverrideTag("RenderType", "Opaque");
+            }
+
+            SurfaceType surfaceType = (SurfaceType)material.GetFloat(MPropertyNames.SurfaceType);
+            if (surfaceType == SurfaceType.Opaque)
+            {
+                if (alphaClip)
+                {
+                    material.SetOverrideTag("RenderType", "TransparentCutout");
+                }
+                else
+                {
+                    material.SetOverrideTag("RenderType", "Opaque");
+                }
+                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                material.SetShaderPassEnabled("ShadowCaster", true);
+            }
+            else
+            {
+                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+                // General Transparent Material Settings
+                material.SetOverrideTag("RenderType", "Transparent");
+                material.SetShaderPassEnabled("ShadowCaster", false);
             }
 
             // Receive Shadows
@@ -531,21 +565,66 @@ namespace ChiliMilk.Toon.Editor
             // Workflow Mode
             DoPopup(Styles.WorkflowMode, m_WorkflowModeProp, Enum.GetNames(typeof(WorkflowMode)),materialEditor);
 
-            // Render Face
-            if (material.HasProperty(MPropertyNames.Cull))
+            //// Render Face
+            //if (material.HasProperty(MPropertyNames.Cull))
+            //{
+            //    EditorGUI.showMixedValue = m_CullProp.hasMixedValue;
+            //    EditorGUI.BeginChangeCheck();
+            //    int renderFace = EditorGUILayout.Popup(Styles.RenderFace, (int)m_CullProp.floatValue, Enum.GetNames(typeof(RenderFace)));
+            //    if (EditorGUI.EndChangeCheck())
+            //    {
+            //        materialEditor.RegisterPropertyChangeUndo(Styles.RenderFace.text);
+            //        m_CullProp.floatValue = renderFace;
+            //        material.doubleSidedGI = (RenderFace)m_CullProp.floatValue != RenderFace.Front;
+            //    }
+            //    EditorGUI.showMixedValue = false;
+            //}
+
+            if (material.HasProperty(MPropertyNames.SurfaceType))
             {
-                EditorGUI.showMixedValue = m_CullProp.hasMixedValue;
+                EditorGUI.showMixedValue = m_SurfaceTypeProp.hasMixedValue;
                 EditorGUI.BeginChangeCheck();
-                int renderFace = EditorGUILayout.Popup(Styles.RenderFace, (int)m_CullProp.floatValue, Enum.GetNames(typeof(RenderFace)));
+                var surface = EditorGUILayout.Popup(Styles.SurfaceType, (int)m_SurfaceTypeProp.floatValue, Enum.GetNames(typeof(SurfaceType)));
                 if (EditorGUI.EndChangeCheck())
                 {
-                    materialEditor.RegisterPropertyChangeUndo(Styles.RenderFace.text);
-                    m_CullProp.floatValue = renderFace;
-                    material.doubleSidedGI = (RenderFace)m_CullProp.floatValue != RenderFace.Front;
+                    materialEditor.RegisterPropertyChangeUndo(Styles.SurfaceType.text);
+                    if ((SurfaceType)surface == SurfaceType.Opaque)
+                    {
+                        material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Geometry;
+                    }
+                    else
+                    {
+                        material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+                    }
+                    m_RenderQueueProp.floatValue = material.renderQueue;
+                    m_SurfaceTypeProp.floatValue = surface;
                 }
                 EditorGUI.showMixedValue = false;
             }
-            
+
+            // Render Face
+            if (material.HasProperty(MPropertyNames.Cull))
+            {
+                if ((SurfaceType)material.GetFloat(MPropertyNames.SurfaceType) == SurfaceType.Opaque)
+                {
+                    EditorGUI.showMixedValue = m_CullProp.hasMixedValue;
+                    EditorGUI.BeginChangeCheck();
+                    int renderFace = EditorGUILayout.Popup(Styles.RenderFace, (int)m_CullProp.floatValue, Enum.GetNames(typeof(RenderFace)));
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        materialEditor.RegisterPropertyChangeUndo(Styles.RenderFace.text);
+                        m_CullProp.floatValue = renderFace;
+                        material.doubleSidedGI = (RenderFace)m_CullProp.floatValue != RenderFace.Front;
+                    }
+                    EditorGUI.showMixedValue = false;
+                }
+                else
+                {
+                    m_CullProp.floatValue = (float)RenderFace.Front;
+                    material.doubleSidedGI = false;
+                }
+            }
+
             // AlphaClip
             if (material.HasProperty(MPropertyNames.AlphaClip) && material.HasProperty(MPropertyNames.Cutoff))
             {

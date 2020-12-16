@@ -9,6 +9,9 @@
         [ToggleOff] _InverseClipMask("_InverseClipMask",Float) = 0.0
         _ClipMask("ClipMask",2D) = "white"{}
 		_Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5
+        [HideInInspector] _SurfaceType("__surface", Float) = 0.0
+        [HideInInspector] _SrcBlend("__src", Float) = 1.0
+        [HideInInspector] _DstBlend("__dst", Float) = 0.0
 
         //Stencil
         [HideInInspector]_StencilType("StencilType",Float) = 0
@@ -91,7 +94,7 @@
         Pass
         {
             Name "Outline"
-            ZTest Less
+            ZTest LEqual
             Tags{"LightMode"="SRPDefaultUnlit"}
             ZWrite On
             Cull Front
@@ -123,7 +126,7 @@
         {
             Name "ForwardLit"
             Tags{"LightMode" = "UniversalForward"}
-            Blend One Zero
+            Blend [_SrcBlend][_DstBlend]
             ZWrite On
             Cull[_Cull]
             Stencil
