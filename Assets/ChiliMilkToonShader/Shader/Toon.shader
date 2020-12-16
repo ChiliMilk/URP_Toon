@@ -4,13 +4,6 @@
     {
         // Surface Options
         [HideInInspector] _WorkflowMode("WorkflowMode", Float) = 0.0
-
-        //BlendState
-        [HideInInspector] _SurfaceType("__surface", Float) = 0.0
-        [HideInInspector] _Blend("__blend", Float) = 0.0
-        [HideInInspector] _SrcBlend("__src", Float) = 1.0
-        [HideInInspector] _DstBlend("__dst", Float) = 0.0
-        //[HideInInspector] _ZWrite("__zw", Float) = 1.0
         [HideInInspector] _Cull("__cull", Float) = 2.0
 		[HideInInspector][ToggleOff]_AlphaClip("__clip", Float) = 0.0
         [ToggleOff] _InverseClipMask("_InverseClipMask",Float) = 0.0
@@ -130,7 +123,7 @@
         {
             Name "ForwardLit"
             Tags{"LightMode" = "UniversalForward"}
-            Blend[_SrcBlend][_DstBlend]
+            Blend One Zero
             ZWrite On
             Cull[_Cull]
             Stencil
@@ -153,7 +146,6 @@
             #pragma shader_feature _INSHADOWMAP
             #pragma shader_feature _NORMALMAP
             #pragma shader_feature _ALPHATEST_ON
-            #pragma shader_feature _ALPHAPREMULTIPLY_ON
             #pragma shader_feature _EMISSION
             #pragma shader_feature _METALLICSPECGLOSSMAP
             #pragma shader_feature _OCCLUSIONMAP
@@ -298,7 +290,6 @@
             #pragma vertex vert
             #pragma fragment frag
             #pragma shader_feature _ALPHATEST_ON
-            #pragma shader_feature _ALPHAPREMULTIPLY_ON
 
             #include "../Include/ToonProperty.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/Utils/Universal2D.hlsl"

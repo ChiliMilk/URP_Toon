@@ -24,8 +24,6 @@ namespace ChiliMilk.Toon.Editor
 
             // Properies
             public static readonly GUIContent WorkflowMode = new GUIContent("Workflow Mode");
-            public static readonly GUIContent SurfaceType = new GUIContent("SurfaceType");
-            public static readonly GUIContent BlendMode = new GUIContent("BlendMode");
             public static readonly GUIContent RenderFace = new GUIContent("Render Face");
             public static readonly GUIContent AlphaClipping = new GUIContent("Alpha Clipping");
             public static readonly GUIContent InverseClipMask = new GUIContent("Inverse ClipMask");
@@ -81,8 +79,6 @@ namespace ChiliMilk.Toon.Editor
         private struct MPropertyNames
         {
             public static readonly string WorkflowMode = "_WorkflowMode";
-            public static readonly string SurfaceType = "_SurfaceType";
-            public static readonly string BlendMode = "_Blend";
             public static readonly string Cull = "_Cull";
             public static readonly string AlphaClip = "_AlphaClip";
             public static readonly string InverseClipMask = "_InverseClipMask";
@@ -112,7 +108,6 @@ namespace ChiliMilk.Toon.Editor
             public static readonly string DiffuseRampMap = "_DiffuseRampMap";
             public static readonly string DiffuseRampV = "_DiffuseRampV";
             public static readonly string ReceiveShadows = "_ReceiveShadows";
-
             
             //Specular
             public static readonly string SpecularHighlights = "_SpecularHighlights";
@@ -123,7 +118,6 @@ namespace ChiliMilk.Toon.Editor
             public static readonly string SpecStep = "_SpecularStep";
             public static readonly string SpecFeather = "_SpecularFeather";
             public static readonly string Smoothness = "_Smoothness";
-            
             public static readonly string EnableHairSpecular = "_EnableHairSpecular";
             public static readonly string SpecularShiftMap = "_SpecularShiftMap";
             public static readonly string SpecularShiftIntensity = "_SpecularShiftIntensity";
@@ -161,20 +155,6 @@ namespace ChiliMilk.Toon.Editor
         {
             Specular,
             Metallic,
-        }
-
-        public enum SurfaceType
-        {
-            Opaque,
-            Transparent
-        }
-
-        public enum BlendMode
-        {
-            Alpha,   // Old school alpha-blending mode, fresnel does not affect amount of transparency
-            Premultiply, // Physically plausible transparency mode, implemented as alpha pre-multiply
-            Additive,
-            Multiply
         }
 
         public enum RenderFace
@@ -256,13 +236,11 @@ namespace ChiliMilk.Toon.Editor
         private MaterialProperty m_SpecFeatherProp;
         private MaterialProperty m_SmoothnessProp;
         private MaterialProperty m_SpecularHighlightsProp;
-
         private MaterialProperty m_EnableHairSpecularProp;
         private MaterialProperty m_SpeculatShiftMapProp;
         private MaterialProperty m_SpecularShiftIntensityProp;
         private MaterialProperty m_SpecularShift1Prop;
         private MaterialProperty m_SpecularShift2Prop;
-
         private MaterialProperty m_Specular2MulProp;
 
         //Outline
@@ -292,8 +270,6 @@ namespace ChiliMilk.Toon.Editor
             m_OutlineFoldout = GetFoldoutState("Outline");
 
             m_WorkflowModeProp = FindProperty(MPropertyNames.WorkflowMode, properties, false);
-            m_SurfaceTypeProp = FindProperty(MPropertyNames.SurfaceType, properties, false);
-            m_BlendModeProp = FindProperty(MPropertyNames.BlendMode, properties, false);
             m_CullProp = FindProperty(MPropertyNames.Cull, properties, false);
             m_AlphaClipProp = FindProperty(MPropertyNames.AlphaClip, properties, false);
             m_InverseClipMaskProp = FindProperty(MPropertyNames.InverseClipMask, properties, false);
@@ -385,71 +361,6 @@ namespace ChiliMilk.Toon.Editor
             }
         }
 
-        private void SetupMaterialBlendMode(Material material)
-        {
-            if (material == null)
-                throw new ArgumentNullException("material");
-
-            bool alphaClip = material.GetFloat(MPropertyNames.AlphaClip) == 1;
-            if (alphaClip)
-            {
-                SetKeyword(material,"_INVERSECLIPMASK",material.GetFloat(MPropertyNames.InverseClipMask) == 1);
-                material.EnableKeyword("_ALPHATEST_ON");
-            }
-            else
-            {
-                material.DisableKeyword("_ALPHATEST_ON");
-            }
-
-            SurfaceType surfaceType = (SurfaceType)material.GetFloat(MPropertyNames.SurfaceType);
-            if (surfaceType == SurfaceType.Opaque)
-            {
-                if (alphaClip)
-                {
-                    material.SetOverrideTag("RenderType", "TransparentCutout");
-                }
-                else
-                {
-                    material.SetOverrideTag("RenderType", "Opaque");
-                }
-                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-            }
-            else
-            {
-                BlendMode blendMode = (BlendMode)material.GetFloat("_Blend");
-                // Specific Transparent Mode Settings
-                switch (blendMode)
-                {
-                    case BlendMode.Alpha:
-                        material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                        material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                        material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                        break;
-                    case BlendMode.Premultiply:
-                        material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                        material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-                        material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
-                        break;
-                    case BlendMode.Additive:
-                        material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-                        material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.One);
-                        material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                        break;
-                    case BlendMode.Multiply:
-                        material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.DstColor);
-                        material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
-                        material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-                        material.EnableKeyword("_ALPHAMODULATE_ON");
-                        break;
-                }
-                // General Transparent Material Settings
-                material.SetOverrideTag("RenderType", "Transparent");
-            }
-            
-        }
-
         private void SetMaterialKeywords(Material material)
         {
             // Reset
@@ -460,8 +371,20 @@ namespace ChiliMilk.Toon.Editor
             {
                 SetKeyword(material,"_SPECULAR_SETUP", material.GetFloat(MPropertyNames.WorkflowMode) == 0);
             }
-
-            SetupMaterialBlendMode(material);
+            
+            //Alpha clip
+            bool alphaClip = material.GetFloat(MPropertyNames.AlphaClip) == 1;
+            if (alphaClip)
+            {
+                SetKeyword(material,"_INVERSECLIPMASK",material.GetFloat(MPropertyNames.InverseClipMask) == 1);
+                material.EnableKeyword("_ALPHATEST_ON");
+                material.SetOverrideTag("RenderType", "TransparentCutout");
+            }
+            else
+            {
+                material.DisableKeyword("_ALPHATEST_ON");
+                material.SetOverrideTag("RenderType", "Opaque");
+            }
 
             // Receive Shadows
             if (material.HasProperty(MPropertyNames.ReceiveShadows))
@@ -610,52 +533,19 @@ namespace ChiliMilk.Toon.Editor
             // Workflow Mode
             DoPopup(Styles.WorkflowMode, m_WorkflowModeProp, Enum.GetNames(typeof(WorkflowMode)),materialEditor);
 
-            //SufaceType
-            if (material.HasProperty(MPropertyNames.SurfaceType))
+            // Render Face
+            if (material.HasProperty(MPropertyNames.Cull))
             {
-                EditorGUI.showMixedValue = m_SurfaceTypeProp.hasMixedValue;
+                EditorGUI.showMixedValue = m_CullProp.hasMixedValue;
                 EditorGUI.BeginChangeCheck();
-                var surface = EditorGUILayout.Popup(Styles.SurfaceType, (int)m_SurfaceTypeProp.floatValue, Enum.GetNames(typeof(SurfaceType)));
+                int renderFace = EditorGUILayout.Popup(Styles.RenderFace, (int)m_CullProp.floatValue, Enum.GetNames(typeof(RenderFace)));
                 if (EditorGUI.EndChangeCheck())
                 {
-                    materialEditor.RegisterPropertyChangeUndo(Styles.SurfaceType.text);
-                    if ((SurfaceType)surface == SurfaceType.Opaque)
-                    {
-                        material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Geometry;
-                    }
-                    else
-                    {
-                        material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
-                    }
-                    m_RenderQueueProp.floatValue = material.renderQueue;
-                    m_SurfaceTypeProp.floatValue = surface;
+                    materialEditor.RegisterPropertyChangeUndo(Styles.RenderFace.text);
+                    m_CullProp.floatValue = renderFace;
+                    material.doubleSidedGI = (RenderFace)m_CullProp.floatValue != RenderFace.Front;
                 }
                 EditorGUI.showMixedValue = false;
-            }
-
-            //BlendMode
-            if ((SurfaceType)material.GetFloat(MPropertyNames.SurfaceType) == SurfaceType.Transparent)
-            {
-                DoPopup(Styles.BlendMode, m_BlendModeProp, Enum.GetNames(typeof(BlendMode)),materialEditor);
-                m_CullProp.floatValue = 2;
-                material.doubleSidedGI = false;
-            }
-            else
-            {
-                // Render Face
-                if (material.HasProperty(MPropertyNames.Cull))
-                {
-                    EditorGUI.showMixedValue = m_CullProp.hasMixedValue;
-                    EditorGUI.BeginChangeCheck();
-                    var renderFace = EditorGUILayout.Popup(Styles.RenderFace, (int)m_CullProp.floatValue, Enum.GetNames(typeof(RenderFace)));
-                    if (EditorGUI.EndChangeCheck())
-                    {
-                        materialEditor.RegisterPropertyChangeUndo(Styles.RenderFace.text);
-                        m_CullProp.floatValue = renderFace;
-                        material.doubleSidedGI = (RenderFace)m_CullProp.floatValue != RenderFace.Front;
-                    }
-                    EditorGUI.showMixedValue = false;
-                }
             }
             
             // AlphaClip

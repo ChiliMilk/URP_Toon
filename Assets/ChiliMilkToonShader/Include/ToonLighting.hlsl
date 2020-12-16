@@ -44,10 +44,6 @@ inline void InitializeBRDFDataToon(SurfaceDataToon surfaceData, InputDataToon in
 #endif
     outBRDFData.normalizationTerm = outBRDFData.roughness * 4.0h + 2.0h;
     outBRDFData.roughness2MinusOne = outBRDFData.roughness2 - 1.0h;
-#ifdef _ALPHAPREMULTIPLY_ON
-    outBRDFData.diffuse *= surfaceData.alpha;
-    surfaceData.alpha = surfaceData.alpha * oneMinusReflectivity + reflectivity;
-#endif
 }
 
 #ifdef _RIMLIGHT
