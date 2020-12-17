@@ -165,29 +165,6 @@ half SampleOcclusion(float2 uv)
 #endif
 }
 
-//Lit Meta Use
-inline void InitializeStandardLitSurfaceData(float2 uv, out SurfaceData outSurfaceData)
-{
-    half4 albedoAlpha = SampleAlbedoAlpha(uv, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));
-    outSurfaceData.alpha = Alpha(albedoAlpha.a*SampleClipMask(uv), _BaseColor, _Cutoff);
-
-    half4 specGloss = SampleMetallicSpecGloss(uv, albedoAlpha.a,_Smoothness);
-    outSurfaceData.albedo = albedoAlpha.rgb * _BaseColor.rgb;
-
-#if _SPECULAR_SETUP
-    outSurfaceData.metallic = 1.0h;
-    outSurfaceData.specular = specGloss.rgb;
-#else
-    outSurfaceData.metallic = specGloss.r;
-    outSurfaceData.specular = half3(0.0h, 0.0h, 0.0h);
-#endif
-
-    outSurfaceData.smoothness = specGloss.a;
-    outSurfaceData.normalTS = SampleNormal(uv, TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap), _BumpScale);
-    outSurfaceData.occlusion = SampleOcclusion(uv);
-    outSurfaceData.emission = SampleEmission(uv, _EmissionColor.rgb, TEXTURE2D_ARGS(_EmissionMap, sampler_EmissionMap));
-}
-
 inline void InitializeSurfaceDataToon(float2 uv,out SurfaceDataToon outSurfaceData)
 {
     half4 albedoAlpha = SampleAlbedoAlpha(uv, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));

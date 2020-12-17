@@ -260,8 +260,8 @@
             #pragma prefer_hlslcc gles
             #pragma exclude_renderers d3d11_9x
 
-            #pragma vertex UniversalVertexMeta
-            #pragma fragment UniversalFragmentMeta
+            #pragma vertex ToonVertexMeta
+            #pragma fragment ToonFragmentMeta
 
             #pragma shader_feature _SPECULAR_SETUP
             #pragma shader_feature _EMISSION
@@ -271,7 +271,7 @@
             #pragma shader_feature _SPECGLOSSMAP
 
             #include "../Include/ToonProperty.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/LitMetaPass.hlsl"
+            #include "../Include/ToonMetaPass.hlsl"
             
             ENDHLSL
         }
