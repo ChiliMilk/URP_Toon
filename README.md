@@ -8,7 +8,7 @@
 	- [Rim](#Rim)
 	- [Outline](#Outline)
 	- [AdvancedOptions](#AdvancedOptions)
-- [Multi Pass Batch](#Multi Pass Batch)
+- [MultiPassBatch](#Multi Pass Batch)
 - [Reference](#Reference)
 - [Licenses](#Licenses)
 
