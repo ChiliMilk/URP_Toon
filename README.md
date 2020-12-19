@@ -8,7 +8,7 @@
 	- [Rim](#Rim)
 	- [Outline](#Outline)
 	- [AdvancedOptions](#AdvancedOptions)
-- [MultiPassBatch](#Multi Pass Batch)
+- [Multi Pass Batch](#Multi Pass Batch)
 - [Reference](#Reference)
 - [Licenses](#Licenses)
 
@@ -94,7 +94,7 @@ Stencil Channel : 1-255
 - Enable GPU Instancing : 使用GPU Instancing合批  
 - RenderQueue : 渲染队列  
 
-## Multi Pass Batch 
+## Multi Pass Batch
 
 In the default URP, if render multiple pass shaders, the Rendering order like this:  
 Object1.Pass1-  
