@@ -96,30 +96,30 @@ Stencil Channel : 1-255
 
 ## Multi Pass Shader with SPR Batch 
 
-In the default URP, if render multiple pass shaders, the Rendering order like this: 
-Object1.Pass1-
-Objcet1.Pass2-
-Object2.Pass1-
-Object2.Pass2......
-![image-BeforeBatch](image/BeforeBatch.png)
-This will stop SPRBatch.
-![image-NotSupportBatch](image/NotSupportBatch.png)
-Use ComstomRenderer,the Rendering order like this:
-Object1.Pass1-
-Objcet2.Pass1-
-Object1.Pass2-
-Object2.Pass2......
-![image-AfterBatch](image/AfterBatch.png)
+In the default URP, if render multiple pass shaders, the Rendering order like this:  
+Object1.Pass1-  
+Objcet1.Pass2-  
+Object2.Pass1-  
+Object2.Pass2......  
+![image-BeforeBatch](image/BeforeBatch.png)  
+This will stop SPRBatch.  
+![image-NotSupportBatch](image/NotSupportBatch.png)  
+Use ComstomRenderer,the Rendering order like this:  
+Object1.Pass1-  
+Objcet2.Pass1-  
+Object1.Pass2-  
+Object2.Pass2......  
+![image-AfterBatch](image/AfterBatch.png)  
 
 How to Set project:
 
-1.Create CustomForwardRenderer Asset.
+1.Create CustomForwardRenderer Asset.  
 Assets/Create/Rendering/Universal Render Pipeline/ToonForward Renderer
 
-2.Setup Pipeline Asset
-![image-Setup](image/Setup.png)
+2.Setup Pipeline Asset  
+![image-Setup](image/Setup.png)  
 
-Node1 : Use Assembly Definition Reference to access urp package.
+Node1 : Use Assembly Definition Reference to access urp package.  
 Node2 : SRP Batch does not support Skin Mesh yet.
 
 ## Reference
