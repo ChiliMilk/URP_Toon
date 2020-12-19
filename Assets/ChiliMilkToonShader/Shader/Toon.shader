@@ -94,7 +94,7 @@
         Pass
         {
             Name "Outline"
-            ZTest LEqual
+            ZTest Less
             Tags{"LightMode"="SRPDefaultUnlit"}
             ZWrite On
             Cull Front
