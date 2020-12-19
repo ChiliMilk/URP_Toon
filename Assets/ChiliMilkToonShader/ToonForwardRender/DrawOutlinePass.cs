@@ -21,7 +21,7 @@ namespace UnityEngine.Rendering.Universal.Internal
         {
             m_ProfilerTag = profilerTag;
             m_ProfilingSampler = new ProfilingSampler(profilerTag);
-            m_ShaderTagIdList.Add(new ShaderTagId("SRPDefaultUnlit"));
+            m_ShaderTagIdList.Add(new ShaderTagId("Outline"));
             renderPassEvent = evt;
             m_FilteringSettings = new FilteringSettings(renderQueueRange, layerMask);
             m_RenderStateBlock = new RenderStateBlock(RenderStateMask.Nothing);

@@ -95,7 +95,7 @@
         {
             Name "Outline"
             ZTest Less
-            Tags{"LightMode"="SRPDefaultUnlit"}
+            Tags{"LightMode"="Outline"} //Use For CustomForwardRenderer. Default Tags{"LightMode"="SRPDefaultUnlit"} 
             ZWrite On
             Cull Front
             Stencil
