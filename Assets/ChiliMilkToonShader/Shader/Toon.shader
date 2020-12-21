@@ -168,8 +168,8 @@
             #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
 
             // Unity defined keywords
-            #pragma multi_compile _DIRLIGHTMAP_COMBINED
-            #pragma multi_compile _LIGHTMAP_ON
+            #pragma multi_compile _ DIRLIGHTMAP_COMBINED
+            #pragma multi_compile _ LIGHTMAP_ON
             #pragma multi_compile_fog
 
             // GPU Instancing
