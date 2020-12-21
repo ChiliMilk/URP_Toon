@@ -94,6 +94,8 @@ struct InputDataToon
     half    fogCoord;
     half3   vertexLighting;
     half3   bakedGI;
+    float2  normalizedScreenSpaceUV;
+    half4   shadowMask;
 #ifdef _HAIRSPECULAR
     half3   tangentWS;
     half3   bitangentWS;

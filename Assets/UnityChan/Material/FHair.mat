@@ -204,3 +204,4 @@ Material:
     - _Shadow2Color: {r: 0.5283019, g: 0.5283019, b: 0.5283019, a: 0}
     - _SpecColor: {r: 0.254717, g: 0.1739968, b: 0, a: 1}
     - _SubsurfaceColor: {r: 1, g: 1, b: 1, a: 1}
+  m_BuildTextureStacks: []

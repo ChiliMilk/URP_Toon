@@ -76,6 +76,8 @@ void InitializeInputDataToon(Varyings input, half3 normalTS, out InputDataToon i
     inputData.fogCoord = input.fogFactorAndVertexLight.x;
     inputData.vertexLighting = input.fogFactorAndVertexLight.yzw;
     inputData.bakedGI = SAMPLE_GI(input.lightmapUV, input.vertexSH, inputData.normalWS);
+    inputData.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(input.positionCS);
+    inputData.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUV);
 }
 
 Varyings ToonForwardPassVertex(Attributes input)

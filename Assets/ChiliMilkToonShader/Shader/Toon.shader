@@ -84,13 +84,18 @@
 		[ToggleOff] _SpecularHighlights("Specular Highlights", Float) = 1.0
         [ToggleOff] _EnvironmentReflections("Environment Reflections", Float) = 0.0
         _RenderQueue("Render Queue", Float) = 2000
+        
+        [HideInInspector][NoScaleOffset]unity_Lightmaps("unity_Lightmaps", 2DArray) = "" {}
+        [HideInInspector][NoScaleOffset]unity_LightmapsInd("unity_LightmapsInd", 2DArray) = "" {}
+        [HideInInspector][NoScaleOffset]unity_ShadowMasks("unity_ShadowMasks", 2DArray) = "" {}
 
     }
     SubShader
     {
         // Lightmode matches the ShaderPassName set in UniversalRenderPipeline.cs. SRPDefaultUnlit and passes with
         // no LightMode tag are also rendered by Universal Render Pipeline
-        Tags{"RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" "IgnoreProjector" = "True"}
+        Tags{"RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" "IgnoreProjector" = "True" "ShaderModel" = "4.5"}
+        LOD 300        
         Pass
         {
             Name "Outline"
@@ -106,11 +111,231 @@
                 Fail [_StencilOp]
             }
             HLSLPROGRAM
-            #pragma prefer_hlslcc gles
-            #pragma exclude_renderers d3d11_9x
+            #pragma exclude_renderers gles gles3 glcore
+            #pragma target 4.5
+
+            #pragma shader_feature_local_vertex _USESMOOTHNORMAL
+            #pragma multi_compile_instancing
+            #pragma multi_compile_fog
+
+            #pragma vertex Vertex
+            #pragma fragment Fragment
+            
+            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonFunction.hlsl"
+            #include "../Include/ToonOutlinePass.hlsl"            
+            ENDHLSL
+        }
+       	Pass
+        {
+            Name "ForwardLit"
+            Tags{"LightMode" = "UniversalForward"}
+            Blend [_SrcBlend][_DstBlend]
+            ZWrite On
+            Cull[_Cull]
+            Stencil
+            {
+                Ref[_StencilChannel]
+                Comp[_StencilComp]
+                Pass [_StencilOp]
+                Fail [_StencilOp]    
+            }
+            HLSLPROGRAM
+            #pragma exclude_renderers gles gles3 glcore
+            #pragma target 4.5
+
+            // Material Keywords
+            #pragma shader_feature_local_fragment _INVERSECLIPMASK
+            #pragma shader_feature_local_fragment _DIFFUSERAMPMAP
+            #pragma shader_feature_local_fragment _RIMLIGHT
+            #pragma shader_feature_local_fragment _BLENDRIM
+            #pragma shader_feature_local_fragment _INSHADOWMAP
+            #pragma shader_feature_local _NORMALMAP
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _EMISSION
+            #pragma shader_feature_local_fragment _METALLICSPECGLOSSMAP
+            #pragma shader_feature_local_fragment _OCCLUSIONMAP
+            #pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
+            #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
+            #pragma shader_feature_local_fragment _SPECULAR_SETUP
+            #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
+            #pragma shader_feature_local_fragment _HAIRSPECULAR
+            #pragma shader_feature_local_fragment _SPECULARSHIFTMAP
+            
+            // Universal Pipeline keywords
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
+            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+            #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT
+            #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
+            #pragma multi_compile _ LIGHTMAP_SHADOW_MIXING
+            #pragma multi_compile _ SHADOWS_SHADOWMASK
+
+            // Unity defined keywords
+            #pragma multi_compile _ DIRLIGHTMAP_COMBINED
+            #pragma multi_compile _ LIGHTMAP_ON
+            #pragma multi_compile_fog
+
+            // GPU Instancing
+            #pragma multi_compile_instancing
+
+            #pragma vertex ToonForwardPassVertex
+            #pragma fragment ToonForwardPassFragment
+
+            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonFunction.hlsl"
+            #include "../Include/ToonLighting.hlsl"
+            #include "../Include/ToonForwardPass.hlsl"
+            ENDHLSL
+        }
+         
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags{"LightMode" = "ShadowCaster"}
+
+            ZWrite On
+            ZTest LEqual
+            ColorMask 0
+            Cull[_Cull]
+
+            HLSLPROGRAM
+            #pragma exclude_renderers gles gles3 glcore
+            #pragma target 4.5
+
+            // -------------------------------------
+            // Material Keywords
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+
+            //--------------------------------------
+            // GPU Instancing
+            #pragma multi_compile_instancing
+            #pragma multi_compile _ DOTS_INSTANCING_ON
+
+            #pragma vertex ShadowPassVertex
+            #pragma fragment ShadowPassFragment
+
+            #include "../Include/ToonProperty.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
+            
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "DepthOnly"
+            Tags{"LightMode" = "DepthOnly"}
+
+            ZWrite On
+            ColorMask 0
+            Cull[_Cull]
+
+            HLSLPROGRAM
+            #pragma exclude_renderers gles gles3 glcore
+            #pragma target 4.5
+
+             // -------------------------------------
+            // Material Keywords
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+
+            //--------------------------------------
+            // GPU Instancing
+            #pragma multi_compile_instancing
+            #pragma multi_compile _ DOTS_INSTANCING_ON
+
+            #pragma vertex DepthOnlyVertex
+            #pragma fragment DepthOnlyFragment
+
+            #include "../Include/ToonProperty.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"   
+            ENDHLSL
+        }
+        
+        Pass
+        {
+            Name "DepthNormals"
+            Tags{"LightMode" = "DepthNormals"}
+
+            ZWrite On
+            Cull[_Cull]
+
+            HLSLPROGRAM
+            #pragma exclude_renderers gles gles3 glcore
+            #pragma target 4.5
+
+            #pragma vertex DepthNormalsVertex
+            #pragma fragment DepthNormalsFragment
+
+            // -------------------------------------
+            // Material Keywords
+            #pragma shader_feature_local _NORMALMAP
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+
+            //--------------------------------------
+            // GPU Instancing
+            #pragma multi_compile_instancing
+            #pragma multi_compile _ DOTS_INSTANCING_ON
+
+            #include "../Include/ToonProperty.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthNormalsPass.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "Meta"
+            Tags{"LightMode" = "Meta"}
+
+            Cull Off
+
+            HLSLPROGRAM
+            // Required to compile gles 2.0 with standard srp library
+            #pragma exclude_renderers gles gles3 glcore
+            #pragma target 4.5
+
+            #pragma vertex ToonVertexMeta
+            #pragma fragment ToonFragmentMeta
+
+            #pragma shader_feature_local_fragment _SPECULAR_SETUP
+            #pragma shader_feature_local_fragment _EMISSION
+            #pragma shader_feature_local_fragment _METALLICSPECGLOSSMAP
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+
+            #pragma shader_feature_local_fragment _SPECGLOSSMAP
+
+            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonMetaPass.hlsl"
+            
+            ENDHLSL
+        }
+
+    }
+    SubShader
+    {
+        // Lightmode matches the ShaderPassName set in UniversalRenderPipeline.cs. SRPDefaultUnlit and passes with
+        // no LightMode tag are also rendered by Universal Render Pipeline
+        Tags{"RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" "IgnoreProjector" = "True" "ShaderModel" = "2.0"}
+        LOD 300
+        Pass
+        {
+            Name "Outline"
+            ZTest Less
+            Tags{"LightMode"="Outline"} //Use For CustomForwardRenderer. Default Tags{"LightMode"="SRPDefaultUnlit"} 
+            ZWrite On
+            Cull Front
+            Stencil
+            {
+                Ref [_StencilChannel]
+                Comp [_StencilComp]
+                Pass [_StencilOp]
+                Fail [_StencilOp]
+            }
+            HLSLPROGRAM
+            #pragma only_renderers gles gles3 glcore
             #pragma target 2.0
 
-            #pragma shader_feature _USESMOOTHNORMAL
+            #pragma shader_feature_local_vertex _USESMOOTHNORMAL
             #pragma multi_compile_instancing
             #pragma multi_compile_fog
 
@@ -137,39 +362,40 @@
                 Fail [_StencilOp]    
             }
             HLSLPROGRAM
-            #pragma prefer_hlslcc gles
-            #pragma exclude_renderers d3d11_9x
+            #pragma only_renderers gles gles3 glcore
             #pragma target 2.0
 
             // Material Keywords
-            #pragma shader_feature _INVERSECLIPMASK
-            #pragma shader_feature _DIFFUSERAMPMAP
-            #pragma shader_feature _RIMLIGHT
-            #pragma shader_feature _BLENDRIM
-            #pragma shader_feature _INSHADOWMAP
-            #pragma shader_feature _NORMALMAP
-            #pragma shader_feature _ALPHATEST_ON
-            #pragma shader_feature _EMISSION
-            #pragma shader_feature _METALLICSPECGLOSSMAP
-            #pragma shader_feature _OCCLUSIONMAP
-            #pragma shader_feature _SPECULARHIGHLIGHTS_OFF
-            #pragma shader_feature _ENVIRONMENTREFLECTIONS_OFF
-            #pragma shader_feature _SPECULAR_SETUP
-            #pragma shader_feature _RECEIVE_SHADOWS_OFF
-            #pragma shader_feature _HAIRSPECULAR
-            #pragma shader_feature _SPECULARSHIFTMAP
+            #pragma shader_feature_local_fragment _INVERSECLIPMASK
+            #pragma shader_feature_local_fragment _DIFFUSERAMPMAP
+            #pragma shader_feature_local_fragment _RIMLIGHT
+            #pragma shader_feature_local_fragment _BLENDRIM
+            #pragma shader_feature_local_fragment _INSHADOWMAP
+            #pragma shader_feature_local _NORMALMAP
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _EMISSION
+            #pragma shader_feature_local_fragment _METALLICSPECGLOSSMAP
+            #pragma shader_feature_local_fragment _OCCLUSIONMAP
+            #pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
+            #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
+            #pragma shader_feature_local_fragment _SPECULAR_SETUP
+            #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
+            #pragma shader_feature_local_fragment _HAIRSPECULAR
+            #pragma shader_feature_local_fragment _SPECULARSHIFTMAP
             
             // Universal Pipeline keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
             #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
-            #pragma multi_compile _ _SHADOWS_SOFT
-            #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT
+            #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
+            #pragma multi_compile _ LIGHTMAP_SHADOW_MIXING
+            #pragma multi_compile _ SHADOWS_SHADOWMASK
 
             // Unity defined keywords
-            #pragma multi_compile _DIRLIGHTMAP_COMBINED
-            #pragma multi_compile _LIGHTMAP_ON
+            #pragma multi_compile _ DIRLIGHTMAP_COMBINED
+            #pragma multi_compile _ LIGHTMAP_ON
             #pragma multi_compile_fog
 
             // GPU Instancing
@@ -192,20 +418,21 @@
 
             ZWrite On
             ZTest LEqual
+            ColorMask 0
             Cull[_Cull]
 
             HLSLPROGRAM
-            #pragma prefer_hlslcc gles
-            #pragma exclude_renderers d3d11_9x
+            #pragma only_renderers gles gles3 glcore
             #pragma target 2.0
 
             // -------------------------------------
             // Material Keywords
-            #pragma shader_feature _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
 
             //--------------------------------------
             // GPU Instancing
             #pragma multi_compile_instancing
+            #pragma multi_compile _ DOTS_INSTANCING_ON
 
             #pragma vertex ShadowPassVertex
             #pragma fragment ShadowPassFragment
@@ -226,17 +453,17 @@
             Cull[_Cull]
 
             HLSLPROGRAM
-            #pragma prefer_hlslcc gles
-            #pragma exclude_renderers d3d11_9x
+            #pragma only_renderers gles gles3 glcore
             #pragma target 2.0
 
              // -------------------------------------
             // Material Keywords
-            #pragma shader_feature _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
 
             //--------------------------------------
             // GPU Instancing
             #pragma multi_compile_instancing
+            #pragma multi_compile _ DOTS_INSTANCING_ON
 
             #pragma vertex DepthOnlyVertex
             #pragma fragment DepthOnlyFragment
@@ -245,11 +472,39 @@
             #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"   
             ENDHLSL
         }
+        
+        Pass
+        {
+            Name "DepthNormals"
+            Tags{"LightMode" = "DepthNormals"}
+
+            ZWrite On
+            Cull[_Cull]
+
+            HLSLPROGRAM
+            #pragma only_renderers gles gles3 glcore
+            #pragma target 2.0
+
+            #pragma vertex DepthNormalsVertex
+            #pragma fragment DepthNormalsFragment
+
+            // -------------------------------------
+            // Material Keywords
+            #pragma shader_feature_local _NORMALMAP
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
+
+            //--------------------------------------
+            // GPU Instancing
+            #pragma multi_compile_instancing
+            #pragma multi_compile _ DOTS_INSTANCING_ON
+
+            #include "../Include/ToonProperty.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthNormalsPass.hlsl"
+            ENDHLSL
+        }
 
         Pass
         {
-            //ZWrite On
-            //ZTest LEqual
             Name "Meta"
             Tags{"LightMode" = "Meta"}
 
@@ -257,18 +512,18 @@
 
             HLSLPROGRAM
             // Required to compile gles 2.0 with standard srp library
-            #pragma prefer_hlslcc gles
-            #pragma exclude_renderers d3d11_9x
+            #pragma only_renderers gles gles3 glcore
+            #pragma target 2.0
 
             #pragma vertex ToonVertexMeta
             #pragma fragment ToonFragmentMeta
 
-            #pragma shader_feature _SPECULAR_SETUP
-            #pragma shader_feature _EMISSION
-            #pragma shader_feature _METALLICSPECGLOSSMAP
-            #pragma shader_feature _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _SPECULAR_SETUP
+            #pragma shader_feature_local_fragment _EMISSION
+            #pragma shader_feature_local_fragment _METALLICSPECGLOSSMAP
+            #pragma shader_feature_local_fragment _ALPHATEST_ON
 
-            #pragma shader_feature _SPECGLOSSMAP
+            #pragma shader_feature_local_fragment _SPECGLOSSMAP
 
             #include "../Include/ToonProperty.hlsl"
             #include "../Include/ToonMetaPass.hlsl"
@@ -276,28 +531,6 @@
             ENDHLSL
         }
 
-        Pass
-        {
-            Name "Universal2D"
-            Tags{ "LightMode" = "Universal2D" }
-
-            Blend One Zero
-            ZWrite On
-            Cull[_Cull]
-
-            HLSLPROGRAM
-            // Required to compile gles 2.0 with standard srp library
-            #pragma prefer_hlslcc gles
-            #pragma exclude_renderers d3d11_9x
-
-            #pragma vertex vert
-            #pragma fragment frag
-            #pragma shader_feature _ALPHATEST_ON
-
-            #include "../Include/ToonProperty.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/Shaders/Utils/Universal2D.hlsl"
-            ENDHLSL
-        }
     }
     CustomEditor "ChiliMilk.Toon.Editor.ToonShaderGUI"
     FallBack "Hidden/Universal Render Pipeline/FallbackError"

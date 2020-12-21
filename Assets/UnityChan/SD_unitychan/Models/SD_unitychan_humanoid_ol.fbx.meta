@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: dd6ec75974b69a3409711f8110698bbb
 ModelImporter:
-  serializedVersion: 19300
+  serializedVersion: 20200
   internalIDToNameTable:
   - first:
       1: 100000
@@ -885,11 +885,13 @@ ModelImporter:
     importBlendShapes: 1
     importCameras: 0
     importLights: 0
+    fileIdsGeneration: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 0
+    bakeAxisConversion: 0
     preserveHierarchy: 0
     skinWeightsMode: 0
     maxBonesPerVertex: 4
@@ -899,6 +901,9 @@ ModelImporter:
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 0
   tangentSpace:
@@ -910,7 +915,7 @@ ModelImporter:
     blendShapeNormalImportMode: 0
     normalSmoothingSource: 0
   referencedClips:
-  - 0ac96fc239b18504699c120da66291d3
+  - 7c12b06e138044c60b1fdcd286d07ecd
   importAnimation: 0
   humanDescription:
     serializedVersion: 3
@@ -1980,6 +1985,7 @@ ModelImporter:
   animationType: 3
   humanoidOversampling: 1
   avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
   additionalBone: 0
   userData: 
   assetBundleName: 
