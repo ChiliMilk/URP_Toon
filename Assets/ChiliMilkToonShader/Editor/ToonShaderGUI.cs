@@ -469,7 +469,6 @@ namespace ChiliMilk.Toon.Editor
 
             //Outline
             SetKeyword(material,"_USESMOOTHNORMAL", material.GetFloat(MPropertyNames.UseSmoothNormal) == 1.0);
-            
             material.SetShaderPassEnabled("Outline", material.GetFloat(MPropertyNames.EnableOutline) == 1.0f&&surfaceType == SurfaceType.Opaque);
 
             //RampMap

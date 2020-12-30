@@ -126,6 +126,7 @@
             #include "../Include/ToonOutlinePass.hlsl"            
             ENDHLSL
         }
+        
        	Pass
         {
             Name "ForwardLit"
@@ -347,7 +348,8 @@
             #include "../Include/ToonOutlinePass.hlsl"            
             ENDHLSL
         }
-       Pass
+        
+        Pass
         {
             Name "ForwardLit"
             Tags{"LightMode" = "UniversalForward"}
@@ -526,12 +528,12 @@
             #pragma shader_feature_local_fragment _SPECGLOSSMAP
 
             #include "../Include/ToonProperty.hlsl"
-            #include "../Include/ToonMetaPass.hlsl"
-            
+            #include "../Include/ToonMetaPass.hlsl"            
             ENDHLSL
         }
 
     }
+
     CustomEditor "ChiliMilk.Toon.Editor.ToonShaderGUI"
     FallBack "Hidden/Universal Render Pipeline/FallbackError"
 }
