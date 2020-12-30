@@ -15,7 +15,7 @@
 ## Introduction
 基于URP的通用卡通着色器，使用URP标准的PBR模型（Minimalist CookTorrance BRDF）进行改造，纯代码实现，没有使用ShaderGraph,兼容SPR Batch.  
 Universal Toon shader based on URP , use PBR lighting（Minimalist CookTorrance BRDF） in URP,use code without ShaderGraph,SPR Batch Compatible.  
-- Unity 2019.3.15+、URP 7.4.1+  
+- Unity 2020.2.0+、URP 10.2.2+  
 
 ![image-UnityChan](image/UnityChan.png)
 
