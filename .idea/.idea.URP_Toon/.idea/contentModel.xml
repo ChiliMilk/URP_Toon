@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="$PROJECT_DIR$" t="IncludeRecursive">
+      <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="ChiliMilkToonShader" t="Include">
+          <e p="Editor" t="Include">
+            <e p="ChiliMilk.Toon.Editor.asmdef" t="Include" />
+            <e p="ToonShaderGUI.cs" t="Include" />
+          </e>
+          <e p="ToonForwardRender" t="Include">
+            <e p="DrawOutlinePass.cs" t="Include" />
+            <e p="Editor" t="Include">
+              <e p="ToonForwardRendererEditor.cs" t="Include" />
+              <e p="UniversalEditorReference.asmref" t="Include" />
+            </e>
+            <e p="ToonForwardRenderer.cs" t="Include" />
+            <e p="ToonForwardRendererData.cs" t="Include" />
+            <e p="UniversalRuntimeReference.asmref" t="Include" />
+          </e>
+        </e>
+        <e p="Editor" t="Include">
+          <e p="Import" t="Include">
+            <e p="ModelOutlineImporter.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="ChiliMilk.Toon.Editor.csproj" t="IncludeRecursive" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="Packages" t="ExcludeRecursive" />
+      <e p="Temp/Bin" t="ExcludeRecursive" />
+      <e p="Unity.RenderPipelines.Universal.Editor.csproj" t="IncludeRecursive" />
+      <e p="Unity.RenderPipelines.Universal.Runtime.csproj" t="IncludeRecursive" />
+      <e p="URP_Toon.sln" t="IncludeFlat" />
+    </e>
+    <e p="$USER_HOME$/Library/Caches/JetBrains/Rider2020.3/extResources" t="IncludeRecursive" />
+    <e p="$USER_HOME$/Library/Caches/JetBrains/Rider2020.3/resharper-host/local/Transient/Rider/v203/SolutionCaches/_URP_Toon.-12820514.00" t="ExcludeRecursive" />
+  </component>
+</project>
