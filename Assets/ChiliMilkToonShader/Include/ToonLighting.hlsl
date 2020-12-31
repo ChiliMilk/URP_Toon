@@ -88,8 +88,7 @@ half DirectSpecularToon(BRDFDataToon brdfData,half3 normalWS,half3 lightDirectio
     half LoH2 = LoH * LoH;
     float d = NoH * NoH * brdfData.roughness2MinusOne + 1.00001f;
     half specularTerm = brdfData.roughness2 / ((d * d) * max(0.1h, LoH2) * brdfData.normalizationTerm);
-    float maxD = brdfData.roughness2MinusOne + 1.00001f;
-    half maxSpecularTerm = brdfData.roughness2 / ((maxD * maxD) * brdfData.normalizationTerm);
+    half maxSpecularTerm = 1.0h / ((brdfData.roughness2MinusOne + 1.00001f) * max(0.1h, LoH2) * brdfData.normalizationTerm);
     specularTerm = StepFeatherToon(specularTerm,maxSpecularTerm,step,feather);
     return specularTerm;
 }
