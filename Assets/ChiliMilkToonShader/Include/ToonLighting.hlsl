@@ -47,12 +47,10 @@ inline void InitializeBRDFDataToon(SurfaceDataToon surfaceData, InputDataToon in
 }
 
 #ifdef _RIMLIGHT
-half3 RimLight(BRDFDataToon brdfData,half3 normalWS,half3 viewDirectionWS,half3 lightDirectionWS)
+half3 RimLight(BRDFDataToon brdfData,half3 normalWS,half3 viewDirectionWS,half radiance)
 {
     half fresnel = pow((1.0 - saturate(dot(normalWS, viewDirectionWS))),_RimPow);
-    half LdotV = saturate(dot(lightDirectionWS,-viewDirectionWS));
-    half NdotL = saturate(dot(normalWS,lightDirectionWS)); 
-    fresnel *= saturate(LdotV+NdotL);
+    fresnel *= radiance;
     half3 rimColor;
 #ifdef _BLENDRIM
     rimColor = lerp(brdfData.diffuse,_RimColor,fresnel);
@@ -189,7 +187,7 @@ half3 LightingToon(BRDFDataToon brdfData, SurfaceDataToon surfaceData,Light ligh
     color = specularColor+diffuseColor;
 #endif 
 #ifdef _RIMLIGHT
-    color += RimLight(brdfData,normalWS,viewDirectionWS,light.direction);
+    color += RimLight(brdfData,normalWS,viewDirectionWS,radiance.x);
 #endif
     return color*light.color;
 }
