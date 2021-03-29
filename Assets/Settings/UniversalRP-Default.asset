@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf2edee5c58d82540a51f03df9d42094, type: 3}
-  m_Name: UniversalRP-HighQuality
+  m_Name: UniversalRP-Default
   m_EditorClassIdentifier: 
   k_AssetVersion: 6
   k_AssetPreviousVersion: 5
@@ -19,7 +19,7 @@ MonoBehaviour:
   m_RendererDataList:
   - {fileID: 11400000, guid: 4a8e21d5c33334b11b34a596161b9360, type: 2}
   m_DefaultRendererIndex: 0
-  m_RequireDepthTexture: 1
+  m_RequireDepthTexture: 0
   m_RequireOpaqueTexture: 0
   m_OpaqueDownsampling: 1
   m_SupportsTerrainHoles: 1
