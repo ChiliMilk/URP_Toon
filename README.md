@@ -15,13 +15,13 @@
 ## Introduction
 基于URP的通用卡通着色器，使用URP标准的PBR模型（Minimalist CookTorrance BRDF）进行改造，纯代码实现，没有使用ShaderGraph,兼容SPR Batch.  
 Universal Toon shader based on URP , use PBR lighting（Minimalist CookTorrance BRDF） in URP,use code without ShaderGraph,SPR Batch Compatible.  
-- Unity 2019.3.15+、URP 7.4.1+  
+- Unity 2020.2.0+、URP 10.2.2+  
 
-![image-UnityChan](image/UnityChan.png)
+![image-UnityChan](image/UnityChan.png) 
 
 ## Properties
 ### SurfaceOptions
-![image-SurfaceOptions](image/SurfaceOptions.png)
+![image-SurfaceOptions](image/SurfaceOptions.png) 
 - Workflow Mode : Specular or Metallic 
 - SurfaceType : Opaque or Transparent 
 - Render Face : Front Back Both (For Forward Pass)
@@ -45,9 +45,9 @@ Stencil {
 Stencil Channel : 1-255
 
 ### Base
-![image-Base](image/Base.png)
+![image-Base](image/Base.png) 
 ### Shadow
-![image-Shadow](image/Shadow.png)
+![image-Shadow](image/Shadow.png) 
 - UseRampMapShadow : 使用RampMap控制阴影衰减。
 - VOffset : RampMap采样的V坐标
 - Shadow1Color ：第一层阴影颜色
@@ -60,7 +60,7 @@ Stencil Channel : 1-255
 - Receive Shadow : 接收阴影（ShadowCoord）
 
 ### Specular
-![image-Specular](image/Specular.png)
+![image-Specular](image/Specular.png) 
 - Specular
 - SpecularStep : 高光阈值
 - SpecularFeather : 高光羽化
@@ -73,7 +73,7 @@ Stencil Channel : 1-255
 - EnablesSpecularHighlights : 是否使用高光
 
 ### Rim
-![image-Rim](image/Rim.png)
+![image-Rim](image/Rim.png) 
 - EnbleRim ：启用边缘光
 - BlendRim : 颜色插值
 - RimColor
@@ -82,14 +82,14 @@ Stencil Channel : 1-255
 - RimFeather
 
 ### Outline
-![image-Outline](image/Outline.png)
+![image-Outline](image/Outline.png) 
 - EnableOutline ：启用描边
 - UseSmoothNormal : 使用平滑法线(ModelOutlineImporter:https://github.com/Jason-Ma-233/JasonMaToonRenderPipeline#%E5%B9%B3%E6%BB%91%E6%B3%95%E7%BA%BF%E5%AF%BC%E5%85%A5%E5%B7%A5%E5%85%B7ModelOutlineImporter)
 - OutlineColor
 - OutlineWidth
 
 ### AdvancedOptions
-![image-AdvancedOptions](image/AdvancedOptions.png)
+![image-AdvancedOptions](image/AdvancedOptions.png) 
 - Environment Reflections : 是否接收反射  
 - Enable GPU Instancing : 使用GPU Instancing合批  
 - RenderQueue : 渲染队列  
@@ -101,17 +101,17 @@ Object1.Pass1-
 Objcet1.Pass2-  
 Object2.Pass1-  
 Object2.Pass2......  
-![image-BeforeBatch](image/BeforeBatch.png)  
+![image-BeforeBatch](image/BeforeBatch.png)    
 This will stop SPRBatch.  
-![image-NotSupportBatch](image/NotSupportBatch.png)  
-Use ComstomRenderer,the Rendering order like this:  
+![image-NotSupportBatch](image/NotSupportBatch.png)   
+We can change the Rendering order like this:  
 Object1.Pass1-  
 Objcet2.Pass1-  
 Object1.Pass2-  
 Object2.Pass2......  
-![image-AfterBatch](image/AfterBatch.png)  
+![image-AfterBatch](image/AfterBatch.png)   
 
-How to Set project:
+#### Use CustomRenderer
 
 1.Create CustomForwardRenderer Asset.  
 Assets/Create/Rendering/Universal Render Pipeline/ToonForward Renderer
@@ -119,8 +119,15 @@ Assets/Create/Rendering/Universal Render Pipeline/ToonForward Renderer
 2.Setup Pipeline Asset  
 ![image-Setup](image/Setup.png)  
 
-Node1 : Use Assembly Definition Reference to access urp package.  
-Node2 : SRP Batch does not support Skin Mesh yet.
+#### Use RenderFeature
+
+You can also use RenderFeature.
+
+Select ForwardRenderData>Add Renderer Feature>Render Outline Feature.
+
+![image-RenderOutline](image/RenderOutline.png)  
+
+Node : SRP Batch does not support Skin Mesh yet.
 
 ## Reference
 
