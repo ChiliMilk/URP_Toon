@@ -104,7 +104,7 @@ half3 GlossyEnvironmentToon(half3 reflectVector, half perceptualRoughness, half 
 #endif
     return irradiance * occlusion;
 #else
-    return _GlossyEnvironmentColor.rgb * occlusion;
+    return 0;
 #endif
 }
 
