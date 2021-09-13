@@ -3,12 +3,6 @@ using System.Reflection;
 
 namespace UnityEngine.Rendering.Universal
 {
-    
-    /// <summary>
-    /// Default renderer for Universal RP.
-    /// This renderer is supported on all Universal RP supported platforms.
-    /// It uses a classic forward rendering strategy with per-object light culling.
-    /// </summary>
     public sealed class ToonForwardRenderer : ScriptableRenderer
     {
         const int k_DepthStencilBufferBits = 32;
@@ -20,9 +14,9 @@ namespace UnityEngine.Rendering.Universal
         }
 
         // Rendering mode setup from UI.
-        internal RenderingMode renderingMode { get { return RenderingMode.Forward;  } }
+        internal RenderingMode renderingMode { get { return RenderingMode.Forward; } }
         // Actual rendering mode, which may be different (ex: wireframe rendering, harware not capable of deferred rendering).
-        internal RenderingMode actualRenderingMode { get { return GL.wireframe || m_DeferredLights == null || !m_DeferredLights.IsRuntimeSupportedThisFrame()  ? RenderingMode.Forward : this.renderingMode; } }
+        internal RenderingMode actualRenderingMode { get { return GL.wireframe || m_DeferredLights == null || !m_DeferredLights.IsRuntimeSupportedThisFrame() ? RenderingMode.Forward : this.renderingMode; } }
         internal bool accurateGbufferNormals { get { return m_DeferredLights != null ? m_DeferredLights.AccurateGbufferNormals : false; } }
         ColorGradingLutPass m_ColorGradingLutPass;
         DepthOnlyPass m_DepthPrepass;
@@ -34,9 +28,9 @@ namespace UnityEngine.Rendering.Universal
         TileDepthRangePass m_TileDepthRangePass;
         TileDepthRangePass m_TileDepthRangeExtraPass; // TODO use subpass API to hide this pass
         DeferredPass m_DeferredPass;
-        DrawOutlinePass m_RenderOutlinePass;
         DrawObjectsPass m_RenderOpaqueForwardOnlyPass;
         DrawObjectsPass m_RenderOpaqueForwardPass;
+        DrawOutlinePass m_RenderOutlinePass;
         DrawHairShadowMaskPass m_RenderHairShadowMaskPass;
         DrawSkyboxPass m_DrawSkyboxPass;
         CopyDepthPass m_CopyDepthPass;
@@ -157,8 +151,8 @@ namespace UnityEngine.Rendering.Universal
 
             // Always create this pass even in deferred because we use it for wireframe rendering in the Editor or offscreen depth texture rendering.
             m_RenderOpaqueForwardPass = new DrawObjectsPass(URPProfileId.DrawOpaqueObjects, true, RenderPassEvent.BeforeRenderingOpaques, RenderQueueRange.opaque, data.opaqueLayerMask, m_DefaultStencilState, stencilData.stencilReference);
-            m_RenderOutlinePass = new DrawOutlinePass("Render Outline",true, RenderPassEvent.BeforeRenderingOpaques, RenderQueueRange.opaque, data.opaqueLayerMask, m_DefaultStencilState, stencilData.stencilReference);
-            m_RenderHairShadowMaskPass = new DrawHairShadowMaskPass("Render HairShadowMask", true, RenderPassEvent.BeforeRenderingOpaques, RenderQueueRange.opaque, data.opaqueLayerMask, m_DefaultStencilState, stencilData.stencilReference);
+            m_RenderOutlinePass = new DrawOutlinePass("Render Outline", RenderPassEvent.BeforeRenderingOpaques, RenderQueueRange.opaque, data.opaqueLayerMask);
+            m_RenderHairShadowMaskPass = new DrawHairShadowMaskPass("Render HairShadowMask", RenderPassEvent.BeforeRenderingOpaques, RenderQueueRange.opaque, data.opaqueLayerMask);
             m_CopyDepthPass = new CopyDepthPass(RenderPassEvent.AfterRenderingSkybox, m_CopyDepthMaterial);
             m_DrawSkyboxPass = new DrawSkyboxPass(RenderPassEvent.BeforeRenderingSkybox);
             m_CopyColorPass = new CopyColorPass(RenderPassEvent.AfterRenderingSkybox, m_SamplingMaterial, m_BlitMaterial);
@@ -266,7 +260,11 @@ namespace UnityEngine.Rendering.Universal
 
             // Assign the camera color target early in case it is needed during AddRenderPasses.
             bool isPreviewCamera = cameraData.isPreviewCamera;
-            var createColorTexture = rendererFeatures.Count != 0 && !isPreviewCamera;
+            bool isRunningHololens = false;
+#if ENABLE_VR && ENABLE_VR_MODULE
+            isRunningHololens = UniversalRenderPipeline.IsRunningHololens(cameraData);
+#endif
+            var createColorTexture = (rendererFeatures.Count != 0 && !isRunningHololens) && !isPreviewCamera;
             if (createColorTexture)
             {
                 m_ActiveCameraColorAttachment = m_CameraColorAttachment;
@@ -314,6 +312,10 @@ namespace UnityEngine.Rendering.Universal
             createColorTexture |= RequiresIntermediateColorTexture(ref cameraData);
             createColorTexture |= renderPassInputs.requiresColorTexture;
             createColorTexture &= !isPreviewCamera;
+
+            // TODO: There's an issue in multiview and depth copy pass. Atm forcing a depth prepass on XR until we have a proper fix.
+            if (cameraData.xr.enabled && requiresDepthTexture)
+                requiresDepthPrepass = true;
 
             // If camera requires depth and there's no depth pre-pass we create a depth texture that can be read later by effect requiring it.
             // When deferred renderer is enabled, we must always create a depth texture and CANNOT use BuiltinRenderTextureType.CameraTarget. This is to get
@@ -412,16 +414,11 @@ namespace UnityEngine.Rendering.Universal
 #endif
 
             if (this.actualRenderingMode == RenderingMode.Deferred)
-            {
                 EnqueueDeferred(ref renderingData, requiresDepthPrepass, mainLightShadows, additionalLightShadows);
-            }
             else
-            {
                 EnqueuePass(m_RenderHairShadowMaskPass);
                 EnqueuePass(m_RenderOpaqueForwardPass);
                 EnqueuePass(m_RenderOutlinePass);
-            }
-
             Skybox cameraSkybox;
             cameraData.camera.TryGetComponent<Skybox>(out cameraSkybox);
             bool isOverlayCamera = cameraData.renderType == CameraRenderType.Overlay;
@@ -672,15 +669,15 @@ namespace UnityEngine.Rendering.Universal
             for (int i = 0; i < activeRenderPassQueue.Count; ++i)
             {
                 ScriptableRenderPass pass = activeRenderPassQueue[i];
-                bool needsDepth   = (pass.input & ScriptableRenderPassInput.Depth) != ScriptableRenderPassInput.None;
+                bool needsDepth = (pass.input & ScriptableRenderPassInput.Depth) != ScriptableRenderPassInput.None;
                 bool needsNormals = (pass.input & ScriptableRenderPassInput.Normal) != ScriptableRenderPassInput.None;
-                bool needsColor   = (pass.input & ScriptableRenderPassInput.Color) != ScriptableRenderPassInput.None;
+                bool needsColor = (pass.input & ScriptableRenderPassInput.Color) != ScriptableRenderPassInput.None;
                 bool eventBeforeOpaque = pass.renderPassEvent <= RenderPassEvent.BeforeRenderingOpaques;
 
-                inputSummary.requiresDepthTexture   |= needsDepth;
-                inputSummary.requiresDepthPrepass   |= needsNormals || needsDepth && eventBeforeOpaque;
+                inputSummary.requiresDepthTexture |= needsDepth;
+                inputSummary.requiresDepthPrepass |= needsNormals || needsDepth && eventBeforeOpaque;
                 inputSummary.requiresNormalsTexture |= needsNormals;
-                inputSummary.requiresColorTexture   |= needsColor;
+                inputSummary.requiresColorTexture |= needsColor;
             }
 
             return inputSummary;
@@ -695,6 +692,8 @@ namespace UnityEngine.Rendering.Universal
                 {
                     bool useDepthRenderBuffer = m_ActiveCameraDepthAttachment == RenderTargetHandle.CameraTarget;
                     var colorDescriptor = descriptor;
+                    colorDescriptor.useMipMap = false;
+                    colorDescriptor.autoGenerateMips = false;
                     colorDescriptor.depthBufferBits = (useDepthRenderBuffer) ? k_DepthStencilBufferBits : 0;
                     cmd.GetTemporaryRT(m_ActiveCameraColorAttachment.id, colorDescriptor, FilterMode.Bilinear);
                 }
@@ -702,6 +701,8 @@ namespace UnityEngine.Rendering.Universal
                 if (createDepth)
                 {
                     var depthDescriptor = descriptor;
+                    depthDescriptor.useMipMap = false;
+                    depthDescriptor.autoGenerateMips = false;
 #if ENABLE_VR && ENABLE_XR_MODULE
                     // XRTODO: Enabled this line for non-XR pass? URP copy depth pass is already capable of handling MSAA.
                     depthDescriptor.bindMS = depthDescriptor.msaaSamples > 1 && !SystemInfo.supportsMultisampleAutoResolve && (SystemInfo.supportsMultisampledTextures != 0);

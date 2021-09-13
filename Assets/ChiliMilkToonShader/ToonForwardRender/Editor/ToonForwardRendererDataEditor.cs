@@ -6,7 +6,8 @@ using UnityEngine.Scripting.APIUpdating;
 namespace UnityEditor.Rendering.Universal
 {
     [CustomEditor(typeof(ToonForwardRendererData), true)]
-    [MovedFrom("UnityEditor.Rendering.LWRP")] public class ToonForwardRendererDataEditor : ScriptableRendererDataEditor
+    [MovedFrom("UnityEditor.Rendering.LWRP")]
+    public class ToonForwardRendererDataEditor : ScriptableRendererDataEditor
     {
         private static class Styles
         {
@@ -123,7 +124,7 @@ namespace UnityEditor.Rendering.Universal
 
                 if (GUILayout.Button("Reload All"))
                 {
-                    var resources = target as ForwardRendererData;
+                    var resources = target as ToonForwardRendererData;
                     resources.shaders = null;
                     ResourceReloader.ReloadAllNullIn(target, UniversalRenderPipelineAsset.packagePath);
                 }

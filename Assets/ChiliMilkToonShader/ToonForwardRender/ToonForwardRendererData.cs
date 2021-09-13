@@ -14,7 +14,7 @@ namespace UnityEngine.Rendering.Universal
     {
 #if UNITY_EDITOR
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812")]
-        internal class CreateForwardRendererAsset : EndNameEditAction
+        internal class CreateToonForwardRendererAsset : EndNameEditAction
         {
             public override void Action(int instanceId, string pathName, string resourceFile)
             {
@@ -26,9 +26,9 @@ namespace UnityEngine.Rendering.Universal
         }
 
         [MenuItem("Assets/Create/Rendering/Universal Render Pipeline/Toon Forward Renderer", priority = CoreUtils.assetCreateMenuPriority2)]
-        static void CreateForwardRendererData()
+        static void CreateToonForwardRendererData()
         {
-            ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0, CreateInstance<CreateForwardRendererAsset>(), "CustomForwardRendererData.asset", null, null);
+            ProjectWindowUtil.StartNameEditingIfProjectWindowExists(0, CreateInstance<CreateToonForwardRendererAsset>(), "ToonForwardRendererData.asset", null, null);
         }
 #endif
 

@@ -35,10 +35,6 @@ struct Varyings
     float4 shadowCoord              : TEXCOORD7;
 #endif
 
-#if defined(_RECEIVE_HAIRSHADOWMASK) && defined(_HAIRSHADOWMASK)
-    float4 positionNDC              : TEXCOORD8;
-#endif
-
     float4 positionCS               : SV_POSITION;
     UNITY_VERTEX_INPUT_INSTANCE_ID
     UNITY_VERTEX_OUTPUT_STEREO
@@ -85,7 +81,6 @@ void InitializeInputDataToon(Varyings input, half3 normalTS, out InputDataToon i
 
 #if defined(_RECEIVE_HAIRSHADOWMASK) && defined(_HAIRSHADOWMASK)
     inputData.depth = input.positionCS.z/input.positionCS.w;
-    inputData.positionNDC = input.positionNDC.xy/input.positionNDC.w;
 #endif
 }
 
@@ -123,10 +118,6 @@ Varyings ToonForwardPassVertex(Attributes input)
 
 #if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
     output.shadowCoord = GetShadowCoord(vertexInput);
-#endif
-
-#if defined(_RECEIVE_HAIRSHADOWMASK) && defined(_HAIRSHADOWMASK)
-    output.positionNDC = vertexInput.positionNDC;
 #endif
 
     output.positionCS = vertexInput.positionCS;

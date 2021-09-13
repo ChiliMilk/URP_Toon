@@ -11,28 +11,17 @@ namespace UnityEngine.Rendering.Universal.Internal
     public class DrawOutlinePass : ScriptableRenderPass
     {
         FilteringSettings m_FilteringSettings;
-        RenderStateBlock m_RenderStateBlock;
         List<ShaderTagId> m_ShaderTagIdList = new List<ShaderTagId>();
         string m_ProfilerTag;
         ProfilingSampler m_ProfilingSampler;
-        bool m_IsOpaque;
 
-        public DrawOutlinePass(string profilerTag, bool opaque, RenderPassEvent evt, RenderQueueRange renderQueueRange, LayerMask layerMask, StencilState stencilState, int stencilReference)
+        public DrawOutlinePass(string profilerTag, RenderPassEvent evt, RenderQueueRange renderQueueRange, LayerMask layerMask)
         {
             m_ProfilerTag = profilerTag;
             m_ProfilingSampler = new ProfilingSampler(profilerTag);
             m_ShaderTagIdList.Add(new ShaderTagId("Outline"));
             renderPassEvent = evt;
             m_FilteringSettings = new FilteringSettings(renderQueueRange, layerMask);
-            m_RenderStateBlock = new RenderStateBlock(RenderStateMask.Nothing);
-            m_IsOpaque = opaque;
-
-            if (stencilState.enabled)
-            {
-                m_RenderStateBlock.stencilReference = stencilReference;
-                m_RenderStateBlock.mask = RenderStateMask.Stencil;
-                m_RenderStateBlock.stencilState = stencilState;
-            }
         }
 
         /// <inheritdoc/>
@@ -45,9 +34,9 @@ namespace UnityEngine.Rendering.Universal.Internal
                 cmd.Clear();
 
                 Camera camera = renderingData.cameraData.camera;
-                var sortFlags = (m_IsOpaque) ? renderingData.cameraData.defaultOpaqueSortFlags : SortingCriteria.CommonTransparent;
+                var sortFlags = renderingData.cameraData.defaultOpaqueSortFlags;
                 var drawSettings = CreateDrawingSettings(m_ShaderTagIdList, ref renderingData, sortFlags);
-                context.DrawRenderers(renderingData.cullResults, ref drawSettings, ref m_FilteringSettings, ref m_RenderStateBlock);
+                context.DrawRenderers(renderingData.cullResults, ref drawSettings, ref m_FilteringSettings);
 
                 // Render objects that did not match any shader pass with error shader
                 RenderingUtils.RenderObjectsWithError(context, ref renderingData.cullResults, camera, m_FilteringSettings, SortingCriteria.None);

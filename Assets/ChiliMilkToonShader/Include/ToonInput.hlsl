@@ -1,5 +1,5 @@
-﻿#ifndef TOON_PROPERTY_INCLUDED
-#define TOON_PROPERTY_INCLUDED
+﻿#ifndef TOON_INPUT_INCLUDED
+#define TOON_INPUT_INCLUDED
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl"
 
@@ -104,9 +104,7 @@ struct InputDataToon
     half3   tangentWS;
     half3   bitangentWS;
 #endif
-
     float depth;
-    float2 positionNDC;
 };
 
 half SampleClipMask(float2 uv)

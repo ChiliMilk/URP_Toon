@@ -117,7 +117,7 @@
             #pragma vertex Vertex
             #pragma fragment Fragment
             
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonHairShadowMaskPass.hlsl"
             ENDHLSL
         }
@@ -147,7 +147,7 @@
             #pragma vertex Vertex
             #pragma fragment Fragment
             
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonFunction.hlsl"
             #include "../Include/ToonOutlinePass.hlsl"            
             ENDHLSL
@@ -212,7 +212,7 @@
             #pragma vertex ToonForwardPassVertex
             #pragma fragment ToonForwardPassFragment
 
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonFunction.hlsl"
             #include "../Include/ToonLighting.hlsl"
             #include "../Include/ToonForwardPass.hlsl"
@@ -245,7 +245,7 @@
             #pragma vertex ShadowPassVertex
             #pragma fragment ShadowPassFragment
 
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
             
             ENDHLSL
@@ -276,7 +276,7 @@
             #pragma vertex DepthOnlyVertex
             #pragma fragment DepthOnlyFragment
 
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"   
             ENDHLSL
         }
@@ -306,7 +306,7 @@
             #pragma multi_compile_instancing
             #pragma multi_compile _ DOTS_INSTANCING_ON
 
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthNormalsPass.hlsl"
             ENDHLSL
         }
@@ -333,7 +333,7 @@
 
             #pragma shader_feature_local_fragment _SPECGLOSSMAP
 
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonMetaPass.hlsl"
             
             ENDHLSL
@@ -365,7 +365,7 @@
             #pragma vertex Vertex
             #pragma fragment Fragment
             
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonHairShadowMaskPass.hlsl"
             ENDHLSL
         }
@@ -395,7 +395,7 @@
             #pragma vertex Vertex
             #pragma fragment Fragment
             
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonFunction.hlsl"
             #include "../Include/ToonOutlinePass.hlsl"            
             ENDHLSL
@@ -460,7 +460,7 @@
             #pragma vertex ToonForwardPassVertex
             #pragma fragment ToonForwardPassFragment
 
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonFunction.hlsl"
             #include "../Include/ToonLighting.hlsl"
             #include "../Include/ToonForwardPass.hlsl"
@@ -493,7 +493,7 @@
             #pragma vertex ShadowPassVertex
             #pragma fragment ShadowPassFragment
 
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
             
             ENDHLSL
@@ -524,7 +524,7 @@
             #pragma vertex DepthOnlyVertex
             #pragma fragment DepthOnlyFragment
 
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"   
             ENDHLSL
         }
@@ -554,7 +554,7 @@
             #pragma multi_compile_instancing
             #pragma multi_compile _ DOTS_INSTANCING_ON
 
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthNormalsPass.hlsl"
             ENDHLSL
         }
@@ -581,7 +581,7 @@
 
             #pragma shader_feature_local_fragment _SPECGLOSSMAP
 
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonMetaPass.hlsl"            
             ENDHLSL
         }
