@@ -18,6 +18,9 @@ Material:
     RenderType: Opaque
   disabledShaderPasses:
   - SRPDEFAULTUNLIT
+  - Outline
+  - FaceHairShadowMask
+  - HairShadowMask
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -123,6 +126,9 @@ Material:
     - _Blend: 0
     - _BlendRim: 0
     - _BumpScale: 1
+    - _CastHairShadowMask: 0
+    - _CastShadowForFace: 0
+    - _CastShadowMaskForFace: 0
     - _ClearCoat: 1
     - _ClearCoatSmoothness: 0.962
     - _Cull: 2
@@ -152,6 +158,8 @@ Material:
     - _OutlineWidth: 1
     - _QueueOffset: 0
     - _RampV: 0
+    - _ReceiveHairShadowMask: 0
+    - _ReceiveShadowMaskForFace: 0
     - _ReceiveShadowStrength: 0
     - _ReceiveShadows: 1
     - _ReflectionSteps: 2

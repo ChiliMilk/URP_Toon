@@ -37,6 +37,7 @@ namespace UnityEngine.Rendering.Universal
         DrawOutlinePass m_RenderOutlinePass;
         DrawObjectsPass m_RenderOpaqueForwardOnlyPass;
         DrawObjectsPass m_RenderOpaqueForwardPass;
+        DrawHairShadowMaskPass m_RenderHairShadowMaskPass;
         DrawSkyboxPass m_DrawSkyboxPass;
         CopyDepthPass m_CopyDepthPass;
         CopyColorPass m_CopyColorPass;
@@ -157,6 +158,7 @@ namespace UnityEngine.Rendering.Universal
             // Always create this pass even in deferred because we use it for wireframe rendering in the Editor or offscreen depth texture rendering.
             m_RenderOpaqueForwardPass = new DrawObjectsPass(URPProfileId.DrawOpaqueObjects, true, RenderPassEvent.BeforeRenderingOpaques, RenderQueueRange.opaque, data.opaqueLayerMask, m_DefaultStencilState, stencilData.stencilReference);
             m_RenderOutlinePass = new DrawOutlinePass("Render Outline",true, RenderPassEvent.BeforeRenderingOpaques, RenderQueueRange.opaque, data.opaqueLayerMask, m_DefaultStencilState, stencilData.stencilReference);
+            m_RenderHairShadowMaskPass = new DrawHairShadowMaskPass("Render HairShadowMask", true, RenderPassEvent.BeforeRenderingOpaques, RenderQueueRange.opaque, data.opaqueLayerMask, m_DefaultStencilState, stencilData.stencilReference);
             m_CopyDepthPass = new CopyDepthPass(RenderPassEvent.AfterRenderingSkybox, m_CopyDepthMaterial);
             m_DrawSkyboxPass = new DrawSkyboxPass(RenderPassEvent.BeforeRenderingSkybox);
             m_CopyColorPass = new CopyColorPass(RenderPassEvent.AfterRenderingSkybox, m_SamplingMaterial, m_BlitMaterial);
@@ -415,6 +417,7 @@ namespace UnityEngine.Rendering.Universal
             }
             else
             {
+                EnqueuePass(m_RenderHairShadowMaskPass);
                 EnqueuePass(m_RenderOpaqueForwardPass);
                 EnqueuePass(m_RenderOutlinePass);
             }

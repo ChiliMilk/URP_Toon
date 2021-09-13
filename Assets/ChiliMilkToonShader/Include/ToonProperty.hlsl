@@ -62,6 +62,10 @@ TEXTURE2D( _DiffuseRampMap);  SAMPLER(sampler_DiffuseRampMap);
     #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_MetallicGlossMap, sampler_MetallicGlossMap, uv)
 #endif
 
+#if defined(_RECEIVE_HAIRSHADOWMASK) && defined(_HAIRSHADOWMASK)
+    TEXTURE2D(_HairShadowMask);   SAMPLER(sampler_HairShadowMask);
+#endif
+
 struct SurfaceDataToon
 {
     half3 albedo;
@@ -100,6 +104,9 @@ struct InputDataToon
     half3   tangentWS;
     half3   bitangentWS;
 #endif
+
+    float depth;
+    float2 positionNDC;
 };
 
 half SampleClipMask(float2 uv)

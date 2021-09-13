@@ -19,6 +19,8 @@ Universal Toon shader based on URP , use PBR lighting（Minimalist CookTorrance 
 
 ![image-UnityChan](image/UnityChan.png) 
 
+![image-UnityChan2](image/UnityChan2.png)
+
 ## Properties
 ### SurfaceOptions
 ![image-SurfaceOptions](image/SurfaceOptions.png) 

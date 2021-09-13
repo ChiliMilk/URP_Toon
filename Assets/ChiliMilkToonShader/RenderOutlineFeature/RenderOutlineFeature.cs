@@ -6,7 +6,7 @@ public class RenderOutlineFeature : ScriptableRendererFeature
 {
 
     private RenderOutlinePass renderOutlinePass;
-    public Setting featureSetting;
+    public Setting featureSetting = new Setting();
 
     [System.Serializable]
     public class Setting
@@ -31,12 +31,9 @@ public class RenderOutlineFeature : ScriptableRendererFeature
 
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
         {
-            CommandBuffer cmd = CommandBufferPool.Get("RenderOutline");
             DrawingSettings drawingSettings = CreateDrawingSettings(outlineTag, ref renderingData, SortingCriteria.CommonOpaque);
             FilteringSettings filteringSettings = new FilteringSettings(RenderQueueRange.all);
             context.DrawRenderers(renderingData.cullResults,ref drawingSettings,ref filteringSettings);
-            context.ExecuteCommandBuffer(cmd);
-            CommandBufferPool.Release(cmd);
         }
     }
 }

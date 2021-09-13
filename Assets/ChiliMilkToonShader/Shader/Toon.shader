@@ -39,9 +39,11 @@
         //_Shadow2Map("Shadow2 Map",2D) = "white" {} 
         _Shadow2Step("Shadow1 Step",Range(0.0,1.0)) = 0.3
         _Shadow2Feather("Shadow1 Feather",Range(0.0,1.0)) = 0.0
-         [ToggleOff]_EnableInShadowMap("Enable ShadowMap",Float) = 0.0
+         [ToggleOff] _EnableInShadowMap("Enable ShadowMap",Float) = 0.0
         _InShadowMap("Shadow Map",2D) = "white"{}
         _InShadowMapStrength("ShadowMap Strength",Range(0.0,1.0)) = 1.0
+        [ToggleOff] _CastHairShadowMask("CastHairShadowMask(FrontHair)",Float) = 0.0
+        [ToggleOff] _ReceiveHairShadowMask("ReceiveHairShadowMask",Float) = 0.0
 
         //Specular
 		_Metallic("Metallic", Range(0.0, 1.0)) = 0.0
@@ -74,10 +76,10 @@
         _Specular2Mul ("SpecularSecMul", Range (0.0,1.0) ) = 0.5
 
         //Outline
-        [ToggleOff] _EnableOutline("Enable Outline",Float) = 0.0
+        [ToggleOff] _EnableOutline("Enable Outline",Float) = 1.0
         [ToggleOff] _UseSmoothNormal("UseSmoothNormal",Float) = 0.0
         _OutlineColor("OutlineColor",Color)= (0.0,0.0,0.0,0.0)
-        _OutlineWidth("OutlineWidth",Range(0.0,5.0)) = 1.0
+        _OutlineWidth("OutlineWidth",Range(0.0,5.0)) = 0.5
 
         // Advanced Options
         [ToggleOff] _ReceiveShadows("Receive Shadows", Float) = 1.0
@@ -95,7 +97,31 @@
         // Lightmode matches the ShaderPassName set in UniversalRenderPipeline.cs. SRPDefaultUnlit and passes with
         // no LightMode tag are also rendered by Universal Render Pipeline
         Tags{"RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" "IgnoreProjector" = "True" "ShaderModel" = "4.5"}
-        LOD 300        
+        LOD 300
+
+        Pass
+        {
+            Name "HairShadowMask"
+            ZTest Less
+            Tags{"LightMode"="HairShadowMask"}
+            ZWrite Off
+            Cull Back
+ 
+            HLSLPROGRAM
+            #pragma exclude_renderers gles gles3 glcore
+            #pragma target 4.5
+
+            #pragma multi_compile_instancing
+            #pragma multi_compile_fog
+
+            #pragma vertex Vertex
+            #pragma fragment Fragment
+            
+            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonHairShadowMaskPass.hlsl"
+            ENDHLSL
+        }
+
         Pass
         {
             Name "Outline"
@@ -162,6 +188,7 @@
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
             #pragma shader_feature_local_fragment _HAIRSPECULAR
             #pragma shader_feature_local_fragment _SPECULARSHIFTMAP
+            #pragma shader_feature_local _RECEIVE_HAIRSHADOWMASK
             
             // Universal Pipeline keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
@@ -172,6 +199,7 @@
             #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
             #pragma multi_compile _ LIGHTMAP_SHADOW_MIXING
             #pragma multi_compile _ SHADOWS_SHADOWMASK
+            #pragma multi_compile _ _HAIRSHADOWMASK
 
             // Unity defined keywords
             #pragma multi_compile _ DIRLIGHTMAP_COMBINED
@@ -318,6 +346,30 @@
         // no LightMode tag are also rendered by Universal Render Pipeline
         Tags{"RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" "IgnoreProjector" = "True" "ShaderModel" = "2.0"}
         LOD 300
+
+        Pass
+        {
+            Name "HairShadowMask"
+            ZTest Less
+            Tags{"LightMode"="HairShadowMask"}
+            ZWrite Off
+            Cull [_Cull]
+ 
+            HLSLPROGRAM
+            #pragma only_renderers gles gles3 glcore
+            #pragma target 2.0
+
+            #pragma multi_compile_instancing
+            #pragma multi_compile_fog
+
+            #pragma vertex Vertex
+            #pragma fragment Fragment
+            
+            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonHairShadowMaskPass.hlsl"
+            ENDHLSL
+        }
+
         Pass
         {
             Name "Outline"
@@ -384,6 +436,7 @@
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
             #pragma shader_feature_local_fragment _HAIRSPECULAR
             #pragma shader_feature_local_fragment _SPECULARSHIFTMAP
+            #pragma shader_feature_local _RECEIVE_HAIRSHADOWMASK
             
             // Universal Pipeline keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
@@ -394,6 +447,7 @@
             #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
             #pragma multi_compile _ LIGHTMAP_SHADOW_MIXING
             #pragma multi_compile _ SHADOWS_SHADOWMASK
+            #pragma multi_compile _ _HAIRSHADOWMASK
 
             // Unity defined keywords
             #pragma multi_compile _ DIRLIGHTMAP_COMBINED

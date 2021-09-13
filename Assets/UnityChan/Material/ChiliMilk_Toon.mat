@@ -16,7 +16,8 @@ Material:
   m_CustomRenderQueue: 2000
   stringTagMap:
     RenderType: Opaque
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - HairShadowMask
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -77,6 +78,9 @@ Material:
     - _Blend: 0
     - _BlendRim: 1
     - _BumpScale: 1
+    - _CastHairShadowMask: 0
+    - _CastShadowForFace: 0
+    - _CastShadowMaskForFace: 1
     - _Cull: 2
     - _Cutoff: 0.5
     - _DiffuseRampV: 0
@@ -92,7 +96,9 @@ Material:
     - _InverseClipMask: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
-    - _OutlineWidth: 1
+    - _OutlineWidth: 0.4
+    - _ReceiveHairShadowMask: 0
+    - _ReceiveShadowMaskForFace: 0
     - _ReceiveShadows: 1
     - _RenderQueue: 2000
     - _RimFeather: 0
@@ -125,5 +131,5 @@ Material:
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
     - _Shadow1Color: {r: 0.6037736, g: 0.6037736, b: 0.6037736, a: 0.5}
     - _Shadow2Color: {r: 0, g: 0, b: 0, a: 0}
-    - _SpecColor: {r: 1, g: 0.8191595, b: 0.4575472, a: 1}
+    - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
