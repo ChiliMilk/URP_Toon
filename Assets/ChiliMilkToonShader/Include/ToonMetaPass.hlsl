@@ -34,11 +34,11 @@ half4 ToonFragmentMeta(Varyings input) : SV_Target
     SurfaceDataToon surfaceData;
     InitializeSurfaceDataToon(input.uv, surfaceData);
 
-    BRDFData brdfData;
-    InitializeBRDFData(surfaceData.albedo, surfaceData.metallic, surfaceData.specular, surfaceData.smoothness, surfaceData.alpha, brdfData);
+    BRDFDataToon brdfData;
+    InitializeBRDFDataToon(surfaceData, brdfData);
 
     MetaInput metaInput;
-    metaInput.Albedo = brdfData.diffuse + brdfData.specular * brdfData.roughness * 0.5;
+    metaInput.Albedo = brdfData.diffuse;
     metaInput.SpecularColor = surfaceData.specular;
     metaInput.Emission = surfaceData.emission;
 

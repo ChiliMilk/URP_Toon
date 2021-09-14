@@ -334,6 +334,8 @@
             #pragma shader_feature_local_fragment _SPECGLOSSMAP
 
             #include "../Include/ToonInput.hlsl"
+            #include "../Include/ToonFunction.hlsl"
+            #include "../Include/ToonLighting.hlsl"
             #include "../Include/ToonMetaPass.hlsl"
             
             ENDHLSL
@@ -582,6 +584,8 @@
             #pragma shader_feature_local_fragment _SPECGLOSSMAP
 
             #include "../Include/ToonInput.hlsl"
+            #include "../Include/ToonFunction.hlsl"
+            #include "../Include/ToonLighting.hlsl"
             #include "../Include/ToonMetaPass.hlsl"            
             ENDHLSL
         }

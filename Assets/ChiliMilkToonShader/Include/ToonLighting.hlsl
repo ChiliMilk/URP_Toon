@@ -20,7 +20,7 @@ struct BRDFDataToon
 };
 
 
-inline void InitializeBRDFDataToon(SurfaceDataToon surfaceData, InputDataToon inputData, out BRDFDataToon outBRDFData)
+inline void InitializeBRDFDataToon(SurfaceDataToon surfaceData, out BRDFDataToon outBRDFData)
 {
 #ifdef _SPECULAR_SETUP
     half reflectivity = ReflectivitySpecular(surfaceData.specular);
@@ -208,7 +208,7 @@ half3 LightingToon(BRDFDataToon brdfData, SurfaceDataToon surfaceData, Light lig
 half4 FragmentLitToon(InputDataToon inputData, SurfaceDataToon surfaceData)
 {
     BRDFDataToon brdfData;
-    InitializeBRDFDataToon(surfaceData, inputData, brdfData);
+    InitializeBRDFDataToon(surfaceData, brdfData);
     half3 bitangentWS;
 #ifdef _HAIRSPECULAR
     bitangentWS = inputData.bitangentWS;
