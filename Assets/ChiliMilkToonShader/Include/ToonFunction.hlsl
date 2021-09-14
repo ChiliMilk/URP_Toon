@@ -47,4 +47,5 @@ SamplerState sampler_LinearClamp
     AddressV = Clamp; // of Mirror of Clamp of Border
 };
 #endif
+
 #endif

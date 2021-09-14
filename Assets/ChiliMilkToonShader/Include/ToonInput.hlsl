@@ -1,5 +1,5 @@
-﻿#ifndef TOON_PROPERTY_INCLUDED
-#define TOON_PROPERTY_INCLUDED
+﻿#ifndef TOON_INPUT_INCLUDED
+#define TOON_INPUT_INCLUDED
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl"
 
@@ -62,6 +62,10 @@ TEXTURE2D( _DiffuseRampMap);  SAMPLER(sampler_DiffuseRampMap);
     #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_MetallicGlossMap, sampler_MetallicGlossMap, uv)
 #endif
 
+#if defined(_RECEIVE_HAIRSHADOWMASK) && defined(_HAIRSHADOWMASK)
+    TEXTURE2D(_HairShadowMask);   SAMPLER(sampler_HairShadowMask);
+#endif
+
 struct SurfaceDataToon
 {
     half3 albedo;
@@ -94,10 +98,12 @@ struct InputDataToon
     half    fogCoord;
     half3   vertexLighting;
     half3   bakedGI;
+    float2  normalizedScreenSpaceUV;
 #ifdef _HAIRSPECULAR
     half3   tangentWS;
     half3   bitangentWS;
 #endif
+    float depth;
 };
 
 half SampleClipMask(float2 uv)

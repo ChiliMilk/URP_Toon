@@ -34,7 +34,7 @@ struct Varyings
 #if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
     float4 shadowCoord              : TEXCOORD7;
 #endif
-
+    float4 positionNDC              : TEXCOORD8;
     float4 positionCS               : SV_POSITION;
     UNITY_VERTEX_INPUT_INSTANCE_ID
     UNITY_VERTEX_OUTPUT_STEREO
@@ -76,6 +76,11 @@ void InitializeInputDataToon(Varyings input, half3 normalTS, out InputDataToon i
     inputData.fogCoord = input.fogFactorAndVertexLight.x;
     inputData.vertexLighting = input.fogFactorAndVertexLight.yzw;
     inputData.bakedGI = SAMPLE_GI(input.lightmapUV, input.vertexSH, inputData.normalWS);
+    inputData.normalizedScreenSpaceUV = input.positionNDC.xy/input.positionNDC.w;
+
+#if defined(_RECEIVE_HAIRSHADOWMASK) && defined(_HAIRSHADOWMASK)
+    inputData.depth = input.positionCS.z/input.positionCS.w;
+#endif
 }
 
 Varyings ToonForwardPassVertex(Attributes input)
@@ -115,7 +120,7 @@ Varyings ToonForwardPassVertex(Attributes input)
 #endif
 
     output.positionCS = vertexInput.positionCS;
-
+    output.positionNDC = vertexInput.positionNDC;
     return output;
 }
 

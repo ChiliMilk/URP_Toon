@@ -39,9 +39,11 @@
         //_Shadow2Map("Shadow2 Map",2D) = "white" {} 
         _Shadow2Step("Shadow1 Step",Range(0.0,1.0)) = 0.3
         _Shadow2Feather("Shadow1 Feather",Range(0.0,1.0)) = 0.0
-         [ToggleOff]_EnableInShadowMap("Enable ShadowMap",Float) = 0.0
+         [ToggleOff] _EnableInShadowMap("Enable ShadowMap",Float) = 0.0
         _InShadowMap("Shadow Map",2D) = "white"{}
         _InShadowMapStrength("ShadowMap Strength",Range(0.0,1.0)) = 1.0
+        [ToggleOff] _CastHairShadowMask("CastHairShadowMask(FrontHair)",Float) = 0.0
+        [ToggleOff] _ReceiveHairShadowMask("ReceiveHairShadowMask",Float) = 0.0
 
         //Specular
 		_Metallic("Metallic", Range(0.0, 1.0)) = 0.0
@@ -74,23 +76,53 @@
         _Specular2Mul ("SpecularSecMul", Range (0.0,1.0) ) = 0.5
 
         //Outline
-        [ToggleOff] _EnableOutline("Enable Outline",Float) = 0.0
+        [ToggleOff] _EnableOutline("Enable Outline",Float) = 1.0
         [ToggleOff] _UseSmoothNormal("UseSmoothNormal",Float) = 0.0
         _OutlineColor("OutlineColor",Color)= (0.0,0.0,0.0,0.0)
-        _OutlineWidth("OutlineWidth",Range(0.0,5.0)) = 1.0
+        _OutlineWidth("OutlineWidth",Range(0.0,5.0)) = 0.5
 
         // Advanced Options
         [ToggleOff] _ReceiveShadows("Receive Shadows", Float) = 1.0
 		[ToggleOff] _SpecularHighlights("Specular Highlights", Float) = 1.0
         [ToggleOff] _EnvironmentReflections("Environment Reflections", Float) = 0.0
         _RenderQueue("Render Queue", Float) = 2000
+        
+        [HideInInspector][NoScaleOffset]unity_Lightmaps("unity_Lightmaps", 2DArray) = "" {}
+        [HideInInspector][NoScaleOffset]unity_LightmapsInd("unity_LightmapsInd", 2DArray) = "" {}
+        [HideInInspector][NoScaleOffset]unity_ShadowMasks("unity_ShadowMasks", 2DArray) = "" {}
 
     }
+    
     SubShader
     {
         // Lightmode matches the ShaderPassName set in UniversalRenderPipeline.cs. SRPDefaultUnlit and passes with
         // no LightMode tag are also rendered by Universal Render Pipeline
         Tags{"RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" "IgnoreProjector" = "True"}
+
+        Pass
+        {
+            Name "HairShadowMask"
+            ZTest Less
+            Tags{"LightMode"="HairShadowMask"}
+            ZWrite Off
+            Cull Back
+ 
+            HLSLPROGRAM
+            #pragma prefer_hlslcc gles
+            #pragma exclude_renderers d3d11_9x
+            #pragma target 2.0
+
+            #pragma multi_compile_instancing
+            #pragma multi_compile_fog
+
+            #pragma vertex Vertex
+            #pragma fragment Fragment
+            
+            #include "../Include/ToonInput.hlsl"
+            #include "../Include/ToonHairShadowMaskPass.hlsl"
+            ENDHLSL
+        }
+    
         Pass
         {
             Name "Outline"
@@ -117,12 +149,13 @@
             #pragma vertex Vertex
             #pragma fragment Fragment
             
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonFunction.hlsl"
             #include "../Include/ToonOutlinePass.hlsl"            
             ENDHLSL
         }
-       Pass
+
+        Pass
         {
             Name "ForwardLit"
             Tags{"LightMode" = "UniversalForward"}
@@ -158,6 +191,7 @@
             #pragma shader_feature _RECEIVE_SHADOWS_OFF
             #pragma shader_feature _HAIRSPECULAR
             #pragma shader_feature _SPECULARSHIFTMAP
+            #pragma shader_feature _RECEIVE_HAIRSHADOWMASK
             
             // Universal Pipeline keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
@@ -166,6 +200,7 @@
             #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
             #pragma multi_compile _ _SHADOWS_SOFT
             #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
+            #pragma multi_compile _ _HAIRSHADOWMASK
 
             // Unity defined keywords
             #pragma multi_compile _ DIRLIGHTMAP_COMBINED
@@ -178,7 +213,7 @@
             #pragma vertex ToonForwardPassVertex
             #pragma fragment ToonForwardPassFragment
 
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonFunction.hlsl"
             #include "../Include/ToonLighting.hlsl"
             #include "../Include/ToonForwardPass.hlsl"
@@ -210,7 +245,7 @@
             #pragma vertex ShadowPassVertex
             #pragma fragment ShadowPassFragment
 
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
             
             ENDHLSL
@@ -241,7 +276,7 @@
             #pragma vertex DepthOnlyVertex
             #pragma fragment DepthOnlyFragment
 
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"   
             ENDHLSL
         }
@@ -270,7 +305,9 @@
 
             #pragma shader_feature _SPECGLOSSMAP
 
-            #include "../Include/ToonProperty.hlsl"
+            #include "../Include/ToonInput.hlsl"
+            #include "../Include/ToonFunction.hlsl"
+            #include "../Include/ToonLighting.hlsl"
             #include "../Include/ToonMetaPass.hlsl"
             
             ENDHLSL

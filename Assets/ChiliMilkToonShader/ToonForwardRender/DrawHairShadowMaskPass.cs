@@ -2,29 +2,35 @@
 
 namespace UnityEngine.Rendering.Universal.Internal
 {
-    /// <summary>
-    /// Draw  objects into the given color and depth target
-    ///
-    /// You can use this pass to render objects that have a material and/or shader
-    /// with the pass names UniversalForward or SRPDefaultUnlit.
-    /// </summary>
-    public class DrawOutlinePass : ScriptableRenderPass
+    public class DrawHairShadowMaskPass : ScriptableRenderPass
     {
         FilteringSettings m_FilteringSettings;
         List<ShaderTagId> m_ShaderTagIdList = new List<ShaderTagId>();
         string m_ProfilerTag;
         ProfilingSampler m_ProfilingSampler;
 
-        public DrawOutlinePass(string profilerTag, RenderPassEvent evt, RenderQueueRange renderQueueRange, LayerMask layerMask)
+        static int maskId = Shader.PropertyToID("_HairShadowMask");
+        static RenderTargetIdentifier mask_idt = new RenderTargetIdentifier(maskId);
+        static string keyword = "_HAIRSHADOWMASK";
+        ShaderTagId maskTag = new ShaderTagId("HairShadowMask");
+
+        public DrawHairShadowMaskPass(string profilerTag, RenderPassEvent evt, RenderQueueRange renderQueueRange, LayerMask layerMask)
         {
             m_ProfilerTag = profilerTag;
             m_ProfilingSampler = new ProfilingSampler(profilerTag);
-            m_ShaderTagIdList.Add(new ShaderTagId("Outline"));
+            m_ShaderTagIdList.Add(maskTag);
             renderPassEvent = evt;
             m_FilteringSettings = new FilteringSettings(renderQueueRange, layerMask);
         }
 
-        /// <inheritdoc/>
+        public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
+        {
+            cmd.GetTemporaryRT(maskId, new RenderTextureDescriptor(Screen.width, Screen.height, RenderTextureFormat.R16));
+            ConfigureTarget(mask_idt);
+            ConfigureClear(ClearFlag.Color, Color.black);
+            CoreUtils.SetKeyword(cmd, keyword, true);
+        }
+
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
         {
             CommandBuffer cmd = CommandBufferPool.Get(m_ProfilerTag);
@@ -43,6 +49,11 @@ namespace UnityEngine.Rendering.Universal.Internal
             }
             context.ExecuteCommandBuffer(cmd);
             CommandBufferPool.Release(cmd);
+        }
+
+        public override void FrameCleanup(CommandBuffer cmd)
+        {
+            cmd.DisableShaderKeyword(keyword);
         }
     }
 }
