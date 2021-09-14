@@ -44,7 +44,7 @@ public class RenderFrontHairShadowMaskFeature : ScriptableRendererFeature
 
         public override void FrameCleanup(CommandBuffer cmd)
         {
-            CoreUtils.SetKeyword(cmd, keyword, false);
+            cmd.DisableShaderKeyword(keyword);
         }
 
     }

@@ -53,7 +53,7 @@ namespace UnityEngine.Rendering.Universal.Internal
 
         public override void FrameCleanup(CommandBuffer cmd)
         {
-            CoreUtils.SetKeyword(cmd, keyword, false);
+            cmd.DisableShaderKeyword(keyword);
         }
     }
 }
