@@ -39,12 +39,5 @@ inline half StepFeatherToon(half Term,half maxTerm,half step,half feather)
     return saturate((Term/maxTerm-step)/feather)*maxTerm;
 }
 
-#ifdef _DIFFUSERAMPMAP
-SamplerState sampler_LinearClamp
-{
-    Filter = MIN_MAG_MIP_LINEAR;
-    AddressU = Clamp; // of Mirror of Clamp of Border
-    AddressV = Clamp; // of Mirror of Clamp of Border
-};
-#endif
+
 #endif

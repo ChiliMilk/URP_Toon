@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: ChiliMilk_Toon
   m_Shader: {fileID: 4800000, guid: 1d6e561d2a2bdae46a0884077d1708ba, type: 3}
-  m_ShaderKeywords: _BLENDRIM _ENVIRONMENTREFLECTIONS_OFF _RIMLIGHT _SPECULAR_SETUP
+  m_ShaderKeywords: _BLENDRIM _ENVIRONMENTREFLECTIONS_OFF _SPECULAR_SETUP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -89,7 +89,7 @@ Material:
     - _EnableInShadowMap: 0
     - _EnableOutline: 1
     - _EnableRampMap: 0
-    - _EnableRim: 1
+    - _EnableRim: 0
     - _EnableStencil: 0
     - _EnvironmentReflections: 0
     - _InShadowMapStrength: 1
@@ -105,9 +105,9 @@ Material:
     - _RimPow: 4
     - _RimStep: 0.3
     - _Shadow1Feather: 0
-    - _Shadow1Step: 0.671
+    - _Shadow1Step: 0.599
     - _Shadow2Feather: 0
-    - _Shadow2Step: 0.5
+    - _Shadow2Step: 0.364
     - _Smoothness: 0.23
     - _Specular2Mul: 0.5
     - _SpecularFeather: 0

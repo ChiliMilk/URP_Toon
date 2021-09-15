@@ -108,7 +108,7 @@ half3 GlossyEnvironmentToon(half3 reflectVector, half perceptualRoughness, half 
 #endif
 }
 
-half3 SpecularBDRFToon(BRDFDataToon brdfData, SurfaceDataToon surfaceData, half3 normalWS, half3 lightDirectionWS, half3 viewDirectionWS, half3 bitangentWS, half radiance)
+half3 SpecularBDRFToon(BRDFDataToon brdfData, SurfaceDataToon surfaceData, half3 normalWS, half3 lightDirectionWS, half3 viewDirectionWS, half3 bitangentWS)
 {
 #ifndef _SPECULARHIGHLIGHTS_OFF
     #ifdef _HAIRSPECULAR
@@ -120,7 +120,7 @@ half3 SpecularBDRFToon(BRDFDataToon brdfData, SurfaceDataToon surfaceData, half3
     specularTerm = specularTerm - HALF_MIN;
     specularTerm = clamp(specularTerm, 0.0, 100.0); // Prevent FP16 overflow on mobiles
 //#endif
-    half3 specularColor = specularTerm * brdfData.specular * radiance;
+    half3 specularColor = specularTerm * brdfData.specular;
     return specularColor;
 #else
     return 0;
@@ -179,7 +179,7 @@ half3 RampRadianceToon(SurfaceDataToon surfaceData, half3 normalWS, half3 lightD
     lightAttenuation = saturate(lightAttenuation*surfaceData.inShadow);
     #endif
     half H_Lambert = 0.5 * dot(normalWS, lightDirectionWS) + 0.5;
-    radiance.xyz =  SAMPLE_TEXTURE2D_LOD(_DiffuseRampMap,sampler_LinearClamp,half2(H_Lambert,_DiffuseRampV),0).xyz * lightAttenuation * HairShadowMask(lightDirectionWS,normalizedScreenSpaceUV,depth,H_Lambert);
+    radiance.xyz =  SAMPLE_TEXTURE2D(_DiffuseRampMap,sampler_DiffuseRampMap,half2(H_Lambert,_DiffuseRampV)).xyz * lightAttenuation * HairShadowMask(lightDirectionWS,normalizedScreenSpaceUV,depth,H_Lambert);
     return radiance;
 }
 #endif
@@ -190,12 +190,12 @@ half3 LightingToon(BRDFDataToon brdfData, SurfaceDataToon surfaceData, Light lig
     half3 color;
 #ifdef _DIFFUSERAMPMAP
     half3 radiance = RampRadianceToon(surfaceData,normalWS, light.direction,lightAttenuation,normalizedScreenSpaceUV,depth);
-    half3 specularColor = SpecularBDRFToon(brdfData, surfaceData, normalWS, light.direction, viewDirectionWS, bitangentWS, radiance.x);
+    half3 specularColor = SpecularBDRFToon(brdfData, surfaceData, normalWS, light.direction, viewDirectionWS, bitangentWS) * radiance;
     half3 diffuseColor = radiance.xyz * brdfData.diffuse;
     color = specularColor + diffuseColor;
 #else
     half2 radiance = RadianceToon(surfaceData,normalWS,light.direction,lightAttenuation,normalizedScreenSpaceUV,depth);
-    half3 specularColor = SpecularBDRFToon(brdfData, surfaceData, normalWS, light.direction, viewDirectionWS, bitangentWS,radiance.x);
+    half3 specularColor = SpecularBDRFToon(brdfData, surfaceData, normalWS, light.direction, viewDirectionWS, bitangentWS) * radiance.x;
     half3 diffuseColor = DoubleShadowToon(surfaceData,brdfData.diffuse,radiance);
     color = specularColor + diffuseColor;
 #endif 
