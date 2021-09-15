@@ -179,7 +179,7 @@ half3 RampRadianceToon(SurfaceDataToon surfaceData, half3 normalWS, half3 lightD
     lightAttenuation = saturate(lightAttenuation*surfaceData.inShadow);
     #endif
     half H_Lambert = 0.5 * dot(normalWS, lightDirectionWS) + 0.5;
-    radiance.xyz =  SAMPLE_TEXTURE2D(_DiffuseRampMap,sampler_DiffuseRampMap,half2(H_Lambert,_DiffuseRampV)).xyz * lightAttenuation * HairShadowMask(lightDirectionWS,normalizedScreenSpaceUV,depth,H_Lambert);
+    radiance.xyz =  SAMPLE_TEXTURE2D(_DiffuseRampMap,sampler_LinearClamp,half2(H_Lambert,_DiffuseRampV)).xyz * lightAttenuation * HairShadowMask(lightDirectionWS,normalizedScreenSpaceUV,depth,H_Lambert);
     return radiance;
 }
 #endif
