@@ -53,7 +53,7 @@ TEXTURE2D(_SpecGlossMap);   SAMPLER(sampler_SpecGlossMap);
 TEXTURE2D(_SpecularShiftMap);   SAMPLER(sampler_SpecularShiftMap);
 #endif
 #ifdef _DIFFUSERAMPMAP
-TEXTURE2D( _DiffuseRampMap);  SAMPLER(sampler_DiffuseRampMap);
+TEXTURE2D( _DiffuseRampMap);  SAMPLER(sampler_LinearClamp);
 #endif
 
 #ifdef _SPECULAR_SETUP
