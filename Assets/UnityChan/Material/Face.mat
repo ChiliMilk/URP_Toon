@@ -174,7 +174,7 @@ Material:
     - _RenderQueue: 2000
     - _RimFeather: 0
     - _RimPow: 4
-    - _RimStep: 0.3
+    - _RimStep: 0.5
     - _Shadow1Feather: 0
     - _Shadow1Step: 0
     - _Shadow2Feather: 0
