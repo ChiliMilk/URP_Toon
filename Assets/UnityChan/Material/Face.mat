@@ -135,7 +135,7 @@ Material:
     - _AlphaClip: 0
     - _Anisotropy: 0
     - _Blend: 0
-    - _BlendRim: 1
+    - _BlendRim: 0
     - _BumpScale: 1
     - _CastHairShadowMask: 0
     - _ClearCoat: 1
@@ -213,7 +213,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 0.3018868, g: 0.3018868, b: 0.3018868, a: 1}
+    - _RimColor: {r: 0, g: 0, b: 0, a: 1}
     - _Shadow1Color: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 0.5}
     - _Shadow2Color: {r: 0.5283019, g: 0.5283019, b: 0.5283019, a: 0}
     - _SpecColor: {r: 0, g: 0, b: 0, a: 1}

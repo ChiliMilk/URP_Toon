@@ -138,7 +138,7 @@ Material:
     - _AlphaClip: 1
     - _Anisotropy: -1
     - _Blend: 0
-    - _BlendRim: 1
+    - _BlendRim: 0
     - _BumpScale: 1
     - _CastHairShadowMask: 0
     - _ClearCoat: 1
@@ -178,7 +178,7 @@ Material:
     - _RenderQueue: 2450
     - _RimFeather: 0
     - _RimPow: 4
-    - _RimStep: 0.155
+    - _RimStep: 0.5
     - _Shadow1Feather: 0.167
     - _Shadow1Step: 0.5
     - _Shadow2Feather: 0.2
@@ -217,7 +217,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 1, g: 0.7993822, b: 0.53301877, a: 1}
+    - _RimColor: {r: 0, g: 0, b: 0, a: 1}
     - _Shadow1Color: {r: 0.5377358, g: 0.5377358, b: 0.5377358, a: 0.5}
     - _Shadow2Color: {r: 0.4, g: 0.4, b: 0.4, a: 0}
     - _SpecColor: {r: 0.25471696, g: 0.17399678, b: 0, a: 1}

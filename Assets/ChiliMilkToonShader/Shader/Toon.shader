@@ -39,7 +39,6 @@
         //_Shadow2Map("Shadow2 Map",2D) = "white" {} 
         _Shadow2Step("Shadow1 Step",Range(0.0,1.0)) = 0.3
         _Shadow2Feather("Shadow1 Feather",Range(0.0,1.0)) = 0.0
-         [ToggleOff] _EnableInShadowMap("Enable ShadowMap",Float) = 0.0
         _InShadowMap("Shadow Map",2D) = "white"{}
         _InShadowMapStrength("ShadowMap Strength",Range(0.0,1.0)) = 1.0
         [ToggleOff] _CastHairShadowMask("CastHairShadowMask(FrontHair)",Float) = 0.0
@@ -60,9 +59,8 @@
         _DiffuseRampV("DiffuseRampV",Range(0.0,1))= 0.0
 
         //Rim
-        [ToggleOff] _EnableRim("EnableRim",Float) = 0.0
-        [ToggleOff] _BlendRim("BlendRim",Float) = 1.0
-        _RimColor("RimColor",Color) = (1.0,1.0,1.0,1.0)
+        _BlendRim("BlendRim",Range(0.0,1.0)) = 0.0
+        _RimColor("RimColor",Color) = (0.0,0.0,0.0,0.0)
         _RimPow("RimPower",Range(0.0,10.0)) = 4
         _RimStep("RimStep",Range(0.0,1.0)) = 0.5
         _RimFeather("RimFeather",Range(0.0,1.0)) = 0
@@ -86,10 +84,6 @@
 		[ToggleOff] _SpecularHighlights("Specular Highlights", Float) = 1.0
         [ToggleOff] _EnvironmentReflections("Environment Reflections", Float) = 0.0
         _RenderQueue("Render Queue", Float) = 2000
-        
-        [HideInInspector][NoScaleOffset]unity_Lightmaps("unity_Lightmaps", 2DArray) = "" {}
-        [HideInInspector][NoScaleOffset]unity_LightmapsInd("unity_LightmapsInd", 2DArray) = "" {}
-        [HideInInspector][NoScaleOffset]unity_ShadowMasks("unity_ShadowMasks", 2DArray) = "" {}
 
     }
     
@@ -177,9 +171,6 @@
             // Material Keywords
             #pragma shader_feature _INVERSECLIPMASK
             #pragma shader_feature _DIFFUSERAMPMAP
-            #pragma shader_feature _RIMLIGHT
-            #pragma shader_feature _BLENDRIM
-            #pragma shader_feature _INSHADOWMAP
             #pragma shader_feature _NORMALMAP
             #pragma shader_feature _ALPHATEST_ON
             #pragma shader_feature _EMISSION
@@ -190,7 +181,6 @@
             #pragma shader_feature _SPECULAR_SETUP
             #pragma shader_feature _RECEIVE_SHADOWS_OFF
             #pragma shader_feature _HAIRSPECULAR
-            #pragma shader_feature _SPECULARSHIFTMAP
             #pragma shader_feature _RECEIVE_HAIRSHADOWMASK
             
             // Universal Pipeline keywords
@@ -237,7 +227,7 @@
             // -------------------------------------
             // Material Keywords
             #pragma shader_feature _ALPHATEST_ON
-
+            #pragma shader_feature _INVERSECLIPMASK
             //--------------------------------------
             // GPU Instancing
             #pragma multi_compile_instancing
@@ -268,6 +258,7 @@
              // -------------------------------------
             // Material Keywords
             #pragma shader_feature _ALPHATEST_ON
+            #pragma shader_feature _INVERSECLIPMASK
 
             //--------------------------------------
             // GPU Instancing
@@ -302,7 +293,7 @@
             #pragma shader_feature _EMISSION
             #pragma shader_feature _METALLICSPECGLOSSMAP
             #pragma shader_feature _ALPHATEST_ON
-
+            #pragma shader_feature _INVERSECLIPMASK
             #pragma shader_feature _SPECGLOSSMAP
 
             #include "../Include/ToonInput.hlsl"

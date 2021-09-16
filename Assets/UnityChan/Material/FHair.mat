@@ -22,8 +22,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: FHair
   m_Shader: {fileID: 4800000, guid: 1d6e561d2a2bdae46a0884077d1708ba, type: 3}
-  m_ShaderKeywords: _BLENDRIM _ENVIRONMENTREFLECTIONS_OFF _HAIRSPECULAR _INSHADOWMAP
-    _NORMALMAP _RIMLIGHT _SPECULARSHIFTMAP _SPECULAR_SETUP _USESMOOTHNORMAL
+  m_ShaderKeywords: _ENVIRONMENTREFLECTIONS_OFF _HAIRSPECULAR _NORMALMAP _SPECULAR_SETUP
+    _USESMOOTHNORMAL
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -134,7 +134,7 @@ Material:
     - _AlphaClip: 0
     - _Anisotropy: -1
     - _Blend: 0
-    - _BlendRim: 1
+    - _BlendRim: 0
     - _BumpScale: 1
     - _CastHairShadowMask: 1
     - _ClearCoat: 1
@@ -174,7 +174,7 @@ Material:
     - _RenderQueue: 2452
     - _RimFeather: 0
     - _RimPow: 4
-    - _RimStep: 0.155
+    - _RimStep: 0.5
     - _Shadow1Feather: 0
     - _Shadow1Step: 0.5
     - _Shadow2Feather: 0.365
@@ -213,7 +213,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 1, g: 0.7993822, b: 0.53301877, a: 1}
+    - _RimColor: {r: 0, g: 0, b: 0, a: 1}
     - _Shadow1Color: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 0.5}
     - _Shadow2Color: {r: 0.5283019, g: 0.5283019, b: 0.5283019, a: 0}
     - _SpecColor: {r: 0.254717, g: 0.1739968, b: 0, a: 1}
