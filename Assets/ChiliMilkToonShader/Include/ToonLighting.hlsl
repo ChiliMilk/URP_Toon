@@ -46,21 +46,15 @@ inline void InitializeBRDFDataToon(SurfaceDataToon surfaceData, out BRDFDataToon
     outBRDFData.roughness2MinusOne = outBRDFData.roughness2 - 1.0h;
 }
 
-#ifdef _RIMLIGHT
 half3 RimLight(BRDFDataToon brdfData, half3 normalWS, half3 viewDirectionWS, half radiance)
 {
     half fresnel = pow((1.0 - saturate(dot(normalWS, viewDirectionWS))),_RimPow);
     fresnel *= radiance;
     half3 rimColor;
-#ifdef _BLENDRIM
-    rimColor = lerp(brdfData.diffuse,_RimColor,fresnel);
-#else
-    rimColor = _RimColor;
-#endif
+    rimColor = lerp(_RimColor,lerp(brdfData.diffuse,_RimColor,fresnel),_BlendRim);
     fresnel = StepFeatherToon(fresnel,1,_RimStep,_RimFeather);
     return fresnel * rimColor;
 }
-#endif
 
 #ifdef _HAIRSPECULAR
 half2 DirectSpecularHairToon(BRDFDataToon brdfData, SurfaceDataToon surfaceData, half3 normalWS, half3 lightDirectionWS, half3 viewDirectionWS, half3 bitangentWS)
@@ -162,9 +156,7 @@ half2 RadianceToon(SurfaceDataToon surfaceData, half3 normalWS, half3 lightDirec
 {
     half2 radiance;
     lightAttenuation = lerp(StepAntiAliasing(lightAttenuation,0.5),lightAttenuation,_Shadow1Feather);
-    #ifdef _INSHADOWMAP
     lightAttenuation = saturate(lightAttenuation*surfaceData.inShadow);
-    #endif
     half H_Lambert = 0.5 * dot(normalWS, lightDirectionWS) + 0.5;
     radiance.x = DiffuseRadianceToon(H_Lambert,_Shadow1Step,_Shadow1Feather) * lightAttenuation * HairShadowMask(lightDirectionWS,normalizedScreenSpaceUV,depth,H_Lambert);
     radiance.y = DiffuseRadianceToon(H_Lambert,_Shadow2Step,_Shadow2Feather);
@@ -175,9 +167,7 @@ half3 RampRadianceToon(SurfaceDataToon surfaceData, half3 normalWS, half3 lightD
 {
     half3 radiance;
     lightAttenuation = StepAntiAliasing(lightAttenuation,0.5);
-    #ifdef _INSHADOWMAP
     lightAttenuation = saturate(lightAttenuation*surfaceData.inShadow);
-    #endif
     half H_Lambert = 0.5 * dot(normalWS, lightDirectionWS) + 0.5;
     radiance.xyz =  SAMPLE_TEXTURE2D(_DiffuseRampMap,sampler_LinearClamp,half2(H_Lambert,_DiffuseRampV)).xyz * lightAttenuation * HairShadowMask(lightDirectionWS,normalizedScreenSpaceUV,depth,H_Lambert);
     return radiance;
@@ -199,9 +189,7 @@ half3 LightingToon(BRDFDataToon brdfData, SurfaceDataToon surfaceData, Light lig
     half3 diffuseColor = DoubleShadowToon(surfaceData,brdfData.diffuse,radiance);
     color = specularColor + diffuseColor;
 #endif 
-#ifdef _RIMLIGHT
     color += RimLight(brdfData,normalWS,viewDirectionWS,radiance.x);
-#endif
     return color * light.color;
 }
 

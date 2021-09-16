@@ -46,7 +46,6 @@ namespace ChiliMilk.Toon.Editor
             public static readonly GUIContent Shadow1Feather = new GUIContent("Shadow1Feather");
             public static readonly GUIContent Shadow2Step = new GUIContent("Shadow2Step");
             public static readonly GUIContent Shadow2Feather = new GUIContent("Shadow2Feather");
-            public static readonly GUIContent EnableInShadowMap = new GUIContent("EnableInShadowMap");
             public static readonly GUIContent InShadowMap = new GUIContent("InShadowMap");
             public static readonly GUIContent ReceiveShadows = new GUIContent("Receive Shadows");
             public static readonly GUIContent CastHairShadowMask = new GUIContent("CastHairShadowMask(Front Hair ShadowMask)");
@@ -71,7 +70,6 @@ namespace ChiliMilk.Toon.Editor
             public static readonly GUIContent OutlineWidth = new GUIContent("OutlineWidth");
 
             //Rim
-            public static readonly GUIContent EnableRim = new GUIContent("EnableRim");
             public static readonly GUIContent BlendRim = new GUIContent("BlendRim");
             public static readonly GUIContent RimColor = new GUIContent("RimColor");
             public static readonly GUIContent RimPow = new GUIContent("RimPow");
@@ -105,7 +103,6 @@ namespace ChiliMilk.Toon.Editor
             //public static readonly string Shadow2Map = "_Shadow2Map";
             public static readonly string Shadow2Step = "_Shadow2Step";
             public static readonly string Shadow2Feather = "_Shadow2Feather";
-            public static readonly string EnableInShadowMap = "_EnableInShadowMap";
             public static readonly string InShadowMap = "_InShadowMap";
             public static readonly string InShadowMapStrength = "_InShadowMapStrength";
             public static readonly string EnableRampMap = "_EnableRampMap";
@@ -146,7 +143,6 @@ namespace ChiliMilk.Toon.Editor
             public static readonly string OutlineWidth = "_OutlineWidth";
             
             //Rim
-            public static readonly string EnableRimLight = "_EnableRim";
             public static readonly string BlendRim = "_BlendRim";
             public static readonly string RimColor = "_RimColor";
             public static readonly string RimPow = "_RimPow";
@@ -225,7 +221,6 @@ namespace ChiliMilk.Toon.Editor
         private MaterialProperty m_EnableRampMapProp;
         private MaterialProperty m_DiffuseRampMapProp;
         private MaterialProperty m_DiffuseRampVProp;
-        private MaterialProperty m_EnableInShadowMapProp;
         private MaterialProperty m_InShadowMapProp;
         private MaterialProperty m_InShadowMapStrengthProp;
         private MaterialProperty m_ReceiveShadowsProp;
@@ -263,7 +258,6 @@ namespace ChiliMilk.Toon.Editor
         private MaterialProperty m_OutlineWidthProp;
         
         //Rim
-        private MaterialProperty m_EnableRimProp;
         private MaterialProperty m_BlendRimProp;
         private MaterialProperty m_RimColorProp;
         private MaterialProperty m_RimPowProp;
@@ -309,7 +303,6 @@ namespace ChiliMilk.Toon.Editor
             m_EnableRampMapProp = FindProperty(MPropertyNames.EnableRampMap, properties, false);
             m_DiffuseRampMapProp = FindProperty(MPropertyNames.DiffuseRampMap, properties, false);
             m_DiffuseRampVProp = FindProperty(MPropertyNames.DiffuseRampV, properties, false);
-            m_EnableInShadowMapProp = FindProperty(MPropertyNames.EnableInShadowMap, properties, false);
             m_InShadowMapProp = FindProperty(MPropertyNames.InShadowMap, properties, false);
             m_InShadowMapStrengthProp = FindProperty(MPropertyNames.InShadowMapStrength, properties, false);
             m_ReceiveShadowsProp = FindProperty(MPropertyNames.ReceiveShadows, properties, false);
@@ -347,7 +340,6 @@ namespace ChiliMilk.Toon.Editor
             m_OutlineWidthProp = FindProperty(MPropertyNames.OutlineWidth, properties, false);
             
             //Rim
-            m_EnableRimProp = FindProperty(MPropertyNames.EnableRimLight, properties, false);
             m_BlendRimProp = FindProperty(MPropertyNames.BlendRim, properties, false);
             m_RimColorProp = FindProperty(MPropertyNames.RimColor, properties, false);
             m_RimPowProp = FindProperty(MPropertyNames.RimPow, properties, false);
@@ -431,9 +423,6 @@ namespace ChiliMilk.Toon.Editor
             //Receive Front Hair Shadow
             SetKeyword(material, "_RECEIVE_HAIRSHADOWMASK", material.GetFloat(MPropertyNames.ReceiveHairShadowMask) == 1.0f);
 
-            //InShadowMap
-            SetKeyword(material, "_INSHADOWMAP", material.GetFloat(MPropertyNames.EnableInShadowMap) == 1.0);
-
             // Highlights
             SetKeyword(material, "_SPECULARHIGHLIGHTS_OFF", material.GetFloat(m_SpecularHighlightsProp.name) == 0.0f);
 
@@ -462,11 +451,6 @@ namespace ChiliMilk.Toon.Editor
 
             // HairSpecular
             SetKeyword(material,"_HAIRSPECULAR", material.GetFloat(MPropertyNames.EnableHairSpecular) == 1.0f);
-            SetKeyword(material,"_SPECULARSHIFTMAP", material.GetTexture(MPropertyNames.SpecularShiftMap) != null);
-
-            //Rim
-            SetKeyword(material,"_RIMLIGHT", material.GetFloat(MPropertyNames.EnableRimLight) == 1.0f);
-            SetKeyword(material,"_BLENDRIM", material.GetFloat(MPropertyNames.BlendRim) == 1.0f);
 
             //Outline
             SetKeyword(material,"_USESMOOTHNORMAL", material.GetFloat(MPropertyNames.UseSmoothNormal) == 1.0);
@@ -718,6 +702,9 @@ namespace ChiliMilk.Toon.Editor
         {
             var material = materialEditor.target as Material;
 
+            //InShadowMap
+            materialEditor.TexturePropertySingleLine(Styles.InShadowMap, m_InShadowMapProp, m_InShadowMapStrengthProp);
+
             //Diffuse
             materialEditor.ShaderProperty(m_EnableRampMapProp, Styles.EnableRampMap);
             if (m_EnableRampMapProp.floatValue == 1.0)
@@ -743,13 +730,6 @@ namespace ChiliMilk.Toon.Editor
                     m_Shadow2StepProp.floatValue = step2;
                     m_Shadow2FeatherProp.floatValue = feather2;
                 }
-            }
-
-            //InShadowMap
-            materialEditor.ShaderProperty(m_EnableInShadowMapProp, Styles.EnableInShadowMap);
-            if (m_EnableInShadowMapProp.floatValue == 1.0)
-            {
-                materialEditor.TexturePropertySingleLine(Styles.InShadowMap, m_InShadowMapProp, m_InShadowMapStrengthProp);
             }
 
             //ReceiveShadows
@@ -857,23 +837,20 @@ namespace ChiliMilk.Toon.Editor
         private void DrawRimProperties(MaterialEditor materialEditor)
         {
             //Rim
-            materialEditor.ShaderProperty(m_EnableRimProp, Styles.EnableRim);
-            if (m_EnableRimProp.floatValue == 1.0)
+            materialEditor.ColorProperty(m_RimColorProp, Styles.RimColor.text);
+            EditorGUI.BeginChangeCheck();
+            EditorGUI.indentLevel += 2;
+            var blendRim = EditorGUILayout.Slider(Styles.BlendRim, m_BlendRimProp.floatValue, 0f, 1f);
+            var rimPow = EditorGUILayout.Slider(Styles.RimPow, m_RimPowProp.floatValue, 0f, 10f);
+            var rimStep = EditorGUILayout.Slider(Styles.RimStep, m_RimStepProp.floatValue, 0f, 1f);
+            var rimFeather = EditorGUILayout.Slider(Styles.RimFeather, m_RimFeatherProp.floatValue, 0f, 1f);
+            EditorGUI.indentLevel -= 2;
+            if (EditorGUI.EndChangeCheck())
             {
-                EditorGUI.BeginChangeCheck();
-                EditorGUI.indentLevel += 2;
-                materialEditor.ShaderProperty(m_BlendRimProp, Styles.BlendRim);
-                materialEditor.ColorProperty(m_RimColorProp, Styles.RimColor.text);
-                var rimPow = EditorGUILayout.Slider(Styles.RimPow, m_RimPowProp.floatValue, 0f, 10f);
-                var rimStep = EditorGUILayout.Slider(Styles.RimStep, m_RimStepProp.floatValue, 0f, 1f);
-                var rimFeather = EditorGUILayout.Slider(Styles.RimFeather, m_RimFeatherProp.floatValue, 0f, 1f);
-                EditorGUI.indentLevel -= 2;
-                if (EditorGUI.EndChangeCheck())
-                {
-                    m_RimPowProp.floatValue = rimPow;
-                    m_RimStepProp.floatValue = rimStep;
-                    m_RimFeatherProp.floatValue = rimFeather;
-                }
+                m_BlendRimProp.floatValue = blendRim;
+                m_RimPowProp.floatValue = rimPow;
+                m_RimStepProp.floatValue = rimStep;
+                m_RimFeatherProp.floatValue = rimFeather;
             }
         }
 

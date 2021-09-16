@@ -39,7 +39,6 @@
         //_Shadow2Map("Shadow2 Map",2D) = "white" {} 
         _Shadow2Step("Shadow1 Step",Range(0.0,1.0)) = 0.3
         _Shadow2Feather("Shadow1 Feather",Range(0.0,1.0)) = 0.0
-         [ToggleOff] _EnableInShadowMap("Enable ShadowMap",Float) = 0.0
         _InShadowMap("Shadow Map",2D) = "white"{}
         _InShadowMapStrength("ShadowMap Strength",Range(0.0,1.0)) = 1.0
         [ToggleOff] _CastHairShadowMask("CastHairShadowMask(FrontHair)",Float) = 0.0
@@ -60,9 +59,8 @@
         _DiffuseRampV("DiffuseRampV",Range(0.0,1))= 0.0
 
         //Rim
-        [ToggleOff] _EnableRim("EnableRim",Float) = 0.0
-        [ToggleOff] _BlendRim("BlendRim",Float) = 1.0
-        _RimColor("RimColor",Color) = (1.0,1.0,1.0,1.0)
+        _BlendRim("BlendRim",Range(0.0,1.0)) = 0.0
+        _RimColor("RimColor",Color) = (0.0,0.0,0.0,0.0)
         _RimPow("RimPower",Range(0.0,10.0)) = 4
         _RimStep("RimStep",Range(0.0,1.0)) = 0.5
         _RimFeather("RimFeather",Range(0.0,1.0)) = 0
@@ -174,9 +172,6 @@
             // Material Keywords
             #pragma shader_feature_local_fragment _INVERSECLIPMASK
             #pragma shader_feature_local_fragment _DIFFUSERAMPMAP
-            #pragma shader_feature_local_fragment _RIMLIGHT
-            #pragma shader_feature_local_fragment _BLENDRIM
-            #pragma shader_feature_local_fragment _INSHADOWMAP
             #pragma shader_feature_local _NORMALMAP
             #pragma shader_feature_local_fragment _ALPHATEST_ON
             #pragma shader_feature_local_fragment _EMISSION
@@ -187,7 +182,6 @@
             #pragma shader_feature_local_fragment _SPECULAR_SETUP
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
             #pragma shader_feature_local _HAIRSPECULAR
-            #pragma shader_feature_local_fragment _SPECULARSHIFTMAP
             #pragma shader_feature_local _RECEIVE_HAIRSHADOWMASK
             
             // Universal Pipeline keywords
@@ -235,6 +229,7 @@
 
             // -------------------------------------
             // Material Keywords
+            #pragma shader_feature_local_fragment _INVERSECLIPMASK
             #pragma shader_feature_local_fragment _ALPHATEST_ON
 
             //--------------------------------------
@@ -266,6 +261,8 @@
 
              // -------------------------------------
             // Material Keywords
+
+            #pragma shader_feature_local_fragment _INVERSECLIPMASK
             #pragma shader_feature_local_fragment _ALPHATEST_ON
 
             //--------------------------------------
@@ -300,6 +297,7 @@
             // Material Keywords
             #pragma shader_feature_local _NORMALMAP
             #pragma shader_feature_local_fragment _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _INVERSECLIPMASK
 
             //--------------------------------------
             // GPU Instancing
@@ -330,7 +328,7 @@
             #pragma shader_feature_local_fragment _EMISSION
             #pragma shader_feature_local_fragment _METALLICSPECGLOSSMAP
             #pragma shader_feature_local_fragment _ALPHATEST_ON
-
+            #pragma shader_feature_local_fragment _INVERSECLIPMASK
             #pragma shader_feature_local_fragment _SPECGLOSSMAP
 
             #include "../Include/ToonInput.hlsl"
@@ -424,9 +422,6 @@
             // Material Keywords
             #pragma shader_feature_local_fragment _INVERSECLIPMASK
             #pragma shader_feature_local_fragment _DIFFUSERAMPMAP
-            #pragma shader_feature_local_fragment _RIMLIGHT
-            #pragma shader_feature_local_fragment _BLENDRIM
-            #pragma shader_feature_local_fragment _INSHADOWMAP
             #pragma shader_feature_local _NORMALMAP
             #pragma shader_feature_local_fragment _ALPHATEST_ON
             #pragma shader_feature_local_fragment _EMISSION
@@ -437,7 +432,6 @@
             #pragma shader_feature_local_fragment _SPECULAR_SETUP
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
             #pragma shader_feature_local _HAIRSPECULAR
-            #pragma shader_feature_local_fragment _SPECULARSHIFTMAP
             #pragma shader_feature_local _RECEIVE_HAIRSHADOWMASK
             
             // Universal Pipeline keywords
@@ -486,6 +480,7 @@
             // -------------------------------------
             // Material Keywords
             #pragma shader_feature_local_fragment _ALPHATEST_ON
+            #pragma shader_feature_local_fragment _INVERSECLIPMASK
 
             //--------------------------------------
             // GPU Instancing
@@ -517,7 +512,7 @@
              // -------------------------------------
             // Material Keywords
             #pragma shader_feature_local_fragment _ALPHATEST_ON
-
+            #pragma shader_feature_local_fragment _INVERSECLIPMASK
             //--------------------------------------
             // GPU Instancing
             #pragma multi_compile_instancing
@@ -550,7 +545,7 @@
             // Material Keywords
             #pragma shader_feature_local _NORMALMAP
             #pragma shader_feature_local_fragment _ALPHATEST_ON
-
+            #pragma shader_feature_local_fragment _INVERSECLIPMASK
             //--------------------------------------
             // GPU Instancing
             #pragma multi_compile_instancing
@@ -580,7 +575,7 @@
             #pragma shader_feature_local_fragment _EMISSION
             #pragma shader_feature_local_fragment _METALLICSPECGLOSSMAP
             #pragma shader_feature_local_fragment _ALPHATEST_ON
-
+            #pragma shader_feature_local_fragment _INVERSECLIPMASK
             #pragma shader_feature_local_fragment _SPECGLOSSMAP
 
             #include "../Include/ToonInput.hlsl"
