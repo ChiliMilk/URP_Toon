@@ -9,7 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Floor
   m_Shader: {fileID: 4800000, guid: 1d6e561d2a2bdae46a0884077d1708ba, type: 3}
-  m_ShaderKeywords: _ENVIRONMENTREFLECTIONS_OFF _SPECULARHIGHLIGHTS_OFF _SPECULAR_SETUP
+  m_ShaderKeywords: _BLENDRIM_OFF _ENVIRONMENTREFLECTIONS_OFF _SPECULARHIGHLIGHTS_OFF
+    _SPECULAR_SETUP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -164,9 +165,9 @@ Material:
     - _ReceiveShadows: 1
     - _ReflectionSteps: 2
     - _RenderQueue: 2000
-    - _RimFeather: 0
+    - _RimFeather: 0.298
     - _RimPow: 4
-    - _RimStep: 0.155
+    - _RimStep: 0.3
     - _Shadow1Feather: 0
     - _Shadow1Step: 0.5
     - _Shadow2Feather: 0
@@ -205,7 +206,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 1, g: 1, b: 1, a: 1}
+    - _RimColor: {r: 0, g: 0, b: 0, a: 1}
     - _Shadow1Color: {r: 0, g: 0, b: 0, a: 0.5}
     - _Shadow2Color: {r: 0.5283019, g: 0.5283019, b: 0.5283019, a: 0}
     - _SpecColor: {r: 0, g: 0, b: 0, a: 1}

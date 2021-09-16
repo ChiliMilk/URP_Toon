@@ -22,8 +22,9 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Face
   m_Shader: {fileID: 4800000, guid: 1d6e561d2a2bdae46a0884077d1708ba, type: 3}
-  m_ShaderKeywords: _BLENDRIM _ENVIRONMENTREFLECTIONS_OFF _NORMALMAP _RECEIVE_HAIRSHADOWMASK
-    _RECEIVE_SHADOWS_OFF _RIMLIGHT _SPECULARHIGHLIGHTS_OFF _SPECULAR_SETUP
+  m_ShaderKeywords: _BLENDRIM _BLENDRIM_OFF _ENVIRONMENTREFLECTIONS_OFF _NORMALMAP
+    _RECEIVE_HAIRSHADOWMASK _RECEIVE_SHADOWS_OFF _RIMLIGHT _SPECULARHIGHLIGHTS_OFF
+    _SPECULAR_SETUP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -136,7 +137,7 @@ Material:
     - _AlphaClip: 0
     - _Anisotropy: 0
     - _Blend: 0
-    - _BlendRim: 1
+    - _BlendRim: 0
     - _BumpScale: 1
     - _CastHairShadowMask: 0
     - _CastShadowForFace: 0
@@ -175,9 +176,9 @@ Material:
     - _ReceiveShadows: 0
     - _ReflectionSteps: 16
     - _RenderQueue: 2000
-    - _RimFeather: 0
+    - _RimFeather: 0.298
     - _RimPow: 4
-    - _RimStep: 0.5
+    - _RimStep: 0.3
     - _Shadow1Feather: 0
     - _Shadow1Step: 0.3
     - _Shadow2Feather: 0
@@ -216,7 +217,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 0.3018868, g: 0.3018868, b: 0.3018868, a: 1}
+    - _RimColor: {r: 0, g: 0, b: 0, a: 1}
     - _Shadow1Color: {r: 0.38679248, g: 0.38679248, b: 0.38679248, a: 0.5}
     - _Shadow2Color: {r: 0.4528302, g: 0.4528302, b: 0.4528302, a: 0}
     - _SpecColor: {r: 0, g: 0, b: 0, a: 1}
