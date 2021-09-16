@@ -186,7 +186,7 @@
             #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
             #pragma shader_feature_local_fragment _SPECULAR_SETUP
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
-            #pragma shader_feature_local_fragment _HAIRSPECULAR
+            #pragma shader_feature_local _HAIRSPECULAR
             #pragma shader_feature_local_fragment _SPECULARSHIFTMAP
             #pragma shader_feature_local _RECEIVE_HAIRSHADOWMASK
             
@@ -436,9 +436,9 @@
             #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
             #pragma shader_feature_local_fragment _SPECULAR_SETUP
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
-            #pragma shader_feature_local_fragment _HAIRSPECULAR
+            #pragma shader_feature_local _HAIRSPECULAR
             #pragma shader_feature_local_fragment _SPECULARSHIFTMAP
-            #pragma shader_feature_local_fragment _RECEIVE_HAIRSHADOWMASK
+            #pragma shader_feature_local _RECEIVE_HAIRSHADOWMASK
             
             // Universal Pipeline keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
