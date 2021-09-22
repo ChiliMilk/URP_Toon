@@ -121,10 +121,10 @@ How ? Use ToonRenderer or RenderFeature ：
 1.Create ToonForwardRenderer Asset.  
 Assets/Create/Rendering/Universal Render Pipeline/ToonForward Renderer
 
-2.Setup Pipeline Asset  
+2.Setup "Graphics Setting" and "Quality Setting" to ToonRenderer Assets.
 ![image-Setup](image/Setup.png)  
 
-#### Use RenderFeature (Use in default urp,dont add in ToonRenderer)
+#### Use RenderFeature (Use in default urp,dont need to add in ToonRenderer )
 
 You can also use RenderFeature in default urp.
 
