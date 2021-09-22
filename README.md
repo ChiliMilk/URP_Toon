@@ -29,15 +29,15 @@ Universal Toon shader based on URP , use PBR lighting（Minimalist CookTorrance 
 - Render Face : Front Back Both (For Forward Pass)
 - Alpha Clipping : ClipMask(裁剪遮罩)，Threshold(阈值)
 - Stencil : 模板测试，用于实现眼睛的遮挡效果，参考UTS(Stencil Test,used to achieve transparent effects for toon eyes,reference from UTS)  
-- Stencil Type : 
-Mask-写入缓冲的物体,渲染队列要比Out优先(Things that want to write to the buffer,Render Queue Less than "Out"):  
+- Stencil Type  (Set Material RenderQueue to Mask < Out).  
+Mask  
 Stencil {  
                 Ref[_StencilChannel]  
                 Comp Always  
                 Pass Replace  
                 Fail Replace  
             }  
-Out-从缓冲读取的物体(Read from the buffer)  
+Out  
 Stencil {  
                 Ref[_StencilChannel]  
                 Comp NotEqual  
@@ -59,7 +59,9 @@ Stencil Channel : 1-255
 - Shadow2Step : 第二层阴影阈值
 - Shadow2Feather : 第二层阴影羽化值
 - EnableInShadowMap : 固定阴影贴图
-- Receive Shadow : 接收阴影（ShadowCoord）
+- Receive Shadow : 接收阴影 (ShadowCoord)
+- CastHairShadowMask (Hair Material) : 投射头发阴影遮罩
+- ReceiveHairShadowMask (Face Material) : 接收头发阴影遮罩
 
 ### Specular
 ![image-Specular](image/Specular.png) 
@@ -76,7 +78,6 @@ Stencil Channel : 1-255
 
 ### Rim
 ![image-Rim](image/Rim.png) 
-- EnbleRim ：启用边缘光
 - BlendRim : 颜色插值
 - RimColor
 - RimPower : 强度
@@ -86,7 +87,7 @@ Stencil Channel : 1-255
 ### Outline
 ![image-Outline](image/Outline.png) 
 - EnableOutline ：启用描边
-- UseSmoothNormal : 使用平滑法线(ModelOutlineImporter:https://github.com/Jason-Ma-233/JasonMaToonRenderPipeline#%E5%B9%B3%E6%BB%91%E6%B3%95%E7%BA%BF%E5%AF%BC%E5%85%A5%E5%B7%A5%E5%85%B7ModelOutlineImporter)
+- UseSmoothNormal : (if use this feature, you need to check "Read/Write Enbale" in the Import Setting of the model, and then rename the model to "XXX_ol":https://github.com/Jason-Ma-233/JasonMaToonRenderPipeline#%E5%B9%B3%E6%BB%91%E6%B3%95%E7%BA%BF%E5%AF%BC%E5%85%A5%E5%B7%A5%E5%85%B7ModelOutlineImporter)
 - OutlineColor
 - OutlineWidth
 
@@ -104,7 +105,7 @@ Objcet1.Pass2-
 Object2.Pass1-  
 Object2.Pass2......  
 ![image-BeforeBatch](image/BeforeBatch.png)    
-This will stop SPRBatch.  
+It will stop SPRBatch.  
 ![image-NotSupportBatch](image/NotSupportBatch.png)   
 We can change the Rendering order like this:  
 Object1.Pass1-  
@@ -113,23 +114,23 @@ Object1.Pass2-
 Object2.Pass2......  
 ![image-AfterBatch](image/AfterBatch.png)   
 
-#### Use CustomRenderer
+How ? Use ToonRenderer or RenderFeature ：
 
-1.Create CustomForwardRenderer Asset.  
+#### Use ToonRenderer 
+
+1.Create ToonForwardRenderer Asset.  
 Assets/Create/Rendering/Universal Render Pipeline/ToonForward Renderer
 
 2.Setup Pipeline Asset  
 ![image-Setup](image/Setup.png)  
 
-#### Use RenderFeature
+#### Use RenderFeature (Use in default urp,dont add in ToonRenderer)
 
-You can also use RenderFeature.
+You can also use RenderFeature in default urp.
 
 Select ForwardRenderData>Add Renderer Feature>Render Outline Feature.
 
 ![image-RenderOutline](image/RenderOutline.png)  
-
-Node : SRP Batch does not support Skin Mesh yet.
 
 ## Reference
 
