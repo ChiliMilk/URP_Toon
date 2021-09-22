@@ -5,7 +5,7 @@
         // Surface Options
         [HideInInspector] _WorkflowMode("WorkflowMode", Float) = 0.0
         [HideInInspector] _Cull("__cull", Float) = 2.0
-		[HideInInspector][ToggleOff]_AlphaClip("__clip", Float) = 0.0
+	    [HideInInspector][ToggleOff]_AlphaClip("__clip", Float) = 0.0
         [ToggleOff] _InverseClipMask("_InverseClipMask",Float) = 0.0
         _ClipMask("ClipMask",2D) = "white"{}
 		_Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5

@@ -90,7 +90,7 @@ Material:
     - _EnableRim: 1
     - _EnableStencil: 0
     - _EnvironmentReflections: 0
-    - _InShadowMapStrength: 1
+    - _InShadowMapStrength: 0
     - _InverseClipMask: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
