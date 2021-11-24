@@ -53,6 +53,7 @@ namespace UnityEngine.Rendering.Universal.Internal
 
         public override void FrameCleanup(CommandBuffer cmd)
         {
+            cmd.ReleaseTemporaryRT(maskId);
             cmd.DisableShaderKeyword(keyword);
         }
     }
