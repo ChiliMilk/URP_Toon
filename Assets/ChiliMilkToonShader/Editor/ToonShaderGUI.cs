@@ -50,6 +50,7 @@ namespace ChiliMilk.Toon.Editor
             public static readonly GUIContent ReceiveShadows = new GUIContent("Receive Shadows");
             public static readonly GUIContent CastHairShadowMask = new GUIContent("CastHairShadowMask(Front Hair ShadowMask)");
             public static readonly GUIContent ReceiveHairShadowMask = new GUIContent("ReceiveHairShadowMask(Front Hair ShadowMask)");
+            public static readonly GUIContent SSAOStrength = new GUIContent("SSAO");
 
             //Specular
             public static readonly GUIContent SpecularStep = new GUIContent("SpecularStep");
@@ -111,6 +112,7 @@ namespace ChiliMilk.Toon.Editor
             public static readonly string ReceiveShadows = "_ReceiveShadows";
             public static readonly string CastHairShadowMask = "_CastHairShadowMask";
             public static readonly string ReceiveHairShadowMask = "_ReceiveHairShadowMask";
+            public static readonly string SSAOStrength = "_SSAOStrength";
 
             //Specular
             public static readonly string SpecularHighlights = "_SpecularHighlights";
@@ -226,6 +228,7 @@ namespace ChiliMilk.Toon.Editor
         private MaterialProperty m_ReceiveShadowsProp;
         private MaterialProperty m_CastHairShadowMaskProp;
         private MaterialProperty m_ReceiveHairShadowMaskProp;
+        private MaterialProperty m_SSAOStrengthProp;
 
         //Base
         private MaterialProperty m_BumpMapProp;
@@ -308,6 +311,7 @@ namespace ChiliMilk.Toon.Editor
             m_ReceiveShadowsProp = FindProperty(MPropertyNames.ReceiveShadows, properties, false);
             m_CastHairShadowMaskProp = FindProperty(MPropertyNames.CastHairShadowMask, properties, false);
             m_ReceiveHairShadowMaskProp = FindProperty(MPropertyNames.ReceiveHairShadowMask, properties, false);
+            m_SSAOStrengthProp = FindProperty(MPropertyNames.SSAOStrength, properties, false);
 
             //Specular
             m_MetallicProp = FindProperty(MPropertyNames.Metallic, properties);
@@ -701,6 +705,14 @@ namespace ChiliMilk.Toon.Editor
         private void DrawShadowProperties(MaterialEditor materialEditor)
         {
             var material = materialEditor.target as Material;
+
+            //SSAO
+            EditorGUI.BeginChangeCheck();
+            var ssao = EditorGUILayout.Slider(Styles.SSAOStrength, m_SSAOStrengthProp.floatValue, 0f, 1f);
+            if (EditorGUI.EndChangeCheck())
+            {
+                m_SSAOStrengthProp.floatValue = ssao;
+            }
 
             //InShadowMap
             materialEditor.TexturePropertySingleLine(Styles.InShadowMap, m_InShadowMapProp, m_InShadowMapStrengthProp);

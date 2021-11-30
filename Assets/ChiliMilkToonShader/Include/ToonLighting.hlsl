@@ -212,12 +212,11 @@ half4 FragmentLitToon(InputDataToon inputData, SurfaceDataToon surfaceData)
     Light mainLight = GetMainLight(inputData.shadowCoord,inputData.positionWS,shadowMask);
 #if defined(_SCREEN_SPACE_OCCLUSION)
     AmbientOcclusionFactor aoFactor = GetScreenSpaceAmbientOcclusion(inputData.normalizedScreenSpaceUV);
-    mainLight.color *= aoFactor.directAmbientOcclusion;
-    inputData.bakedGI *= aoFactor.indirectAmbientOcclusion;
+    inputData.bakedGI *= DiffuseRadianceToon(aoFactor.indirectAmbientOcclusion,_Shadow1Step,_Shadow1Feather) * _SSAOStrength;
 #endif
     MixRealtimeAndBakedGI(mainLight, inputData.normalWS, inputData.bakedGI);
     half3 color = GlobalIlluminationToon(brdfData, inputData.bakedGI, surfaceData.occlusion, inputData.normalWS, inputData.viewDirectionWS);
-    color += LightingToon(brdfData, surfaceData,mainLight, inputData.normalWS, inputData.viewDirectionWS, inputData.normalizedScreenSpaceUV, inputData.depth, bitangentWS);
+    color += LightingToon(brdfData, surfaceData, mainLight, inputData.normalWS, inputData.viewDirectionWS, inputData.normalizedScreenSpaceUV, inputData.depth, bitangentWS);
 
 #ifdef _ADDITIONAL_LIGHTS
     uint pixelLightCount = GetAdditionalLightsCount();

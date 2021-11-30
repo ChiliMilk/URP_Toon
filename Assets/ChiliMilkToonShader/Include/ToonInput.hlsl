@@ -21,6 +21,7 @@ half _Shadow2Feather;
 half _DiffuseRampV;
 half3 _Shadow2Color;
 half _InShadowMapStrength;
+half _SSAOStrength;
 
 half4 _EmissionColor;
 half _OcclusionStrength;

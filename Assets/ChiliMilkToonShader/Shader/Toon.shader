@@ -41,6 +41,7 @@
         _Shadow2Feather("Shadow1 Feather",Range(0.0,1.0)) = 0.0
         _InShadowMap("Shadow Map",2D) = "white"{}
         _InShadowMapStrength("ShadowMap Strength",Range(0.0,1.0)) = 1.0
+        _SSAOStrength("SSAOStrength",Range(0.0,1.0)) = 1.0
         [ToggleOff] _CastHairShadowMask("CastHairShadowMask(FrontHair)",Float) = 0.0
         [ToggleOff] _ReceiveHairShadowMask("ReceiveHairShadowMask",Float) = 0.0
 
