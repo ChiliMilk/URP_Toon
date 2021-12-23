@@ -33,7 +33,7 @@ namespace ChiliMilk.Toon.Editor
             public static readonly GUIContent RenderQueue = new GUIContent("RenderQueue");
             public static readonly GUIContent EnableStencil = new GUIContent("Stencil");
             public static readonly GUIContent StencilType = new GUIContent("Stencil Type");
-            public static readonly GUIContent StencilChannel = new GUIContent("Stencil Channel");
+            public static readonly GUIContent StencilRef = new GUIContent("Stencil Ref");
             public static readonly GUIContent Color = new GUIContent("Color");
             public static readonly GUIContent Normal = new GUIContent("Normal");
             public static readonly GUIContent Occlusion = new GUIContent("Occlusion");
@@ -89,7 +89,7 @@ namespace ChiliMilk.Toon.Editor
             public static readonly string Cutoff = "_Cutoff";
             public static readonly string EnableStencil = "_EnableStencil";
             public static readonly string StencilType = "_StencilType";
-            public static readonly string StencilChannel = "_StencilChannel";
+            public static readonly string StencilRef = "_StencilRef";
             public static readonly string EnvironmentReflections = "_EnvironmentReflections";
             public static readonly string RenderQueue = "_RenderQueue";
             
@@ -207,7 +207,7 @@ namespace ChiliMilk.Toon.Editor
         private MaterialProperty m_RenderQueueProp;
         private MaterialProperty m_EnableStencilProp;
         private MaterialProperty m_StencilTypeProp;
-        private MaterialProperty m_StencilChannelProp;
+        private MaterialProperty m_StencilRefProp;
         
         //Diffuse
         private MaterialProperty m_BaseMapProp;
@@ -290,7 +290,7 @@ namespace ChiliMilk.Toon.Editor
             m_RenderQueueProp = FindProperty(MPropertyNames.RenderQueue, properties, false);
             m_EnableStencilProp = FindProperty(MPropertyNames.EnableStencil, properties, false);
             m_StencilTypeProp = FindProperty(MPropertyNames.StencilType, properties, false);
-            m_StencilChannelProp = FindProperty(MPropertyNames.StencilChannel, properties, false);
+            m_StencilRefProp = FindProperty(MPropertyNames.StencilRef, properties, false);
             
             //Diffuse
             m_BaseMapProp = FindProperty(MPropertyNames.BaseMap, properties, false);
@@ -638,7 +638,7 @@ namespace ChiliMilk.Toon.Editor
             }
 
             //Stencil
-            if (material.HasProperty(MPropertyNames.EnableStencil) && material.HasProperty(MPropertyNames.StencilChannel))
+            if (material.HasProperty(MPropertyNames.EnableStencil) && material.HasProperty(MPropertyNames.StencilRef))
             {
                 EditorGUI.BeginChangeCheck();
                 var enableStencil = EditorGUILayout.Toggle(Styles.EnableStencil, m_EnableStencilProp.floatValue == 1);
@@ -666,7 +666,7 @@ namespace ChiliMilk.Toon.Editor
                             material.SetInt("_StencilOp", (int)UnityEngine.Rendering.StencilOp.Keep);
                         }
                     }
-                    materialEditor.ShaderProperty(m_StencilChannelProp, Styles.StencilChannel);
+                    materialEditor.ShaderProperty(m_StencilRefProp, Styles.StencilRef);
                     EditorGUI.showMixedValue = false;
                 }
                 else
