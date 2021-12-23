@@ -16,7 +16,7 @@
         //Stencil
         [HideInInspector]_StencilType("StencilType",Float) = 0
         [ToggleOff]_EnableStencil("EnableStencil",Float) = 0 
-        _StencilChannel ("Stencil Channel", int) =1
+        _StencilRef ("Stencil Ref", int) = 1
         [HideInInspector]_StencilComp("Stencil Comp",int) = 0
         [HideInInspector]_StencilOp ("Stencil Op",int) = 0
 
@@ -126,7 +126,7 @@
             Cull Front
             Stencil
             {
-                Ref [_StencilChannel]
+                Ref [_StencilRef]
                 Comp [_StencilComp]
                 Pass [_StencilOp]
                 Fail [_StencilOp]
@@ -158,7 +158,7 @@
             Cull[_Cull]
             Stencil
             {
-                Ref[_StencilChannel]
+                Ref[_StencilRef]
                 Comp[_StencilComp]
                 Pass [_StencilOp]
                 Fail [_StencilOp]    

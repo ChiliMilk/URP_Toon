@@ -32,14 +32,14 @@ Universal Toon shader based on URP , use PBR lighting（Minimalist CookTorrance 
 - Stencil Type  (Set Material RenderQueue to Mask < Out).  
 Mask  
 Stencil {  
-                Ref[_StencilChannel]  
+                Ref[_StencilRef]  
                 Comp Always  
                 Pass Replace  
                 Fail Replace  
             }  
 Out  
 Stencil {  
-                Ref[_StencilChannel]  
+                Ref[_StencilRef]  
                 Comp NotEqual  
                 Pass Keep  
                 Fail Keep  
