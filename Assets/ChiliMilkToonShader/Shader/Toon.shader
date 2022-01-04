@@ -44,6 +44,7 @@
         _SSAOStrength("SSAOStrength",Range(0.0,1.0)) = 1.0
         [ToggleOff] _CastHairShadowMask("CastHairShadowMask(FrontHair)",Float) = 0.0
         [ToggleOff] _ReceiveHairShadowMask("ReceiveHairShadowMask",Float) = 0.0
+        _ReceiveHairShadowOffset("ReceiveHairShadowOffset",Range(0.0, 5.0)) = 1
 
         //Specular
 		_Metallic("Metallic", Range(0.0, 1.0)) = 0.0
@@ -183,7 +184,7 @@
             #pragma shader_feature_local_fragment _SPECULAR_SETUP
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
             #pragma shader_feature_local _HAIRSPECULAR
-            #pragma shader_feature_local _RECEIVE_HAIRSHADOWMASK
+            #pragma shader_feature_local_fragment _RECEIVE_HAIRSHADOWMASK
             
             // Universal Pipeline keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
@@ -433,7 +434,7 @@
             #pragma shader_feature_local_fragment _SPECULAR_SETUP
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
             #pragma shader_feature_local _HAIRSPECULAR
-            #pragma shader_feature_local _RECEIVE_HAIRSHADOWMASK
+            #pragma shader_feature_local_fragment _RECEIVE_HAIRSHADOWMASK
             
             // Universal Pipeline keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS

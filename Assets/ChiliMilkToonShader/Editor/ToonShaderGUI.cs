@@ -50,6 +50,7 @@ namespace ChiliMilk.Toon.Editor
             public static readonly GUIContent ReceiveShadows = new GUIContent("Receive Shadows");
             public static readonly GUIContent CastHairShadowMask = new GUIContent("CastHairShadowMask(Front Hair ShadowMask)");
             public static readonly GUIContent ReceiveHairShadowMask = new GUIContent("ReceiveHairShadowMask(Front Hair ShadowMask)");
+            public static readonly GUIContent ReceiveHairShadowOffset = new GUIContent("ReceiveHairShadowOffset(Screen Space UV Offset)");
             public static readonly GUIContent SSAOStrength = new GUIContent("SSAO");
 
             //Specular
@@ -112,6 +113,7 @@ namespace ChiliMilk.Toon.Editor
             public static readonly string ReceiveShadows = "_ReceiveShadows";
             public static readonly string CastHairShadowMask = "_CastHairShadowMask";
             public static readonly string ReceiveHairShadowMask = "_ReceiveHairShadowMask";
+            public static readonly string ReceiveHairShadowOffset = "_ReceiveHairShadowOffset";
             public static readonly string SSAOStrength = "_SSAOStrength";
 
             //Specular
@@ -228,6 +230,7 @@ namespace ChiliMilk.Toon.Editor
         private MaterialProperty m_ReceiveShadowsProp;
         private MaterialProperty m_CastHairShadowMaskProp;
         private MaterialProperty m_ReceiveHairShadowMaskProp;
+        private MaterialProperty m_ReceiveHairShadowOffsetProp;
         private MaterialProperty m_SSAOStrengthProp;
 
         //Base
@@ -311,6 +314,7 @@ namespace ChiliMilk.Toon.Editor
             m_ReceiveShadowsProp = FindProperty(MPropertyNames.ReceiveShadows, properties, false);
             m_CastHairShadowMaskProp = FindProperty(MPropertyNames.CastHairShadowMask, properties, false);
             m_ReceiveHairShadowMaskProp = FindProperty(MPropertyNames.ReceiveHairShadowMask, properties, false);
+            m_ReceiveHairShadowOffsetProp = FindProperty(MPropertyNames.ReceiveHairShadowOffset, properties, false);
             m_SSAOStrengthProp = FindProperty(MPropertyNames.SSAOStrength, properties, false);
 
             //Specular
@@ -777,6 +781,16 @@ namespace ChiliMilk.Toon.Editor
                 {
                     materialEditor.RegisterPropertyChangeUndo(Styles.ReceiveHairShadowMask.text);
                     m_ReceiveHairShadowMaskProp.floatValue = receiveFhairShadows ? 1.0f : 0.0f;
+                }
+
+                if (receiveFhairShadows)
+                {
+                    EditorGUI.BeginChangeCheck();
+                    var offset = EditorGUILayout.Slider(Styles.ReceiveHairShadowOffset, m_ReceiveHairShadowOffsetProp.floatValue, 0f, 5f);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        m_ReceiveHairShadowOffsetProp.floatValue = offset;
+                    }
                 }
             }
         }

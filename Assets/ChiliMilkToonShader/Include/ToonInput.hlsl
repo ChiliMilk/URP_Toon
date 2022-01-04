@@ -18,10 +18,11 @@ half _Shadow1Step;
 half _Shadow1Feather;
 half _Shadow2Step;
 half _Shadow2Feather;
-half _DiffuseRampV;
 half3 _Shadow2Color;
+half _DiffuseRampV;
 half _InShadowMapStrength;
 half _SSAOStrength;
+half _ReceiveHairShadowOffset;
 
 half4 _EmissionColor;
 half _OcclusionStrength;

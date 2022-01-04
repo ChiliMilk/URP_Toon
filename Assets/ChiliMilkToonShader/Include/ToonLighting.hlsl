@@ -136,7 +136,7 @@ half HairShadowMask(half3 lightDirectionWS, float2 normalizedScreenSpaceUV, floa
 {
 #if defined(_RECEIVE_HAIRSHADOWMASK) && defined(_HAIRSHADOWMASK)
     half3 lightDirectionVS = TransformWorldToViewDir(lightDirectionWS,true);
-    float2 samplerUV = normalizedScreenSpaceUV + lightDirectionVS.xy * min(depth,0.01);
+    float2 samplerUV = normalizedScreenSpaceUV + lightDirectionVS.xy * min(depth,0.01) * _ReceiveHairShadowOffset;
     float hairDepth = SAMPLE_TEXTURE2D(_HairShadowMask,sampler_HairShadowMask,samplerUV);
     half hairAtten = step(hairDepth,depth);
     hairAtten = lerp(1,hairAtten,H_Lambert);
