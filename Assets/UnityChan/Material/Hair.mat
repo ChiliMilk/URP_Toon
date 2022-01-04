@@ -75,7 +75,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _SpecularShiftMap:
         m_Texture: {fileID: 2800000, guid: 305990ec6368fdf4c87f05c63bc675c4, type: 3}
-        m_Scale: {x: 50, y: 50}
+        m_Scale: {x: 50, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _AlphaClip: 1
