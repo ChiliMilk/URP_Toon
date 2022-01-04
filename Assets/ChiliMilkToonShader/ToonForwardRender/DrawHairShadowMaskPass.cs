@@ -25,7 +25,7 @@ namespace UnityEngine.Rendering.Universal.Internal
 
         public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
         {
-            cmd.GetTemporaryRT(maskId, new RenderTextureDescriptor(Screen.width, Screen.height, RenderTextureFormat.R8));
+            cmd.GetTemporaryRT(maskId, new RenderTextureDescriptor(Screen.width, Screen.height, RenderTextureFormat.R16));
             ConfigureTarget(mask_idt);
             ConfigureClear(ClearFlag.Color, Color.black);
             CoreUtils.SetKeyword(cmd, keyword, true);
