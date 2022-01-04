@@ -43,6 +43,8 @@
         _InShadowMapStrength("ShadowMap Strength",Range(0.0,1.0)) = 1.0
         [ToggleOff] _CastHairShadowMask("CastHairShadowMask(FrontHair)",Float) = 0.0
         [ToggleOff] _ReceiveHairShadowMask("ReceiveHairShadowMask",Float) = 0.0
+        _ReceiveHairShadowOffset("_ReceiveHairShadowOffset",Float) = 1.0
+
 
         //Specular
 		_Metallic("Metallic", Range(0.0, 1.0)) = 0.0
