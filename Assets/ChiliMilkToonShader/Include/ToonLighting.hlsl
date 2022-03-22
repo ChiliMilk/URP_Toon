@@ -145,6 +145,27 @@ half HairShadowMask(half3 lightDirectionWS, float2 normalizedScreenSpaceUV, floa
     return 1;
 }
 
+#ifdef _SDFSHADOWMAP
+half SDFShadowRadiance(float2 uv, half2 LdotFL, half inShadow, half3 lightDirectionWS, half lightAttenuation, float2 normalizedScreenSpaceUV, float depth)
+{
+    uv.x *= step(0,LdotFL.y) * 2 - 1;
+    float mask = SAMPLE_TEXTURE2D(_SDFShadowMap,sampler_SDFShadowMap,uv);
+    half radiance = 1 - saturate((1 - mask - LdotFL.x - (_Shadow1Step * 2 - 1))/_Shadow1Feather + 1);
+    radiance *= HairShadowMask(lightDirectionWS,normalizedScreenSpaceUV,depth,radiance);
+    lightAttenuation = lerp(StepAntiAliasing(lightAttenuation,0.5),lightAttenuation,_Shadow1Feather);
+    lightAttenuation = saturate(lightAttenuation * inShadow);
+    radiance *= lightAttenuation;
+
+    return radiance;
+}
+
+half2 LightDotObjectFL()
+{
+    half2 lightDirection = GetMainLight().direction.xz;
+    return half2(dot(normalize(lightDirection), normalize(_ForwardDirWS.xz)),dot(normalize(lightDirection), normalize(_LeftDirWS.xz)));
+}
+
+#else
 half3 DoubleShadowToon(SurfaceDataToon surfaceData, half3 BaseColor, half2 radiance)
 {
     half3 finalColor = lerp(lerp(surfaceData.shadow2,surfaceData.shadow1,radiance.y),BaseColor,radiance.x);
@@ -152,44 +173,54 @@ half3 DoubleShadowToon(SurfaceDataToon surfaceData, half3 BaseColor, half2 radia
 }
 
 #ifndef _DIFFUSERAMPMAP
-half2 RadianceToon(SurfaceDataToon surfaceData, half3 normalWS, half3 lightDirectionWS, half lightAttenuation, float2 normalizedScreenSpaceUV, float depth)
+half2 RadianceToon(half inShadow, half3 normalWS, half3 lightDirectionWS, half lightAttenuation, float2 normalizedScreenSpaceUV, float depth)
 {
     half2 radiance;
     lightAttenuation = lerp(StepAntiAliasing(lightAttenuation,0.5),lightAttenuation,_Shadow1Feather);
-    lightAttenuation = saturate(lightAttenuation*surfaceData.inShadow);
+    lightAttenuation = saturate(lightAttenuation * inShadow);
     half H_Lambert = 0.5 * dot(normalWS, lightDirectionWS) + 0.5;
     radiance.x = DiffuseRadianceToon(H_Lambert,_Shadow1Step,_Shadow1Feather) * lightAttenuation * HairShadowMask(lightDirectionWS,normalizedScreenSpaceUV,depth,H_Lambert);
     radiance.y = DiffuseRadianceToon(H_Lambert,_Shadow2Step,_Shadow2Feather);
     return radiance;
 }
 #else
-half3 RampRadianceToon(SurfaceDataToon surfaceData, half3 normalWS, half3 lightDirectionWS, half lightAttenuation, float2 normalizedScreenSpaceUV, float depth)
+half3 RampRadianceToon(half inShadow, half3 normalWS, half3 lightDirectionWS, half lightAttenuation, float2 normalizedScreenSpaceUV, float depth)
 {
     half3 radiance;
     lightAttenuation = StepAntiAliasing(lightAttenuation,0.5);
-    lightAttenuation = saturate(lightAttenuation*surfaceData.inShadow);
+    lightAttenuation = saturate(lightAttenuation * inShadow);
     half H_Lambert = 0.5 * dot(normalWS, lightDirectionWS) + 0.5;
     radiance.xyz =  SAMPLE_TEXTURE2D(_DiffuseRampMap,sampler_LinearClamp,half2(H_Lambert,_DiffuseRampV)).xyz * lightAttenuation * HairShadowMask(lightDirectionWS,normalizedScreenSpaceUV,depth,H_Lambert);
     return radiance;
 }
 #endif
+#endif
 
-half3 LightingToon(BRDFDataToon brdfData, SurfaceDataToon surfaceData, Light light, half3 normalWS, half3 viewDirectionWS, float2 normalizedScreenSpaceUV, float depth, half3 bitangentWS)
+half3 LightingToon(BRDFDataToon brdfData, SurfaceDataToon surfaceData, InputDataToon inputData, Light light)
 {
     half lightAttenuation = light.distanceAttenuation * light.shadowAttenuation;
     half3 color;
+
+#ifdef _SDFSHADOWMAP
+    half radiance = SDFShadowRadiance(inputData.uv,inputData.LdotFL,surfaceData.inShadow,light.direction,lightAttenuation,inputData.normalizedScreenSpaceUV,inputData.depth);
+    half3 specularColor = SpecularBDRFToon(brdfData, surfaceData, inputData.normalWS, light.direction, inputData.viewDirectionWS, inputData.bitangentWS) * radiance;
+    half3 diffuseColor = lerp(surfaceData.shadow1,brdfData.diffuse,radiance);
+    color = diffuseColor + specularColor;
+#else
 #ifdef _DIFFUSERAMPMAP
-    half3 radiance = RampRadianceToon(surfaceData,normalWS, light.direction,lightAttenuation,normalizedScreenSpaceUV,depth);
-    half3 specularColor = SpecularBDRFToon(brdfData, surfaceData, normalWS, light.direction, viewDirectionWS, bitangentWS) * radiance;
+    half3 radiance = RampRadianceToon(surfaceData.inShadow,inputData.normalWS, light.direction,lightAttenuation,inputData.normalizedScreenSpaceUV,inputData.depth);
+    half3 specularColor = SpecularBDRFToon(brdfData, surfaceData, inputData.normalWS, light.direction, inputData.viewDirectionWS, inputData.bitangentWS) * radiance;
     half3 diffuseColor = radiance.xyz * brdfData.diffuse;
     color = specularColor + diffuseColor;
 #else
-    half2 radiance = RadianceToon(surfaceData,normalWS,light.direction,lightAttenuation,normalizedScreenSpaceUV,depth);
-    half3 specularColor = SpecularBDRFToon(brdfData, surfaceData, normalWS, light.direction, viewDirectionWS, bitangentWS) * radiance.x;
+    half2 radiance = RadianceToon(surfaceData.inShadow,inputData.normalWS,light.direction,lightAttenuation,inputData.normalizedScreenSpaceUV,inputData.depth);
+    half3 specularColor = SpecularBDRFToon(brdfData, surfaceData, inputData.normalWS, light.direction, inputData.viewDirectionWS, inputData.bitangentWS) * radiance.x;
     half3 diffuseColor = DoubleShadowToon(surfaceData,brdfData.diffuse,radiance);
     color = specularColor + diffuseColor;
-#endif 
-    color += RimLight(brdfData,normalWS,viewDirectionWS,radiance.x);
+#endif
+#endif
+    color += RimLight(brdfData,inputData.normalWS,inputData.viewDirectionWS,radiance.x);
+
     return color * light.color;
 }
 
@@ -197,10 +228,7 @@ half4 FragmentLitToon(InputDataToon inputData, SurfaceDataToon surfaceData)
 {
     BRDFDataToon brdfData;
     InitializeBRDFDataToon(surfaceData, brdfData);
-    half3 bitangentWS;
-#ifdef _HAIRSPECULAR
-    bitangentWS = inputData.bitangentWS;
-#endif
+
     // To ensure backward compatibility we have to avoid using shadowMask input, as it is not present in older shaders
     #if defined(SHADOWS_SHADOWMASK) && defined(LIGHTMAP_ON)
     half4 shadowMask = inputData.shadowMask;
@@ -216,7 +244,7 @@ half4 FragmentLitToon(InputDataToon inputData, SurfaceDataToon surfaceData)
 #endif
     MixRealtimeAndBakedGI(mainLight, inputData.normalWS, inputData.bakedGI);
     half3 color = GlobalIlluminationToon(brdfData, inputData.bakedGI, surfaceData.occlusion, inputData.normalWS, inputData.viewDirectionWS);
-    color += LightingToon(brdfData, surfaceData, mainLight, inputData.normalWS, inputData.viewDirectionWS, inputData.normalizedScreenSpaceUV, inputData.depth, bitangentWS);
+    color += LightingToon(brdfData, surfaceData, inputData, mainLight);
 
 #ifdef _ADDITIONAL_LIGHTS
     uint pixelLightCount = GetAdditionalLightsCount();
@@ -226,7 +254,7 @@ half4 FragmentLitToon(InputDataToon inputData, SurfaceDataToon surfaceData)
     #if defined(_SCREEN_SPACE_OCCLUSION)
         light.color *= aoFactor.directAmbientOcclusion;
     #endif
-        color += LightingToon(brdfData, surfaceData,light, inputData.normalWS, inputData.viewDirectionWS, inputData.normalizedScreenSpaceUV, inputData.depth, bitangentWS);
+        color += LightingToon(brdfData, surfaceData, inputData, mainLight);
     }
 #endif
 

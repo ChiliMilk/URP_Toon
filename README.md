@@ -4,6 +4,7 @@
 	- [SurfaceOptions](#SurfaceOptions)
 	- [Base](#Base)
 	- [Shadow](#Shadow)
+	- [SDF_FaceShadowMask](#SDF_FaceShadowMask)
 	- [Specular](#Specular)
 	- [Rim](#Rim)
 	- [Outline](#Outline)
@@ -51,19 +52,49 @@ Stencil Channel : 1-255
 ### Shadow
 ![image-Shadow](image/Shadow.png) 
 - UseRampMapShadow : 使用RampMap控制阴影衰减。
+
 - VOffset : RampMap采样的V坐标
+
 - Shadow1Color ：第一层阴影颜色
+
 - Shadow2Color ：第二层阴影颜色
+
 - Shadow1Step : 第一层阴影阈值
+
 - Shadow1Feather : 第一层阴影羽化值
+
 - Shadow2Step : 第二层阴影阈值
+
 - Shadow2Feather : 第二层阴影羽化值
+
 - EnableInShadowMap : 固定阴影贴图
+
 - Receive Shadow : 接收阴影 (ShadowCoord)
+
 - CastHairShadowMask (Hair Material) : 投射头发阴影遮罩
+
 - ReceiveHairShadowMask (Face Material) : 接收头发阴影遮罩
 
+  
+
+### SDF_FaceShadowMask
+
+ ![SDFMask](image\SDFMask.png) 
+
+Used for face shadow.
+
+![SDFFace](image\SDFFace.png) 
+
+Need to add a script to the object, set the forward and left direction(ObjectSpace).
+
+![SDFScript](image\SDFScript.png) 
+
+About how to generate sdf shadow mask.
+
+https://zhuanlan.zhihu.com/p/389668800
+
 ### Specular
+
 ![image-Specular](image/Specular.png) 
 - Specular
 - SpecularStep : 高光阈值

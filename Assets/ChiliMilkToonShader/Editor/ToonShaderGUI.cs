@@ -40,7 +40,7 @@ namespace ChiliMilk.Toon.Editor
             public static readonly GUIContent Emission = new GUIContent("Emission");
 
             //Shadow
-            public static readonly GUIContent EnableRampMap = new GUIContent("UseRampMapShadow");
+            public static readonly GUIContent ShadowType = new GUIContent("ShadowType");
             public static readonly GUIContent DiffuseRampMap = new GUIContent("DiffuseRampMap VOffset");
             public static readonly GUIContent Shadow1Step = new GUIContent("Shadow1Step");
             public static readonly GUIContent Shadow1Feather = new GUIContent("Shadow1Feather");
@@ -52,6 +52,7 @@ namespace ChiliMilk.Toon.Editor
             public static readonly GUIContent ReceiveHairShadowMask = new GUIContent("ReceiveHairShadowMask(Front Hair ShadowMask)");
             public static readonly GUIContent ReceiveHairShadowOffset = new GUIContent("ReceiveHairShadowOffset(Screen Space UV Offset)");
             public static readonly GUIContent SSAOStrength = new GUIContent("SSAO");
+            public static readonly GUIContent SDFShadowMap = new GUIContent("SDFShadowMap(Face)");
 
             //Specular
             public static readonly GUIContent SpecularStep = new GUIContent("SpecularStep");
@@ -107,7 +108,7 @@ namespace ChiliMilk.Toon.Editor
             public static readonly string Shadow2Feather = "_Shadow2Feather";
             public static readonly string InShadowMap = "_InShadowMap";
             public static readonly string InShadowMapStrength = "_InShadowMapStrength";
-            public static readonly string EnableRampMap = "_EnableRampMap";
+            public static readonly string ShadowType = "_ShadowType";
             public static readonly string DiffuseRampMap = "_DiffuseRampMap";
             public static readonly string DiffuseRampV = "_DiffuseRampV";
             public static readonly string ReceiveShadows = "_ReceiveShadows";
@@ -115,6 +116,7 @@ namespace ChiliMilk.Toon.Editor
             public static readonly string ReceiveHairShadowMask = "_ReceiveHairShadowMask";
             public static readonly string ReceiveHairShadowOffset = "_ReceiveHairShadowOffset";
             public static readonly string SSAOStrength = "_SSAOStrength";
+            public static readonly string SDFShadowMap = "_SDFShadowMap";
 
             //Specular
             public static readonly string SpecularHighlights = "_SpecularHighlights";
@@ -182,6 +184,13 @@ namespace ChiliMilk.Toon.Editor
             Out = 1
         }
 
+        public enum ShadowType
+        {
+            DoubleShade = 0,
+            Ramp = 1,
+            FaceSDFShadow = 2
+        }
+
         #endregion
         
         #region Fields
@@ -222,7 +231,7 @@ namespace ChiliMilk.Toon.Editor
         //private MaterialProperty m_Shadow2MapProp;
         private MaterialProperty m_Shadow2StepProp;
         private MaterialProperty m_Shadow2FeatherProp;
-        private MaterialProperty m_EnableRampMapProp;
+        private MaterialProperty m_ShadowTypeProp;
         private MaterialProperty m_DiffuseRampMapProp;
         private MaterialProperty m_DiffuseRampVProp;
         private MaterialProperty m_InShadowMapProp;
@@ -232,6 +241,7 @@ namespace ChiliMilk.Toon.Editor
         private MaterialProperty m_ReceiveHairShadowMaskProp;
         private MaterialProperty m_ReceiveHairShadowOffsetProp;
         private MaterialProperty m_SSAOStrengthProp;
+        private MaterialProperty m_SDFShadowMapProp;
 
         //Base
         private MaterialProperty m_BumpMapProp;
@@ -306,7 +316,7 @@ namespace ChiliMilk.Toon.Editor
             //m_Shadow2MapProp = FindProperty(MPropertyNames.Shadow2Map, properties, false);
             m_Shadow2StepProp = FindProperty(MPropertyNames.Shadow2Step, properties, false);
             m_Shadow2FeatherProp = FindProperty(MPropertyNames.Shadow2Feather, properties, false);
-            m_EnableRampMapProp = FindProperty(MPropertyNames.EnableRampMap, properties, false);
+            m_ShadowTypeProp = FindProperty(MPropertyNames.ShadowType, properties, false);
             m_DiffuseRampMapProp = FindProperty(MPropertyNames.DiffuseRampMap, properties, false);
             m_DiffuseRampVProp = FindProperty(MPropertyNames.DiffuseRampV, properties, false);
             m_InShadowMapProp = FindProperty(MPropertyNames.InShadowMap, properties, false);
@@ -316,6 +326,7 @@ namespace ChiliMilk.Toon.Editor
             m_ReceiveHairShadowMaskProp = FindProperty(MPropertyNames.ReceiveHairShadowMask, properties, false);
             m_ReceiveHairShadowOffsetProp = FindProperty(MPropertyNames.ReceiveHairShadowOffset, properties, false);
             m_SSAOStrengthProp = FindProperty(MPropertyNames.SSAOStrength, properties, false);
+            m_SDFShadowMapProp = FindProperty(MPropertyNames.SDFShadowMap, properties, false);
 
             //Specular
             m_MetallicProp = FindProperty(MPropertyNames.Metallic, properties);
@@ -458,19 +469,23 @@ namespace ChiliMilk.Toon.Editor
             SetKeyword(material,"_EMISSION", hasEmissionMap || emissionColor != Color.black);
 
             // HairSpecular
-            SetKeyword(material,"_HAIRSPECULAR", material.GetFloat(MPropertyNames.EnableHairSpecular) == 1.0f);
+            SetKeyword(material,"_HAIRSPECULAR", material.HasProperty(MPropertyNames.EnableHairSpecular) && material.GetFloat(MPropertyNames.EnableHairSpecular) == 1.0f);
 
             //Outline
             SetKeyword(material,"_USESMOOTHNORMAL", material.GetFloat(MPropertyNames.UseSmoothNormal) == 1.0);
 
             //RampMap
-            SetKeyword(material,"_DIFFUSERAMPMAP", material.GetFloat(MPropertyNames.EnableRampMap)==1.0f);
+            SetKeyword(material,"_DIFFUSERAMPMAP", material.HasProperty(MPropertyNames.ShadowType) && material.GetFloat(MPropertyNames.ShadowType) == 1.0f);
+            SetKeyword(material, "_SDFSHADOWMAP", material.HasProperty(MPropertyNames.ShadowType) && material.GetFloat(MPropertyNames.ShadowType) == 2.0f);
         }
 
         private void SetPass(Material material)
         {
             material.SetShaderPassEnabled("Outline", material.GetFloat(MPropertyNames.EnableOutline) == 1.0f);
-            material.SetShaderPassEnabled("HairShadowMask", material.GetFloat(MPropertyNames.CastHairShadowMask) == 1.0f);
+            if (material.HasProperty(MPropertyNames.CastHairShadowMask))
+            {
+                material.SetShaderPassEnabled("HairShadowMask", material.GetFloat(MPropertyNames.CastHairShadowMask) == 1.0f);
+            }
         }
 
         #endregion
@@ -563,21 +578,6 @@ namespace ChiliMilk.Toon.Editor
 
             // Workflow Mode
             DoPopup(Styles.WorkflowMode, m_WorkflowModeProp, Enum.GetNames(typeof(WorkflowMode)),materialEditor);
-
-            //// Render Face
-            //if (material.HasProperty(MPropertyNames.Cull))
-            //{
-            //    EditorGUI.showMixedValue = m_CullProp.hasMixedValue;
-            //    EditorGUI.BeginChangeCheck();
-            //    int renderFace = EditorGUILayout.Popup(Styles.RenderFace, (int)m_CullProp.floatValue, Enum.GetNames(typeof(RenderFace)));
-            //    if (EditorGUI.EndChangeCheck())
-            //    {
-            //        materialEditor.RegisterPropertyChangeUndo(Styles.RenderFace.text);
-            //        m_CullProp.floatValue = renderFace;
-            //        material.doubleSidedGI = (RenderFace)m_CullProp.floatValue != RenderFace.Front;
-            //    }
-            //    EditorGUI.showMixedValue = false;
-            //}
 
             if (material.HasProperty(MPropertyNames.SurfaceType))
             {
@@ -722,29 +722,58 @@ namespace ChiliMilk.Toon.Editor
             materialEditor.TexturePropertySingleLine(Styles.InShadowMap, m_InShadowMapProp, m_InShadowMapStrengthProp);
 
             //Diffuse
-            materialEditor.ShaderProperty(m_EnableRampMapProp, Styles.EnableRampMap);
-            if (m_EnableRampMapProp.floatValue == 1.0)
+            if (material.HasProperty(MPropertyNames.ShadowType))
             {
-                //Use Ramp
-                materialEditor.TexturePropertySingleLine(Styles.DiffuseRampMap, m_DiffuseRampMapProp, m_DiffuseRampVProp);
-            }
-            else
-            {
-                //materialEditor.TexturePropertySingleLine(Styles.Shadow1Map, m_Shadow1MapProp, m_Shadow1ColorProp);
-                //materialEditor.TexturePropertySingleLine(Styles.Shadow2Map, m_Shadow2MapProp, m_Shadow2ColorProp);
-                materialEditor.ColorProperty(m_Shadow1ColorProp, "Shadow1Color");
-                materialEditor.ColorProperty(m_Shadow2ColorProp, "Shadow2Color");
+                EditorGUI.showMixedValue = m_SurfaceTypeProp.hasMixedValue;
                 EditorGUI.BeginChangeCheck();
-                var step1 = EditorGUILayout.Slider(Styles.Shadow1Step, m_Shadow1StepProp.floatValue, 0f, 1f);
-                var feather1 = EditorGUILayout.Slider(Styles.Shadow1Feather,m_Shadow1FeatherProp.floatValue,0f,1f);
-                var step2 = EditorGUILayout.Slider(Styles.Shadow2Step, m_Shadow2StepProp.floatValue, 0f, 1f);
-                var feather2 = EditorGUILayout.Slider(Styles.Shadow2Feather,m_Shadow2FeatherProp.floatValue,0f,1f);
+                var shadowType = EditorGUILayout.Popup(Styles.ShadowType, (int)m_ShadowTypeProp.floatValue, Enum.GetNames(typeof(ShadowType)));
                 if (EditorGUI.EndChangeCheck())
                 {
-                    m_Shadow1StepProp.floatValue = step1;
-                    m_Shadow1FeatherProp.floatValue = feather1;
-                    m_Shadow2StepProp.floatValue = step2;
-                    m_Shadow2FeatherProp.floatValue = feather2;
+                    materialEditor.RegisterPropertyChangeUndo(Styles.ShadowType.text);
+                    m_ShadowTypeProp.floatValue = shadowType;
+                }
+                EditorGUI.showMixedValue = false;
+
+                if (m_ShadowTypeProp.floatValue == 1.0)
+                {
+                    //Use Ramp
+                    materialEditor.TexturePropertySingleLine(Styles.DiffuseRampMap, m_DiffuseRampMapProp, m_DiffuseRampVProp);
+                }
+                else if(m_ShadowTypeProp.floatValue == 0)
+                {
+                    //materialEditor.TexturePropertySingleLine(Styles.Shadow1Map, m_Shadow1MapProp, m_Shadow1ColorProp);
+                    //materialEditor.TexturePropertySingleLine(Styles.Shadow2Map, m_Shadow2MapProp, m_Shadow2ColorProp);
+                    materialEditor.ColorProperty(m_Shadow1ColorProp, "Shadow1Color");
+                    materialEditor.ColorProperty(m_Shadow2ColorProp, "Shadow2Color");
+                    EditorGUI.BeginChangeCheck();
+                    var step1 = EditorGUILayout.Slider(Styles.Shadow1Step, m_Shadow1StepProp.floatValue, 0f, 1f);
+                    var feather1 = EditorGUILayout.Slider(Styles.Shadow1Feather, m_Shadow1FeatherProp.floatValue, 0f, 1f);
+                    var step2 = EditorGUILayout.Slider(Styles.Shadow2Step, m_Shadow2StepProp.floatValue, 0f, 1f);
+                    var feather2 = EditorGUILayout.Slider(Styles.Shadow2Feather, m_Shadow2FeatherProp.floatValue, 0f, 1f);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        m_Shadow1StepProp.floatValue = step1;
+                        m_Shadow1FeatherProp.floatValue = feather1;
+                        m_Shadow2StepProp.floatValue = step2;
+                        m_Shadow2FeatherProp.floatValue = feather2;
+                    }
+                }
+                else
+                {
+                    //SDF_Face
+                    if (material.HasProperty(MPropertyNames.SDFShadowMap))
+                    {
+                        materialEditor.TexturePropertySingleLine(Styles.SDFShadowMap, m_SDFShadowMapProp);
+                        materialEditor.ColorProperty(m_Shadow1ColorProp, "Shadow1Color");
+                        EditorGUI.BeginChangeCheck();
+                        var step1 = EditorGUILayout.Slider(Styles.Shadow1Step, m_Shadow1StepProp.floatValue, 0f, 1f);
+                        var feather1 = EditorGUILayout.Slider(Styles.Shadow1Feather, m_Shadow1FeatherProp.floatValue, 0f, 1f);
+                        if (EditorGUI.EndChangeCheck())
+                        {
+                            m_Shadow1StepProp.floatValue = step1;
+                            m_Shadow1FeatherProp.floatValue = feather1;
+                        }
+                    }
                 }
             }
 
@@ -833,26 +862,30 @@ namespace ChiliMilk.Toon.Editor
             {
                 m_SmoothnessProp.floatValue = smooth;
             }
-            
+
             // HairSpecular
-            materialEditor.ShaderProperty(m_EnableHairSpecularProp, Styles.EnableHairSpecular);
-            if (m_EnableHairSpecularProp.floatValue == 1.0)
+            if (material.HasProperty(MPropertyNames.EnableHairSpecular))
             {
-                materialEditor.TexturePropertySingleLine(Styles.SpecularShiftMap, m_SpeculatShiftMapProp, m_SpecularShiftIntensityProp);
-                materialEditor.TextureScaleOffsetProperty(m_SpeculatShiftMapProp);
-                EditorGUI.BeginChangeCheck();
-                EditorGUI.indentLevel += 2;
-                var shift1 = EditorGUILayout.Slider(Styles.SpecularShift, m_SpecularShift1Prop.floatValue, -1f, 1f);
-                var shift2 = EditorGUILayout.Slider(Styles.SpecularShiftSec, m_SpecularShift2Prop.floatValue, -1f, 1f);
-                var specular2mul = EditorGUILayout.Slider(Styles.SpecularSecMul, m_Specular2MulProp.floatValue, 0f, 1f);
-                if (EditorGUI.EndChangeCheck())
+                materialEditor.ShaderProperty(m_EnableHairSpecularProp, Styles.EnableHairSpecular);
+                if (m_EnableHairSpecularProp.floatValue == 1.0)
                 {
-                    m_SpecularShift1Prop.floatValue = shift1;
-                    m_SpecularShift2Prop.floatValue = shift2;
-                    m_Specular2MulProp.floatValue = specular2mul;
+                    materialEditor.TexturePropertySingleLine(Styles.SpecularShiftMap, m_SpeculatShiftMapProp, m_SpecularShiftIntensityProp);
+                    materialEditor.TextureScaleOffsetProperty(m_SpeculatShiftMapProp);
+                    EditorGUI.BeginChangeCheck();
+                    EditorGUI.indentLevel += 2;
+                    var shift1 = EditorGUILayout.Slider(Styles.SpecularShift, m_SpecularShift1Prop.floatValue, -1f, 1f);
+                    var shift2 = EditorGUILayout.Slider(Styles.SpecularShiftSec, m_SpecularShift2Prop.floatValue, -1f, 1f);
+                    var specular2mul = EditorGUILayout.Slider(Styles.SpecularSecMul, m_Specular2MulProp.floatValue, 0f, 1f);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        m_SpecularShift1Prop.floatValue = shift1;
+                        m_SpecularShift2Prop.floatValue = shift2;
+                        m_Specular2MulProp.floatValue = specular2mul;
+                    }
+                    EditorGUI.indentLevel -= 2;
                 }
-                EditorGUI.indentLevel -= 2;
             }
+
             // Highlights
             if (material.HasProperty(MPropertyNames.SpecularHighlights))
             {

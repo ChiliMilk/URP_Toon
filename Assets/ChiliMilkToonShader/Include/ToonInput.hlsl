@@ -9,7 +9,6 @@ TEXTURE2D(_BaseMap);            SAMPLER(sampler_BaseMap);
 TEXTURE2D(_BumpMap);            SAMPLER(sampler_BumpMap);
 TEXTURE2D(_EmissionMap);        SAMPLER(sampler_EmissionMap);
 
-
 CBUFFER_START(UnityPerMaterial)
 float4 _BaseMap_ST;
 half4 _BaseColor;
@@ -48,6 +47,9 @@ half _RimFeather;
 
 half _OutlineWidth;
 half4 _OutlineColor;
+
+half3 _ForwardDirWS;
+half3 _LeftDirWS;
 CBUFFER_END
 
 TEXTURE2D(_ClipMask);
@@ -57,7 +59,14 @@ TEXTURE2D(_InShadowMap);
 TEXTURE2D(_OcclusionMap);   SAMPLER(sampler_OcclusionMap);
 TEXTURE2D(_MetallicGlossMap);   SAMPLER(sampler_MetallicGlossMap);
 TEXTURE2D(_SpecGlossMap);   SAMPLER(sampler_SpecGlossMap);
+
+#ifdef _SDFSHADOWMAP
+TEXTURE2D(_SDFShadowMap);   SAMPLER(sampler_SDFShadowMap);
+#endif
+
+#ifdef _HAIRSPECULAR
 TEXTURE2D(_SpecularShiftMap);   SAMPLER(sampler_SpecularShiftMap);
+#endif
 
 #ifdef _DIFFUSERAMPMAP
 TEXTURE2D( _DiffuseRampMap);  SAMPLER(sampler_LinearClamp);
@@ -105,11 +114,15 @@ struct InputDataToon
     half3   bakedGI;
     float2  normalizedScreenSpaceUV;
     half4   shadowMask;
-#ifdef _HAIRSPECULAR
+//#ifdef _HAIRSPECULAR
     half3   tangentWS;
     half3   bitangentWS;
-#endif
+//#endif
     float depth;
+#ifdef _SDFSHADOWMAP
+    half2 LdotFL;
+    float2 uv;
+#endif
 };
 
 half SampleClipMask(float2 uv)
@@ -171,11 +184,13 @@ half SampleInShadow(float2 uv)
     return 1 - inShadow;
 }
 
+#ifdef _HAIRSPECULAR
 half SampleSpecularShift(float2 uv,half shiftAdd)
 {
     half specularShift = SAMPLE_TEXTURE2D(_SpecularShiftMap,sampler_SpecularShiftMap,uv*_SpecularShiftMap_ST.xy+_SpecularShiftMap_ST.zw).r*_SpecularShiftIntensity+shiftAdd;
     return specularShift;
 }
+#endif
 
 half4 SampleMetallicSpecGloss(float2 uv, half albedoAlpha,half smoothness)
 {
@@ -235,7 +250,6 @@ inline void InitializeSurfaceDataToon(float2 uv,out SurfaceDataToon outSurfaceDa
     outSurfaceData.specularShift1 = SampleSpecularShift(uv,_SpecularShift1);
     outSurfaceData.specularShift2 = SampleSpecularShift(uv,_SpecularShift2);
 #endif
-    
 
 }
 #endif

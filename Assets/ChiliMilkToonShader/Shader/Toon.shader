@@ -46,6 +46,11 @@
         [ToggleOff] _ReceiveHairShadowMask("ReceiveHairShadowMask",Float) = 0.0
         _ReceiveHairShadowOffset("ReceiveHairShadowOffset",Range(0.0, 5.0)) = 1
 
+        //SDFShadow
+        _SDFShadowMap("SDFShdaowMap",2D) = "white"{}
+        _ForwardDirWS("ForwardDirWS",vector) = (0,0,0,1)
+        _LeftDirWS("LeftDirWS",vector) = (-1,0,0,0)
+
         //Specular
 		_Metallic("Metallic", Range(0.0, 1.0)) = 0.0
         _MetallicGlossMap("Metallic", 2D) = "white" {}
@@ -56,7 +61,7 @@
 		_Smoothness("Smoothness", Range(0.0, 1.0)) = 0.5
 
         //Ramp
-        [ToggleOff]_EnableRampMap("EnableRampMap",Float) = 0.0
+        [HideInInspector]_ShadowType("ShadowType",Float) = 0.0
         _DiffuseRampMap("DiffuseRampMap",2D) = "white"{}
         _DiffuseRampV("DiffuseRampV",Range(0.0,1))= 0.0
 
@@ -172,6 +177,7 @@
             #pragma target 4.5
 
             // Material Keywords
+            #pragma shader_feature_local _SDFSHADOWMAP
             #pragma shader_feature_local_fragment _INVERSECLIPMASK
             #pragma shader_feature_local_fragment _DIFFUSERAMPMAP
             #pragma shader_feature_local _NORMALMAP
@@ -423,6 +429,7 @@
             #pragma target 2.0
 
             // Material Keywords
+            #pragma shader_feature_local _SDFSHADOWMAP
             #pragma shader_feature_local_fragment _INVERSECLIPMASK
             #pragma shader_feature_local_fragment _DIFFUSERAMPMAP
             #pragma shader_feature_local _NORMALMAP
