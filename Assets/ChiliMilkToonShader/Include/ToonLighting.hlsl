@@ -254,7 +254,7 @@ half4 FragmentLitToon(InputDataToon inputData, SurfaceDataToon surfaceData)
     #if defined(_SCREEN_SPACE_OCCLUSION)
         light.color *= aoFactor.directAmbientOcclusion;
     #endif
-        color += LightingToon(brdfData, surfaceData, inputData, mainLight);
+        color += LightingToon(brdfData, surfaceData, inputData, light);
     }
 #endif
 
