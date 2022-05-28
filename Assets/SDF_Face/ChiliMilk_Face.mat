@@ -2,15 +2,20 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: ChiliMilk_Face
   m_Shader: {fileID: 4800000, guid: 1d6e561d2a2bdae46a0884077d1708ba, type: 3}
-  m_ShaderKeywords: _ENVIRONMENTREFLECTIONS_OFF _RECEIVE_SHADOWS_OFF _SDFSHADOWMAP
-    _SPECULARHIGHLIGHTS_OFF _SPECULAR_SETUP
+  m_ValidKeywords:
+  - _ENVIRONMENTREFLECTIONS_OFF
+  - _RECEIVE_SHADOWS_OFF
+  - _SDFSHADOWMAP
+  - _SPECULARHIGHLIGHTS_OFF
+  - _SPECULAR_SETUP
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -47,6 +52,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MatCapMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -56,7 +65,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SDFShadowMap:
-        m_Texture: {fileID: 2800000, guid: 1114118edc6dd410fa1ecea80b072c4f, type: 3}
+        m_Texture: {fileID: 2800000, guid: bc61faa0d78834b4c81744e81aec03e2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
@@ -79,6 +88,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _AlphaClip: 0
     - _BlendRim: 0
@@ -89,11 +99,13 @@ Material:
     - _DiffuseRampV: 0
     - _DstBlend: 0
     - _EnableHairSpecular: 0
+    - _EnableMatCap: 0
     - _EnableOutline: 0
     - _EnableStencil: 0
     - _EnvironmentReflections: 0
     - _InShadowMapStrength: 1
     - _InverseClipMask: 0
+    - _MatCapUVScale: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _OutlineWidth: 0.5
@@ -106,8 +118,8 @@ Material:
     - _RimStep: 0.5
     - _SDFShadowOffset: 0
     - _SSAOStrength: 0
-    - _Shadow1Feather: 0
-    - _Shadow1Step: 0.55
+    - _Shadow1Feather: 0.005
+    - _Shadow1Step: 0.439
     - _Shadow2Feather: 0
     - _Shadow2Step: 0.3
     - _ShadowType: 2
@@ -115,6 +127,7 @@ Material:
     - _Specular2Mul: 0.5
     - _SpecularFeather: 0
     - _SpecularHighlights: 0
+    - _SpecularShift: 0
     - _SpecularShift1: 0
     - _SpecularShift2: 0
     - _SpecularShiftIntensity: 1
@@ -128,13 +141,14 @@ Material:
     - _UseSmoothNormal: 0
     - _WorkflowMode: 0
     m_Colors:
-    - _BaseColor: {r: 0.6226415, g: 0.5785867, b: 0.5785867, a: 1}
+    - _BaseColor: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _ForwardDirWS: {r: 0, g: -0.00000011920929, b: -1.0000001, a: 0}
     - _LeftDirWS: {r: 1, g: 0, b: 0, a: 0}
+    - _MatCapColor: {r: 0, g: 0, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 0}
     - _RimColor: {r: 0, g: 0, b: 0, a: 0}
-    - _Shadow1Color: {r: 0.4056604, g: 0.36547706, b: 0.36547706, a: 0.5}
+    - _Shadow1Color: {r: 0.4339623, g: 0.4339623, b: 0.4339623, a: 0.5}
     - _Shadow2Color: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []

@@ -32,16 +32,14 @@
         _BaseMap("Albedo", 2D) = "white" {}
 		_BaseColor("Color", Color) = (1.0, 1.0, 1.0, 1.0)
         _Shadow1Color("Shadow1Color", Color) = (0.5, 0.5, 0.5, 0.5)
-        //_Shadow1Map("Shadow1 Map",2D) = "white" {} 
         _Shadow1Step("Shadow1 Step",Range(0.0,1.0)) = 0.5
         _Shadow1Feather("Shadow1 Feather",Range(0.0,1.0)) = 0.0
         _Shadow2Color("Shadow2Color", Color) = (0.0, 0.0, 0.0, 0.0)
-        //_Shadow2Map("Shadow2 Map",2D) = "white" {} 
         _Shadow2Step("Shadow1 Step",Range(0.0,1.0)) = 0.3
         _Shadow2Feather("Shadow1 Feather",Range(0.0,1.0)) = 0.0
         _InShadowMap("Shadow Map",2D) = "white"{}
         _InShadowMapStrength("ShadowMap Strength",Range(0.0,1.0)) = 1.0
-        _SSAOStrength("SSAOStrength",Range(0.0,1.0)) = 1.0
+        _SSAOStrength("SSAOStrength",Range(0.0,1.0)) = 0.0
         [ToggleOff] _CastHairShadowMask("CastHairShadowMask(FrontHair)",Float) = 0.0
         [ToggleOff] _ReceiveHairShadowMask("ReceiveHairShadowMask",Float) = 0.0
         _ReceiveHairShadowOffset("ReceiveHairShadowOffset",Range(0.0, 5.0)) = 1
@@ -52,7 +50,7 @@
         _LeftDirWS("LeftDirWS",vector) = (-1,0,0,0)
 
         //Specular
-		_Metallic("Metallic", Range(0.0, 1.0)) = 0.0
+        _Metallic("Metallic", Range(0.0, 1.0)) = 0.5
         _MetallicGlossMap("Metallic", 2D) = "white" {}
         _SpecColor("Specular", Color) = (0.2, 0.2, 0.2)
         _SpecGlossMap("Specular", 2D) = "white" {}
@@ -68,23 +66,26 @@
         //Rim
         _BlendRim("BlendRim",Range(0.0,1.0)) = 0.0
         _RimColor("RimColor",Color) = (0.0,0.0,0.0,0.0)
-        _RimPow("RimPower",Range(0.0,10.0)) = 4
         _RimStep("RimStep",Range(0.0,1.0)) = 0.5
-        _RimFeather("RimFeather",Range(0.0,1.0)) = 0
+        _RimFeather("RimFeather",Range(0.0,1.0)) = 0.5
 
         // HairSpecular
         [ToggleOff] _EnableHairSpecular("HairSpecular", Float) = 0.0
         _SpecularShiftMap("SpecularShiftMap",2D) = "white"{}
         _SpecularShiftIntensity("SpecularShiftIntensity",Range(0.0,3.0)) = 1.0
-        _SpecularShift1("SpecularShift",Float) = 0.0
-        _SpecularShift2("SpecularShiftSec",Float)= 0.0
-        _Specular2Mul ("SpecularSecMul", Range (0.0,1.0) ) = 0.5
+        _SpecularShift("SpecularShift",Float) = 0.0
 
         //Outline
         [ToggleOff] _EnableOutline("Enable Outline",Float) = 1.0
         [ToggleOff] _UseSmoothNormal("UseSmoothNormal",Float) = 0.0
         _OutlineColor("OutlineColor",Color)= (0.0,0.0,0.0,0.0)
         _OutlineWidth("OutlineWidth",Range(0.0,5.0)) = 0.5
+
+        //MatCap
+        [ToggleOff]_EnableMatCap("Enable MatCap", Float) = 0.0
+        _MatCapMap("MatCapMap", 2D) = "white" {}
+        _MatCapColor("MatCapColor", Color) = (0.0,0.0,0.0,0.0)
+        _MatCapUVScale("MatCapUVScale", Range(-0.5, 0.5)) = 0
 
         // Advanced Options
         [ToggleOff] _ReceiveShadows("Receive Shadows", Float) = 1.0
@@ -151,9 +152,9 @@
 
             #pragma vertex Vertex
             #pragma fragment Fragment
-            
+
+            #include "../Include/ToonFunction.hlsl"    
             #include "../Include/ToonInput.hlsl"
-            #include "../Include/ToonFunction.hlsl"
             #include "../Include/ToonOutlinePass.hlsl"            
             ENDHLSL
         }
@@ -183,14 +184,14 @@
             #pragma shader_feature_local _NORMALMAP
             #pragma shader_feature_local_fragment _ALPHATEST_ON
             #pragma shader_feature_local_fragment _EMISSION
-            #pragma shader_feature_local_fragment _METALLICSPECGLOSSMAP
             #pragma shader_feature_local_fragment _OCCLUSIONMAP
             #pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
             #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
-            #pragma shader_feature_local_fragment _SPECULAR_SETUP
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
             #pragma shader_feature_local _HAIRSPECULAR
             #pragma shader_feature_local_fragment _RECEIVE_HAIRSHADOWMASK
+            #pragma shader_feature_local_fragment _SPECULAR_SETUP
+            #pragma shader_feature_local_fragment _MATCAP
             
             // Universal Pipeline keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
@@ -201,6 +202,8 @@
             #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
             #pragma multi_compile _ LIGHTMAP_SHADOW_MIXING
             #pragma multi_compile _ SHADOWS_SHADOWMASK
+            #pragma multi_compile_fragment _ _LIGHT_LAYERS
+            #pragma multi_compile_fragment _ _LIGHT_COOKIES
 
             #pragma multi_compile_fragment _ _HAIRSHADOWMASK
 
@@ -215,8 +218,8 @@
             #pragma vertex ToonForwardPassVertex
             #pragma fragment ToonForwardPassFragment
 
-            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonFunction.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonLighting.hlsl"
             #include "../Include/ToonForwardPass.hlsl"
             ENDHLSL
@@ -333,15 +336,14 @@
             #pragma vertex ToonVertexMeta
             #pragma fragment ToonFragmentMeta
 
-            #pragma shader_feature_local_fragment _SPECULAR_SETUP
             #pragma shader_feature_local_fragment _EMISSION
-            #pragma shader_feature_local_fragment _METALLICSPECGLOSSMAP
             #pragma shader_feature_local_fragment _ALPHATEST_ON
             #pragma shader_feature_local_fragment _INVERSECLIPMASK
             #pragma shader_feature_local_fragment _SPECGLOSSMAP
+            #pragma shader_feature_local_fragment _SPECULAR_SETUP
 
-            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonFunction.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonLighting.hlsl"
             #include "../Include/ToonMetaPass.hlsl"
             
@@ -404,8 +406,8 @@
             #pragma vertex Vertex
             #pragma fragment Fragment
             
-            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonFunction.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonOutlinePass.hlsl"            
             ENDHLSL
         }
@@ -435,14 +437,14 @@
             #pragma shader_feature_local _NORMALMAP
             #pragma shader_feature_local_fragment _ALPHATEST_ON
             #pragma shader_feature_local_fragment _EMISSION
-            #pragma shader_feature_local_fragment _METALLICSPECGLOSSMAP
             #pragma shader_feature_local_fragment _OCCLUSIONMAP
             #pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
             #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
-            #pragma shader_feature_local_fragment _SPECULAR_SETUP
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
             #pragma shader_feature_local _HAIRSPECULAR
             #pragma shader_feature_local_fragment _RECEIVE_HAIRSHADOWMASK
+            #pragma shader_feature_local_fragment _SPECULAR_SETUP
+            #pragma shader_feature_local_fragment _MATCAP
             
             // Universal Pipeline keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
@@ -453,6 +455,8 @@
             #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
             #pragma multi_compile _ LIGHTMAP_SHADOW_MIXING
             #pragma multi_compile _ SHADOWS_SHADOWMASK
+            #pragma multi_compile_fragment _ _LIGHT_LAYERS
+            #pragma multi_compile_fragment _ _LIGHT_COOKIES
 
             #pragma multi_compile_fragment _ _HAIRSHADOWMASK
 
@@ -467,8 +471,8 @@
             #pragma vertex ToonForwardPassVertex
             #pragma fragment ToonForwardPassFragment
 
-            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonFunction.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonLighting.hlsl"
             #include "../Include/ToonForwardPass.hlsl"
             ENDHLSL
@@ -582,15 +586,14 @@
             #pragma vertex ToonVertexMeta
             #pragma fragment ToonFragmentMeta
 
-            #pragma shader_feature_local_fragment _SPECULAR_SETUP
             #pragma shader_feature_local_fragment _EMISSION
-            #pragma shader_feature_local_fragment _METALLICSPECGLOSSMAP
             #pragma shader_feature_local_fragment _ALPHATEST_ON
             #pragma shader_feature_local_fragment _INVERSECLIPMASK
             #pragma shader_feature_local_fragment _SPECGLOSSMAP
+            #pragma shader_feature_local_fragment _SPECULAR_SETUP
 
-            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonFunction.hlsl"
+            #include "../Include/ToonInput.hlsl"
             #include "../Include/ToonLighting.hlsl"
             #include "../Include/ToonMetaPass.hlsl"            
             ENDHLSL

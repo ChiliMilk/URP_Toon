@@ -23,7 +23,7 @@ struct Varyings
 
 float4 TransformOutlineToHClipScreenSpace(float4 position, float3 normal, float outlineWidth)
 {
-    float4 vertex = TransformObjectToHClip(position.xyz);
+    float4 positionCS = TransformObjectToHClip(position.xyz);
 #ifdef _USESMOOTHNORMAL
     float3 clipNormal = TransformWorldToHClipDir(normal);
 #else
@@ -34,9 +34,9 @@ float4 TransformOutlineToHClipScreenSpace(float4 position, float3 normal, float 
     float4 nearUpperRight = mul(unity_CameraInvProjection, float4(1, 1, UNITY_NEAR_CLIP_VALUE, _ProjectionParams.y));
     float aspect = abs(nearUpperRight.y / nearUpperRight.x);
     projectedNormal.x *= aspect;
-    projectedNormal *= min(vertex.w, 5);
-    vertex.xy += 0.01 * outlineWidth * projectedNormal.xy;
-    return vertex;
+    projectedNormal *= min(positionCS.w, 3);
+    positionCS.xy += 0.01 * outlineWidth * projectedNormal.xy;
+    return positionCS;
 }
 
 Varyings Vertex(Attributes input)

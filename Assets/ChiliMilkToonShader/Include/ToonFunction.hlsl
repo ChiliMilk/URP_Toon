@@ -1,6 +1,8 @@
 ﻿#ifndef TOON_FUNCTION_INCLUDED
 #define TOON_FUNCTION_INCLUDED
  
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
 //https://github.com/Jason-Ma-233/JasonMaToonRenderPipeline
 //Get Smooth Outline NormalWS
 float3 GetSmoothedWorldNormal(float2 uv7, float3x3 t_tbn)
@@ -36,8 +38,7 @@ half DiffuseRadianceToon(half value,half step,half feather)
 //Use to Toon Specular , Rim Light
 inline half StepFeatherToon(half Term,half maxTerm,half step,half feather)
 {
-    return saturate((Term/maxTerm-step)/feather)*maxTerm;
+    return saturate((Term * saturate(rcp(maxTerm)) - step + feather) / feather) * maxTerm;
 }
-
 
 #endif
