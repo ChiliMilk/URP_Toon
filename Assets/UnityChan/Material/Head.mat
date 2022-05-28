@@ -15,20 +15,26 @@ MonoBehaviour:
   version: 1
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Head
   m_Shader: {fileID: 4800000, guid: 1d6e561d2a2bdae46a0884077d1708ba, type: 3}
-  m_ShaderKeywords: _ALPHATEST_ON _ENVIRONMENTREFLECTIONS_OFF _NORMALMAP _SPECULAR_SETUP
-    _USESMOOTHNORMAL
+  m_ValidKeywords:
+  - _ALPHATEST_ON
+  - _ENVIRONMENTREFLECTIONS_OFF
+  - _NORMALMAP
+  - _SPECULAR_SETUP
+  - _USESMOOTHNORMAL
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 2450
+  stringTagMap:
+    RenderType: TransparentCutout
   disabledShaderPasses:
   - HairShadowMask
   m_SavedProperties:
@@ -58,11 +64,19 @@ Material:
         m_Texture: {fileID: 2800000, guid: 867befb73db438442a9ba0e5e6ef7474, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MatCapMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SDFShadowMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -86,6 +100,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _AlphaClip: 1
     - _BlendRim: 0
@@ -96,15 +111,17 @@ Material:
     - _DiffuseRampV: 0
     - _DstBlend: 0
     - _EnableHairSpecular: 0
+    - _EnableMatCap: 0
     - _EnableOutline: 1
     - _EnableRampMap: 0
     - _EnableStencil: 0
     - _EnvironmentReflections: 0
     - _InShadowMapStrength: 1
     - _InverseClipMask: 0
+    - _MatCapUVScale: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
-    - _OutlineWidth: 0.3
+    - _OutlineWidth: 0.4
     - _ReceiveHairShadowMask: 0
     - _ReceiveHairShadowOffset: 1
     - _ReceiveShadows: 1
@@ -117,10 +134,12 @@ Material:
     - _Shadow1Step: 0.5
     - _Shadow2Feather: 0.2
     - _Shadow2Step: 0.3
+    - _ShadowType: 0
     - _Smoothness: 0.62
     - _Specular2Mul: 0.489
     - _SpecularFeather: 0.302
     - _SpecularHighlights: 1
+    - _SpecularShift: 0
     - _SpecularShift1: 0
     - _SpecularShift2: 0
     - _SpecularShiftIntensity: 1
@@ -136,6 +155,9 @@ Material:
     m_Colors:
     - _BaseColor: {r: 0.7924528, g: 0.7924528, b: 0.7924528, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ForwardDirWS: {r: 0, g: 0, b: 0, a: 1}
+    - _LeftDirWS: {r: -1, g: 0, b: 0, a: 0}
+    - _MatCapColor: {r: 0, g: 0, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _RimColor: {r: 0, g: 0, b: 0, a: 1}
     - _Shadow1Color: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 0.5}

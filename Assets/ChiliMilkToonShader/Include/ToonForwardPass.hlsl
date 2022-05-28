@@ -35,9 +35,6 @@ struct Varyings
     float4 shadowCoord              : TEXCOORD7;
 #endif
 
-#ifdef _SDFSHADOWMAP
-    half2 LdotFL                    : TEXCOORD8;
-#endif
     float4 positionCS               : SV_POSITION;
     UNITY_VERTEX_INPUT_INSTANCE_ID
     UNITY_VERTEX_OUTPUT_STEREO
@@ -82,15 +79,6 @@ void InitializeInputDataToon(Varyings input, half3 normalTS, out InputDataToon i
     inputData.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(input.positionCS);
     inputData.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUV);
 
-#if defined(_RECEIVE_HAIRSHADOWMASK) && defined(_HAIRSHADOWMASK)
-    inputData.depth = input.positionCS.z/input.positionCS.w;
-#endif
-
-#ifdef _SDFSHADOWMAP
-    inputData.LdotFL = input.LdotFL;
-    inputData.uv = input.uv;
-#endif
-
 }
 
 Varyings ToonForwardPassVertex(Attributes input)
@@ -128,10 +116,7 @@ Varyings ToonForwardPassVertex(Attributes input)
 #if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
     output.shadowCoord = GetShadowCoord(vertexInput);
 #endif
-
-#ifdef _SDFSHADOWMAP
-    output.LdotFL = LightDotObjectFL();
-#endif
+    
     output.positionCS = vertexInput.positionCS;
 
     return output;
@@ -141,13 +126,17 @@ half4 ToonForwardPassFragment(Varyings input) : SV_Target
 {
     UNITY_SETUP_INSTANCE_ID(input);
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+    
     SurfaceDataToon surfaceData;
     InitializeSurfaceDataToon(input.uv, surfaceData);
 
     InputDataToon inputData;
     InitializeInputDataToon(input, surfaceData.normalTS, inputData);
+    
+    ToonData toonData;
+    InitializeToonData(input.uv, inputData.normalizedScreenSpaceUV, surfaceData.albedo, surfaceData.occlusion, input.positionCS.z / input.positionCS.w, toonData);
 
-    half4 color = FragmentLitToon(inputData, surfaceData);
+    half4 color = FragmentLitToon(inputData, surfaceData, toonData);
     color.rgb = MixFog(color.rgb, inputData.fogCoord);
     return color;
 }
