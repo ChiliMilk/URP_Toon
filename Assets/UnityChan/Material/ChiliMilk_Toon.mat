@@ -11,7 +11,16 @@ Material:
   m_Shader: {fileID: 4800000, guid: 1d6e561d2a2bdae46a0884077d1708ba, type: 3}
   m_ValidKeywords:
   - _ENVIRONMENTREFLECTIONS_OFF
-  m_InvalidKeywords: []
+  - _SPECULAR_SETUP
+  m_InvalidKeywords:
+  - _ALPHACLIP_OFF
+  - _CASTHAIRSHADOWMASK_OFF
+  - _ENABLEHAIRSPECULAR_OFF
+  - _ENABLEMATCAP_OFF
+  - _ENABLESTENCIL_OFF
+  - _INVERSECLIPMASK_OFF
+  - _RECEIVEHAIRSHADOWMASK_OFF
+  - _USESMOOTHNORMAL_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -107,7 +116,6 @@ Material:
     m_Floats:
     - _AlphaClip: 0
     - _Blend: 0
-    - _BlendRim: 0.8
     - _BumpScale: 1
     - _CastHairShadowMask: 0
     - _CastShadowForFace: 0
@@ -144,7 +152,9 @@ Material:
     - _ReceiveShadowMaskForFace: 0
     - _ReceiveShadows: 1
     - _RenderQueue: 2000
+    - _RimBlend: 0.82
     - _RimFeather: 0
+    - _RimFlip: 1
     - _RimPow: 5.68
     - _RimStep: 0.63
     - _SSAOStrength: 1
@@ -172,7 +182,7 @@ Material:
     - _Surface: 0
     - _SurfaceType: 0
     - _UseSmoothNormal: 0
-    - _WorkflowMode: 1
+    - _WorkflowMode: 0
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 0.7075472, g: 0.7075472, b: 0.7075472, a: 1}
@@ -182,7 +192,7 @@ Material:
     - _LeftDirWS: {r: -1, g: 0, b: 0, a: 0}
     - _MatCapColor: {r: 0, g: 0, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 0}
-    - _RimColor: {r: 1, g: 0, b: 0, a: 1}
+    - _RimColor: {r: 1, g: 0.45660377, b: 0.45660377, a: 1}
     - _Shadow1Color: {r: 0.5283019, g: 0.5283019, b: 0.5283019, a: 0.5}
     - _Shadow2Color: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
