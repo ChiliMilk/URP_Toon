@@ -169,13 +169,14 @@ half3 RampRadianceToon(half3 normalWS, half3 lightDirectionWS, half lightAttenua
 #endif
 #endif
 
-half3 RimLight(half3 rimColor, half3 normalWS, half3 viewDirectionWS, half rimStep, half rimFeather, half rimBlend, half radiance)
+float3 RimLight(half3 rimColor, half3 normalWS, half3 viewDirectionWS, half rimStep, half rimFeather, half rimBlend, half rimFlip, half radiance)
 {
     half fresnel = (1.0 - saturate(dot(normalWS, viewDirectionWS)));
     fresnel = DiffuseRadianceToon(fresnel, rimStep, rimFeather);
     half3 color = rimColor * fresnel;
+    radiance = lerp(radiance, 1 - radiance, rimFlip);
     color = lerp(color, color * radiance, rimBlend);
-    
+
     return  color;
 }
 
@@ -193,7 +194,7 @@ half3 MatCapLight(half3 normalWS, half3 viewDirection, half radiance)
 }
 
 
-half3 LightingToon(BRDFDataToon brdfData, SurfaceDataToon surfaceData, InputDataToon inputData, ToonData toonData, Light light)
+half3 LightingToon(BRDFDataToon brdfData, SurfaceDataToon surfaceData, InputDataToon inputData, ToonData toonData, Light light, half isMainLight)
 {
     half lightAttenuation = light.distanceAttenuation * light.shadowAttenuation;
     half3 color = half3(0.0h,0.0h,0.0h);
@@ -216,8 +217,8 @@ half3 LightingToon(BRDFDataToon brdfData, SurfaceDataToon surfaceData, InputData
     color +=  specularColor + diffuseColor;
 #endif
 #endif
-    color += RimLight(toonData.rimColor, inputData.normalWS, inputData.viewDirectionWS, toonData.rimStep, toonData.rimFeather,toonData.rimBlend, radiance.x);
-    color += MatCapLight(inputData.normalWS, inputData.viewDirectionWS, radiance.x);
+    color += isMainLight * RimLight(toonData.rimColor, inputData.normalWS, inputData.viewDirectionWS, toonData.rimStep, toonData.rimFeather, toonData.rimBlend, toonData.rimFlip ,radiance.x);
+    color += isMainLight * MatCapLight(inputData.normalWS, inputData.viewDirectionWS, radiance.x);
     return color * light.color;
 }
 
@@ -241,7 +242,7 @@ half4 FragmentLitToon(InputDataToon inputData, SurfaceDataToon surfaceData, Toon
     half3 color = GlobalIlluminationToon(brdfData, inputData.bakedGI, toonData.ssao, inputData.normalWS, inputData.viewDirectionWS);
     if (IsMatchingLightLayer(mainLight.layerMask, meshRenderingLayers))
     {
-        color += LightingToon(brdfData, surfaceData, inputData, toonData, mainLight);
+        color += LightingToon(brdfData, surfaceData, inputData, toonData, mainLight, 1);
     }
 
 #ifdef _ADDITIONAL_LIGHTS
@@ -251,7 +252,7 @@ half4 FragmentLitToon(InputDataToon inputData, SurfaceDataToon surfaceData, Toon
         Light light = GetAdditionalLight(lightIndex, inputData.positionWS, shadowMask);
         if(IsMatchingLightLayer(light.layerMask, meshRenderingLayers))
         {
-            color += LightingToon(brdfData, surfaceData, inputData, toonData, light);
+            color += LightingToon(brdfData, surfaceData, inputData, toonData, light, 0);
         }
     }
 #endif

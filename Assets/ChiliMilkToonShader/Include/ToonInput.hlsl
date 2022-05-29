@@ -38,8 +38,9 @@ half _SpecularShift;
 half _SpecularShiftIntensity;
 float4 _SpecularShiftMap_ST;
 
-half _BlendRim;
+half _RimBlend;
 half3 _RimColor;
+half _RimFlip;
 half _RimStep;
 half _RimFeather;
 
@@ -137,6 +138,7 @@ struct ToonData
     half specularFeather;
     
     half3 rimColor;
+    half rimFlip;
     half rimStep;
     half rimFeather;
     half rimBlend;
@@ -333,6 +335,7 @@ inline void InitializeToonData(float2 uv, float2 normalizedScreenSpaceUV,float3 
     outToonData.rimColor = _RimColor;
     outToonData.rimStep = _RimStep;
     outToonData.rimFeather = _RimFeather;
-    outToonData.rimBlend = _BlendRim;
+    outToonData.rimBlend = _RimBlend;
+    outToonData.rimFlip = _RimFlip;
 }
 #endif

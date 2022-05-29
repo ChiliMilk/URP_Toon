@@ -64,7 +64,8 @@
         _DiffuseRampV("DiffuseRampV",Range(0.0,1))= 0.0
 
         //Rim
-        _BlendRim("BlendRim",Range(0.0,1.0)) = 0.0
+        _RimBlend("RimBlend",Range(0.0,1.0)) = 0.0
+        [ToggleOff]_RimFlip("RimFlip", Float) = 0.0
         _RimColor("RimColor",Color) = (0.0,0.0,0.0,0.0)
         _RimStep("RimStep",Range(0.0,1.0)) = 0.5
         _RimFeather("RimFeather",Range(0.0,1.0)) = 0.5

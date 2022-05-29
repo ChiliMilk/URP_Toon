@@ -71,7 +71,8 @@ namespace ChiliMilk.Toon.Editor
             public static readonly GUIContent OutlineWidth = new GUIContent("OutlineWidth");
 
             //Rim
-            public static readonly GUIContent BlendRim = new GUIContent("BlendRim");
+            public static readonly GUIContent RimFlip = new GUIContent("RimFlip");
+            public static readonly GUIContent RimBlend = new GUIContent("RimBlend");
             public static readonly GUIContent RimColor = new GUIContent("RimColor");
             public static readonly GUIContent RimPow = new GUIContent("RimPow");
             public static readonly GUIContent RimStep = new GUIContent("RimStep");
@@ -146,9 +147,10 @@ namespace ChiliMilk.Toon.Editor
             public static readonly string UseSmoothNormal = "_UseSmoothNormal";
             public static readonly string OutlineColor = "_OutlineColor";
             public static readonly string OutlineWidth = "_OutlineWidth";
-            
+
             //Rim
-            public static readonly string BlendRim = "_BlendRim";
+            public static readonly string RimFlip = "_RimFlip";
+            public static readonly string RimBlend = "_RimBlend";
             public static readonly string RimColor = "_RimColor";
             public static readonly string RimStep = "_RimStep";
             public static readonly string RimFeather = "_RimFeather";
@@ -274,9 +276,10 @@ namespace ChiliMilk.Toon.Editor
         private MaterialProperty m_UseSmoothNormalProp;
         private MaterialProperty m_OutlineColorProp;
         private MaterialProperty m_OutlineWidthProp;
-        
+
         //Rim
-        private MaterialProperty m_BlendRimProp;
+        private MaterialProperty m_RimFlipProp;
+        private MaterialProperty m_RimBlendProp;
         private MaterialProperty m_RimColorProp;
         private MaterialProperty m_RimStepProp;
         private MaterialProperty m_RimFeatherProp;
@@ -361,9 +364,10 @@ namespace ChiliMilk.Toon.Editor
             m_UseSmoothNormalProp = FindProperty(MPropertyNames.UseSmoothNormal, properties, false);
             m_OutlineColorProp = FindProperty(MPropertyNames.OutlineColor, properties, false);
             m_OutlineWidthProp = FindProperty(MPropertyNames.OutlineWidth, properties, false);
-            
+
             //Rim
-            m_BlendRimProp = FindProperty(MPropertyNames.BlendRim, properties, false);
+            m_RimFlipProp = FindProperty(MPropertyNames.RimFlip, properties, false);
+            m_RimBlendProp = FindProperty(MPropertyNames.RimBlend, properties, false);
             m_RimColorProp = FindProperty(MPropertyNames.RimColor, properties, false);
             m_RimStepProp = FindProperty(MPropertyNames.RimStep, properties, false);
             m_RimFeatherProp = FindProperty(MPropertyNames.RimFeather, properties, false);
@@ -912,15 +916,16 @@ namespace ChiliMilk.Toon.Editor
         {
             //Rim
             materialEditor.ColorProperty(m_RimColorProp, Styles.RimColor.text);
+            materialEditor.ShaderProperty(m_RimFlipProp, Styles.RimFlip);
             EditorGUI.BeginChangeCheck();
             EditorGUI.indentLevel += 2;
-            var blendRim = EditorGUILayout.Slider(Styles.BlendRim, m_BlendRimProp.floatValue, 0f, 1f);
+            var rimBlend = EditorGUILayout.Slider(Styles.RimBlend, m_RimBlendProp.floatValue, 0f, 1f);
             var rimStep = EditorGUILayout.Slider(Styles.RimStep, m_RimStepProp.floatValue, 0f, 1f);
             var rimFeather = EditorGUILayout.Slider(Styles.RimFeather, m_RimFeatherProp.floatValue, 0f, 1f);
             EditorGUI.indentLevel -= 2;
             if (EditorGUI.EndChangeCheck())
             {
-                m_BlendRimProp.floatValue = blendRim;
+                m_RimBlendProp.floatValue = rimBlend;
                 m_RimStepProp.floatValue = rimStep;
                 m_RimFeatherProp.floatValue = rimFeather;
             }
