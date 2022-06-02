@@ -158,7 +158,8 @@ half SampleAmbientOcclusionToon(float2 normalizedScreenSpaceUV, half occlusion)
     half ssao = 1.0;
 #if defined(_SCREEN_SPACE_OCCLUSION)
     ssao = SampleAmbientOcclusion(normalizedScreenSpaceUV);
-    ssao = StepFeatherToon(ssao, _Shadow1Step, _Shadow1Feather) * _SSAOStrength;
+    ssao = StepFeatherToon(ssao, _Shadow1Step, _Shadow1Feather);
+    ssao = lerp(1, ssao, _SSAOStrength);
 #endif
     ssao = min(ssao, occlusion);
     return ssao;
