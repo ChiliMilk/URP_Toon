@@ -11,7 +11,6 @@ struct Attributes
     float4 tangentOS : TANGENT;
     float2 texcoord7 : TEXCOORD7;
 #endif
-    float4 color : COLOR;
     UNITY_VERTEX_INPUT_INSTANCE_ID
 };
 
@@ -53,9 +52,9 @@ Varyings Vertex(Attributes input)
     float3 bitangentDir = normalize(cross(normalDir, tangentDir) * input.tangentOS.w);
     float3x3 t_tbn = float3x3(tangentDir,bitangentDir,normalDir);
     float3 bakeNormal = GetSmoothedWorldNormal(input.texcoord7,t_tbn);
-    output.positionCS = TransformOutlineToHClipScreenSpace(input.positionOS, bakeNormal, _OutlineWidth * input.color.r);
+    output.positionCS = TransformOutlineToHClipScreenSpace(input.positionOS, bakeNormal, _OutlineWidth);
 #else
-    output.positionCS = TransformOutlineToHClipScreenSpace(input.positionOS, input.normalOS, _OutlineWidth * input.color.r);
+    output.positionCS = TransformOutlineToHClipScreenSpace(input.positionOS, input.normalOS, _OutlineWidth);
 #endif
     return output;
 }
