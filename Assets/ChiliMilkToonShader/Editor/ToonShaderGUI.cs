@@ -60,7 +60,7 @@ namespace ChiliMilk.Toon.Editor
             public static readonly GUIContent Specular = new GUIContent("Specular");
             public static readonly GUIContent Metallic = new GUIContent("Metallic");
             public static readonly GUIContent Smoothness = new GUIContent("Smoothness");
-            public static readonly GUIContent EnableHairSpecular = new GUIContent("HairSpecular");
+            public static readonly GUIContent SpecularType = new GUIContent("SpecularType");
             public static readonly GUIContent SpecularShiftMap = new GUIContent("HairShiftMap");
             public static readonly GUIContent SpecularShift = new GUIContent("SpecularShift");
             public static readonly GUIContent SpecularHighlights = new GUIContent("Enable Specular Highlights");
@@ -72,7 +72,8 @@ namespace ChiliMilk.Toon.Editor
 
             //Rim
             public static readonly GUIContent RimFlip = new GUIContent("RimFlip");
-            public static readonly GUIContent RimBlend = new GUIContent("RimBlend");
+            public static readonly GUIContent RimBlendShadow = new GUIContent("RimBlendShadow");
+            public static readonly GUIContent RimBlendLdotV = new GUIContent("RimBlendLdotV(BackLight)");
             public static readonly GUIContent RimColor = new GUIContent("RimColor");
             public static readonly GUIContent RimPow = new GUIContent("RimPow");
             public static readonly GUIContent RimStep = new GUIContent("RimStep");
@@ -129,7 +130,7 @@ namespace ChiliMilk.Toon.Editor
             public static readonly string SpecStep = "_SpecularStep";
             public static readonly string SpecFeather = "_SpecularFeather";
             public static readonly string Smoothness = "_Smoothness";
-            public static readonly string EnableHairSpecular = "_EnableHairSpecular";
+            public static readonly string SpecularType = "_SpecularType";
             public static readonly string SpecularShiftMap = "_SpecularShiftMap";
             public static readonly string SpecularShiftIntensity = "_SpecularShiftIntensity";
             public static readonly string SpecularShift = "_SpecularShift";
@@ -150,7 +151,8 @@ namespace ChiliMilk.Toon.Editor
 
             //Rim
             public static readonly string RimFlip = "_RimFlip";
-            public static readonly string RimBlend = "_RimBlend";
+            public static readonly string RimBlendShadow = "_RimBlendShadow";
+            public static readonly string RimBlendLdotV = "_RimBlendLdotV";
             public static readonly string RimColor = "_RimColor";
             public static readonly string RimStep = "_RimStep";
             public static readonly string RimFeather = "_RimFeather";
@@ -195,6 +197,13 @@ namespace ChiliMilk.Toon.Editor
             DoubleShade = 0,
             Ramp = 1,
             FaceSDFShadow = 2
+        }
+
+        public enum SpecularType
+        {
+            Default = 0,
+            HairSpecularViewNormal,
+            HairSpecularTangent
         }
 
         #endregion
@@ -266,7 +275,7 @@ namespace ChiliMilk.Toon.Editor
         private MaterialProperty m_SpecFeatherProp;
         private MaterialProperty m_SmoothnessProp;
         private MaterialProperty m_SpecularHighlightsProp;
-        private MaterialProperty m_EnableHairSpecularProp;
+        private MaterialProperty m_SpecularTypeProp;
         private MaterialProperty m_SpeculatShiftMapProp;
         private MaterialProperty m_SpecularShiftIntensityProp;
         private MaterialProperty m_SpecularShiftProp;
@@ -279,7 +288,8 @@ namespace ChiliMilk.Toon.Editor
 
         //Rim
         private MaterialProperty m_RimFlipProp;
-        private MaterialProperty m_RimBlendProp;
+        private MaterialProperty m_RimBlendShadowProp;
+        private MaterialProperty m_RimBlendLdotVProp;
         private MaterialProperty m_RimColorProp;
         private MaterialProperty m_RimStepProp;
         private MaterialProperty m_RimFeatherProp;
@@ -357,7 +367,7 @@ namespace ChiliMilk.Toon.Editor
             m_OcclusionStrengthProp = FindProperty(MPropertyNames.OcclusionStrength, properties, false);
             m_EmissionMapProp = FindProperty(MPropertyNames.EmissionMap, properties, false);
             m_EmissionColorProp = FindProperty(MPropertyNames.EmissionColor, properties, false);
-            m_EnableHairSpecularProp = FindProperty(MPropertyNames.EnableHairSpecular, properties, false);
+            m_SpecularTypeProp = FindProperty(MPropertyNames.SpecularType, properties, false);
             
             //Outline
             m_EnableOutlineProp = FindProperty(MPropertyNames.EnableOutline, properties, false);
@@ -367,7 +377,8 @@ namespace ChiliMilk.Toon.Editor
 
             //Rim
             m_RimFlipProp = FindProperty(MPropertyNames.RimFlip, properties, false);
-            m_RimBlendProp = FindProperty(MPropertyNames.RimBlend, properties, false);
+            m_RimBlendShadowProp = FindProperty(MPropertyNames.RimBlendShadow, properties, false);
+            m_RimBlendLdotVProp = FindProperty(MPropertyNames.RimBlendLdotV, properties, false);
             m_RimColorProp = FindProperty(MPropertyNames.RimColor, properties, false);
             m_RimStepProp = FindProperty(MPropertyNames.RimStep, properties, false);
             m_RimFeatherProp = FindProperty(MPropertyNames.RimFeather, properties, false);
@@ -473,7 +484,8 @@ namespace ChiliMilk.Toon.Editor
             SetKeyword(material,"_EMISSION", hasEmissionMap || emissionColor != Color.black);
 
             // HairSpecular
-            SetKeyword(material,"_HAIRSPECULAR", material.HasProperty(MPropertyNames.EnableHairSpecular) && material.GetFloat(MPropertyNames.EnableHairSpecular) == 1.0f);
+            SetKeyword(material, "_HAIRSPECULAR", material.HasProperty(MPropertyNames.SpecularType) && material.GetFloat(MPropertyNames.SpecularType) == 2.0f);
+            SetKeyword(material, "_HAIRSPECULARVIEWNORMAL", material.HasProperty(MPropertyNames.SpecularType) && material.GetFloat(MPropertyNames.SpecularType) == 1.0f);
 
             //Outline
             SetKeyword(material,"_USESMOOTHNORMAL", material.GetFloat(MPropertyNames.UseSmoothNormal) == 1.0);
@@ -887,10 +899,19 @@ namespace ChiliMilk.Toon.Editor
             }
 
             // HairSpecular
-            if (material.HasProperty(MPropertyNames.EnableHairSpecular))
+            if (material.HasProperty(MPropertyNames.SpecularType))
             {
-                materialEditor.ShaderProperty(m_EnableHairSpecularProp, Styles.EnableHairSpecular);
-                if (m_EnableHairSpecularProp.floatValue == 1.0)
+                EditorGUI.showMixedValue = m_SpecularTypeProp.hasMixedValue;
+                EditorGUI.BeginChangeCheck();
+                var specularType = EditorGUILayout.Popup(Styles.SpecularType, (int)m_SpecularTypeProp.floatValue, Enum.GetNames(typeof(SpecularType)));
+                if (EditorGUI.EndChangeCheck())
+                {
+                    materialEditor.RegisterPropertyChangeUndo(Styles.SpecularType.text);
+                    m_SpecularTypeProp.floatValue = specularType;
+                }
+                EditorGUI.showMixedValue = false;
+
+                if (m_SpecularTypeProp.floatValue == 2.0)
                 {
                     materialEditor.TexturePropertySingleLine(Styles.SpecularShiftMap, m_SpeculatShiftMapProp, m_SpecularShiftIntensityProp);
                     materialEditor.TextureScaleOffsetProperty(m_SpeculatShiftMapProp);
@@ -919,13 +940,15 @@ namespace ChiliMilk.Toon.Editor
             materialEditor.ShaderProperty(m_RimFlipProp, Styles.RimFlip);
             EditorGUI.BeginChangeCheck();
             EditorGUI.indentLevel += 2;
-            var rimBlend = EditorGUILayout.Slider(Styles.RimBlend, m_RimBlendProp.floatValue, 0f, 1f);
+            var rimBlendShadow = EditorGUILayout.Slider(Styles.RimBlendShadow, m_RimBlendShadowProp.floatValue, 0f, 1f);
+            var rimBlendLdotV = EditorGUILayout.Slider(Styles.RimBlendLdotV, m_RimBlendLdotVProp.floatValue, 0f, 1f);
             var rimStep = EditorGUILayout.Slider(Styles.RimStep, m_RimStepProp.floatValue, 0f, 1f);
             var rimFeather = EditorGUILayout.Slider(Styles.RimFeather, m_RimFeatherProp.floatValue, 0f, 1f);
             EditorGUI.indentLevel -= 2;
             if (EditorGUI.EndChangeCheck())
             {
-                m_RimBlendProp.floatValue = rimBlend;
+                m_RimBlendShadowProp.floatValue = rimBlendShadow;
+                m_RimBlendLdotVProp.floatValue = rimBlendLdotV;
                 m_RimStepProp.floatValue = rimStep;
                 m_RimFeatherProp.floatValue = rimFeather;
             }

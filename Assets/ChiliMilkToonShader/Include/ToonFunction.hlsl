@@ -15,11 +15,7 @@ float3 GetSmoothedWorldNormal(float2 uv7, float3x3 t_tbn)
 //Use for HairSpecular,Roughness To BlinnPhong
 float RoughnessToBlinnPhongSpecularExponent(float roughness)
 {
-#ifdef _HAIRSPECULAR
     return clamp(2 * rcp(roughness * roughness) - 2, FLT_EPS, rcp(FLT_EPS));
-#else
-    return 0;
-#endif
 }
 
 //AntiAliasing,we use to calculate shadow
@@ -29,8 +25,7 @@ half StepAntiAliasing(half x, half y)
     return saturate(v / (fwidth(v)+HALF_MIN));//fwidth(x) = abs(ddx(x) + ddy(x))
 }
 
-//Use for Toon Diffuse
-half DiffuseRadianceToon(half value,half step,half feather)
+inline half StepFeatherToon(half value,half step,half feather)
 {
     return saturate((value-step+feather)/feather);
 }
