@@ -38,7 +38,8 @@ half _SpecularShift;
 half _SpecularShiftIntensity;
 float4 _SpecularShiftMap_ST;
 
-half _RimBlend;
+half _RimBlendShadow;
+half _RimBlendLdotV;
 half3 _RimColor;
 half _RimFlip;
 half _RimStep;
@@ -141,7 +142,8 @@ struct ToonData
     half rimFlip;
     half rimStep;
     half rimFeather;
-    half rimBlend;
+    half rimBlendShadow;
+    half rimBlendLdotV;
 };
 
 #ifdef _MATCAP
@@ -156,7 +158,7 @@ half SampleAmbientOcclusionToon(float2 normalizedScreenSpaceUV, half occlusion)
     half ssao = 1.0;
 #if defined(_SCREEN_SPACE_OCCLUSION)
     ssao = SampleAmbientOcclusion(normalizedScreenSpaceUV);
-    ssao = DiffuseRadianceToon(ssao, _Shadow1Step, _Shadow1Feather) * _SSAOStrength;
+    ssao = StepFeatherToon(ssao, _Shadow1Step, _Shadow1Feather) * _SSAOStrength;
 #endif
     ssao = min(ssao, occlusion);
     return ssao;
@@ -265,7 +267,7 @@ half SampleSpecularShift(float2 uv)
 #endif
 }
 
-half4 SampleMetallicSpecGloss(float2 uv, half albedoAlpha, half smoothness)
+half4 SampleMetallicSpecGloss(float2 uv, half smoothness)
 {
     half4 specGloss = SAMPLE_METALLICSPECULAR(uv);
 #if _SPECULAR_SETUP
@@ -296,7 +298,7 @@ inline void InitializeSurfaceDataToon(float2 uv,out SurfaceDataToon outSurfaceDa
 {
     half4 albedoAlpha = SampleAlbedoAlpha(uv, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));
     outSurfaceData.alpha = Alpha(albedoAlpha.a, _BaseColor, _Cutoff);
-    half4 specGloss = SampleMetallicSpecGloss(uv, albedoAlpha.a, _Smoothness);
+    half4 specGloss = SampleMetallicSpecGloss(uv, _Smoothness);
     outSurfaceData.albedo = albedoAlpha.rgb * _BaseColor.rgb;
 #if _SPECULAR_SETUP
     outSurfaceData.metallic = 1.0h;
@@ -335,7 +337,8 @@ inline void InitializeToonData(float2 uv, float2 normalizedScreenSpaceUV,float3 
     outToonData.rimColor = _RimColor;
     outToonData.rimStep = _RimStep;
     outToonData.rimFeather = _RimFeather;
-    outToonData.rimBlend = _RimBlend;
+    outToonData.rimBlendShadow = _RimBlendShadow;
     outToonData.rimFlip = _RimFlip;
+    outToonData.rimBlendLdotV = _RimBlendLdotV;
 }
 #endif

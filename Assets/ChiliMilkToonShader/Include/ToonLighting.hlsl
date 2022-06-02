@@ -14,7 +14,7 @@ struct BRDFDataToon
     half grazingTerm;
     half normalizationTerm;     // roughness * 4.0 + 2.0
     half roughness2MinusOne;    // roughness^2 - 1.0
-#ifdef _HAIRSPECULAR
+#if defined _HAIRSPECULAR || defined _HAIRSPECULARVIEWNORMAL
     half specularExponent;
 #endif
 };
@@ -38,7 +38,7 @@ inline void InitializeBRDFDataToon(SurfaceDataToon surfaceData, out BRDFDataToon
     outBRDFData.perceptualRoughness = PerceptualSmoothnessToPerceptualRoughness(surfaceData.smoothness);
     outBRDFData.roughness = max(PerceptualRoughnessToRoughness(outBRDFData.perceptualRoughness), HALF_MIN_SQRT);
     outBRDFData.roughness2 = max(outBRDFData.roughness * outBRDFData.roughness, HALF_MIN);
-#ifdef _HAIRSPECULAR
+#if defined _HAIRSPECULAR || defined _HAIRSPECULARVIEWNORMAL
     outBRDFData.specularExponent = RoughnessToBlinnPhongSpecularExponent(outBRDFData.roughness);
 #endif
     outBRDFData.normalizationTerm = outBRDFData.roughness * 4.0h + 2.0h;
@@ -46,7 +46,7 @@ inline void InitializeBRDFDataToon(SurfaceDataToon surfaceData, out BRDFDataToon
 }
 
 #ifdef _HAIRSPECULAR
-half2 DirectSpecularHairToon(half specularExponent, half specularShift, half3 normalWS, half3 lightDirectionWS, half3 viewDirectionWS, half3 bitangentWS,half specularStep, half specularFeather)
+half DirectSpecularHairToon(half specularExponent, half specularShift, half3 normalWS, half3 lightDirectionWS, half3 viewDirectionWS, half3 bitangentWS,half specularStep, half specularFeather)
 {
     half3 t = ShiftTangent(bitangentWS,normalWS,specularShift);
     half LdotV = dot(lightDirectionWS,viewDirectionWS);
@@ -56,6 +56,14 @@ half2 DirectSpecularHairToon(half specularExponent, half specularShift, half3 no
     half maxSpec = (specularExponent + 2) * rcp(2 * PI);
     half s = StepFeatherToon(spec,maxSpec,specularStep,specularFeather);
     return s;
+}
+#elif defined _HAIRSPECULARVIEWNORMAL
+half DirectSpecularHairViewNormalToon(half specularExponent, half3 normalWS, half3 viewDirectionWS, half specularStep, half specularFeather)
+{
+    half NdotV = saturate(dot(normalize(normalWS.xz), normalize(viewDirectionWS.xz)));
+    half s = pow(NdotV, specularExponent);
+
+    return StepFeatherToon(s, specularStep, specularFeather);
 }
 #else
 half DirectSpecularToon(BRDFDataToon brdfData, half3 normalWS, half3 lightDirectionWS, half3 viewDirectionWS, half step, half feather)
@@ -80,6 +88,8 @@ half3 SpecularBDRFToon(BRDFDataToon brdfData, half3 normalWS, half3 lightDirecti
 #ifndef _SPECULARHIGHLIGHTS_OFF
     #ifdef _HAIRSPECULAR
         half specularTerm = DirectSpecularHairToon(brdfData.specularExponent,specularShift,normalWS,lightDirectionWS,viewDirectionWS,bitangentWS,specularStep,specularFeather);
+    #elif defined _HAIRSPECULARVIEWNORMAL
+    half specularTerm = DirectSpecularHairViewNormalToon(brdfData.specularExponent, normalWS, viewDirectionWS, specularStep, specularFeather);
     #else
     half specularTerm = DirectSpecularToon(brdfData, normalWS, lightDirectionWS, viewDirectionWS, specularStep, specularFeather);
     #endif
@@ -152,8 +162,8 @@ half2 RadianceToon(half3 normalWS, half3 lightDirectionWS, half lightAttenuation
     lightAttenuation = lerp(StepAntiAliasing(lightAttenuation,0.5),lightAttenuation,shadow1Feather);
     lightAttenuation = saturate(lightAttenuation * inShadow);
     half H_Lambert = 0.5 * dot(normalWS, lightDirectionWS) + 0.5;
-    radiance.x = DiffuseRadianceToon(H_Lambert, shadow1Step, shadow1Feather) * lightAttenuation * HairShadowMaskAtten(hairShadowMask, H_Lambert);
-    radiance.y = DiffuseRadianceToon(H_Lambert,shadow2Step,shadow2Feather);
+    radiance.x = StepFeatherToon(H_Lambert, shadow1Step, shadow1Feather) * lightAttenuation * HairShadowMaskAtten(hairShadowMask, H_Lambert);
+    radiance.y = StepFeatherToon(H_Lambert,shadow2Step,shadow2Feather);
     return radiance;
 }
 #else
@@ -169,13 +179,16 @@ half3 RampRadianceToon(half3 normalWS, half3 lightDirectionWS, half lightAttenua
 #endif
 #endif
 
-float3 RimLight(half3 rimColor, half3 normalWS, half3 viewDirectionWS, half rimStep, half rimFeather, half rimBlend, half rimFlip, half radiance)
+float3 RimLight(half3 rimColor, half3 normalWS, half3 viewDirectionWS, half3 lightDirectionWS, half rimStep, half rimFeather, half rimBlendShadow, half rimBlendLdotV, half rimFlip, half radiance)
 {
+    half LdotV = dot(-lightDirectionWS, viewDirectionWS) * 0.5 + 0.5;
+
     half fresnel = (1.0 - saturate(dot(normalWS, viewDirectionWS)));
-    fresnel = DiffuseRadianceToon(fresnel, rimStep, rimFeather);
+    fresnel = StepFeatherToon(fresnel, rimStep, rimFeather);
+    fresnel = lerp(fresnel, fresnel * LdotV, rimBlendLdotV);
     half3 color = rimColor * fresnel;
     radiance = lerp(radiance, 1 - radiance, rimFlip);
-    color = lerp(color, color * radiance, rimBlend);
+    color = lerp(color, color * radiance, rimBlendShadow);
 
     return  color;
 }
@@ -217,7 +230,7 @@ half3 LightingToon(BRDFDataToon brdfData, SurfaceDataToon surfaceData, InputData
     color +=  specularColor + diffuseColor;
 #endif
 #endif
-    color += isMainLight * RimLight(toonData.rimColor, inputData.normalWS, inputData.viewDirectionWS, toonData.rimStep, toonData.rimFeather, toonData.rimBlend, toonData.rimFlip ,radiance.x);
+    color += isMainLight * RimLight(toonData.rimColor, inputData.normalWS, inputData.viewDirectionWS, light.direction, toonData.rimStep, toonData.rimFeather, toonData.rimBlendShadow, toonData.rimBlendLdotV,toonData.rimFlip ,radiance.x);
     color += isMainLight * MatCapLight(inputData.normalWS, inputData.viewDirectionWS, radiance.x);
     return color * light.color;
 }

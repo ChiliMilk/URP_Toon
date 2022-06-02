@@ -46,8 +46,7 @@
 
         //SDFShadow
         _SDFShadowMap("SDFShdaowMap",2D) = "white"{}
-        _ForwardDirWS("ForwardDirWS",vector) = (0,0,0,1)
-        _LeftDirWS("LeftDirWS",vector) = (-1,0,0,0)
+        _LdotFL("LdotFL",vector) = (0,0,0,0)
 
         //Specular
         _Metallic("Metallic", Range(0.0, 1.0)) = 0.5
@@ -64,14 +63,15 @@
         _DiffuseRampV("DiffuseRampV",Range(0.0,1))= 0.0
 
         //Rim
-        _RimBlend("RimBlend",Range(0.0,1.0)) = 0.0
+        _RimBlendShadow("RimBlendShadow",Range(0.0,1.0)) = 0.0
+        _RimBlendLdotV("RimBlendLdotV",Range(0.0,1.0)) = 0.0
         [ToggleOff]_RimFlip("RimFlip", Float) = 0.0
         _RimColor("RimColor",Color) = (0.0,0.0,0.0,0.0)
         _RimStep("RimStep",Range(0.0,1.0)) = 0.5
         _RimFeather("RimFeather",Range(0.0,1.0)) = 0.5
 
         // HairSpecular
-        [ToggleOff] _EnableHairSpecular("HairSpecular", Float) = 0.0
+        [ToggleOff] _SpecularType("SpecularType", Float) = 0.0
         _SpecularShiftMap("SpecularShiftMap",2D) = "white"{}
         _SpecularShiftIntensity("SpecularShiftIntensity",Range(0.0,3.0)) = 1.0
         _SpecularShift("SpecularShift",Float) = 0.0
@@ -189,10 +189,10 @@
             #pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
             #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
-            #pragma shader_feature_local _HAIRSPECULAR
             #pragma shader_feature_local_fragment _RECEIVE_HAIRSHADOWMASK
             #pragma shader_feature_local_fragment _SPECULAR_SETUP
             #pragma shader_feature_local_fragment _MATCAP
+            #pragma multi_compile _ _HAIRSPECULAR _HAIRSPECULARVIEWNORMAL
             
             // Universal Pipeline keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
@@ -442,10 +442,10 @@
             #pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
             #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
             #pragma shader_feature_local _RECEIVE_SHADOWS_OFF
-            #pragma shader_feature_local _HAIRSPECULAR
             #pragma shader_feature_local_fragment _RECEIVE_HAIRSHADOWMASK
             #pragma shader_feature_local_fragment _SPECULAR_SETUP
             #pragma shader_feature_local_fragment _MATCAP
+            #pragma multi_compile _ _HAIRSPECULAR _HAIRSPECULARVIEWNORMAL
             
             // Universal Pipeline keywords
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
