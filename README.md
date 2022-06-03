@@ -70,9 +70,16 @@ Sample "CastHairShadowMask" for shadow.(Check it on face material)
 
 ### Rim
 ![image-Rim](image/Rim.png)  
-- BlendRim  
+
+- RimBlendShadow  
+
 ![image-BlendRim](image/BlendRim.png) 
-Left:BlendRim=0 Right:BlendRim=1
+
+1:RimBlendShadow=0 2:RimBlendShadow=1 3:RimBlendShadow=1 RimFlip=1  
+
+- RimFlip  
+
+Flip RimBlendShadow
 
 ### Outline
 ![image-Outline](image/Outline.png)  
