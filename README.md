@@ -15,7 +15,11 @@
 ## Introduction  
 Simple toon shader in unity universal pipeline.
 
-![image-UnityChan](image/UnityChan.png) 
+![image-UnityChan](image/UnityChan.png)  
+
+Genshin Impact Style(Model and Texture from miHoYo)
+
+![image-Genshin_Sample](image/Genshin_Sample.gif)  
 
 ## Properties
 ### SurfaceOptions
@@ -40,11 +44,11 @@ Shadows based on rampmap.
 Used for face shadow, sample a precomputed shadow mask to generate shadows.
 Limit:symmetrical face uv.
 
-![SDFMask](image\SDFMask.png) 
+![image-SDFMask](image\SDFMask.png) 
 
 Need to add a script to the object, set the forward and left direction(ObjectSpace).
 
-![SDFScript](image\SDFScript.png) 
+![image-SDFScript](image\SDFScript.png) 
 
 About how to generate sdf shadow mask.
 Node:Generate mask in r16 format(antialiasing).
