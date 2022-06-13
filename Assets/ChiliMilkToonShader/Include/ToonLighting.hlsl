@@ -53,17 +53,19 @@ half DirectSpecularHairToon(half specularExponent, half specularShift, half3 nor
     float invLenLV = rsqrt(max(2.0 * LdotV + 2.0,FLT_EPS));
     half3 H = (lightDirectionWS+viewDirectionWS) * invLenLV;
     half spec = D_KajiyaKay(t,H,specularExponent);
-    half maxSpec = (specularExponent + 2) * rcp(2 * PI);
-    half s = StepFeatherToon(spec,maxSpec,specularStep,specularFeather);
-    return s;
+
+    half normalizeSpec = spec * rcp(specularExponent + 2) * 2 * PI;
+    spec *= StepFeatherToon(normalizeSpec,specularStep,specularFeather);
+
+    return spec;
 }
 #elif defined _HAIRSPECULARVIEWNORMAL
 half DirectSpecularHairViewNormalToon(half specularExponent, half3 normalWS, half3 viewDirectionWS, half specularStep, half specularFeather)
 {
     half NdotV = saturate(dot(normalize(normalWS.xz), normalize(viewDirectionWS.xz)));
-    half s = pow(NdotV, specularExponent);
+    half spec = pow(NdotV, specularExponent);
 
-    return StepFeatherToon(s, specularStep, specularFeather);
+    return StepFeatherToon(spec, specularStep, specularFeather);
 }
 #else
 half DirectSpecularToon(BRDFDataToon brdfData, half3 normalWS, half3 lightDirectionWS, half3 viewDirectionWS, half step, half feather)
@@ -76,9 +78,9 @@ half DirectSpecularToon(BRDFDataToon brdfData, half3 normalWS, half3 lightDirect
     half d2 = half(d * d);
     
     half specularTerm = brdfData.roughness2 / (d2 * max(0.1h, LoH2) * brdfData.normalizationTerm);
-    half maxSpecularTerm = specularTerm * d2 * rcp(brdfData.roughness2);
+    half normalizeSpec = brdfData.roughness2 * brdfData.roughness2 * rcp(d2);
     
-    specularTerm = StepFeatherToon(specularTerm, maxSpecularTerm, step, feather);
+    specularTerm *= StepFeatherToon(normalizeSpec, step, feather);
     return specularTerm;
 }
 #endif  
