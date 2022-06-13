@@ -30,10 +30,4 @@ inline half StepFeatherToon(half value,half step,half feather)
     return saturate((value-step+feather)/feather);
 }
 
-//Use to Toon Specular , Rim Light
-inline half StepFeatherToon(half Term,half maxTerm,half step,half feather)
-{
-    return saturate((Term * saturate(rcp(maxTerm)) - step + feather) / feather) * maxTerm;
-}
-
 #endif
