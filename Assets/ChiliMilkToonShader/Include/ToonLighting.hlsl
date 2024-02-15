@@ -251,7 +251,13 @@ half4 FragmentLitToon(InputDataToon inputData, SurfaceDataToon surfaceData, Toon
     half4 shadowMask = half4(1, 1, 1, 1);
     #endif
    
+    #if UNITY_VERSION < 202220
     uint meshRenderingLayers = GetMeshRenderingLightLayer();
+    #else
+    //GetMeshRenderingLayer() is only available in 2022.2+
+    //Previous versions need to use GetMeshRenderingLightLayer()
+    uint meshRenderingLayers = GetMeshRenderingLayer();
+    #endif
     Light mainLight = GetMainLight(inputData.shadowCoord,inputData.positionWS,shadowMask);
     MixRealtimeAndBakedGI(mainLight, inputData.normalWS, inputData.bakedGI);
     half3 color = GlobalIlluminationToon(brdfData, inputData.bakedGI, toonData.ssao, inputData.normalWS, inputData.viewDirectionWS);
